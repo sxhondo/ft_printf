@@ -204,4 +204,5 @@ CMakeFiles/ft_printf.dir/libft/srcs/ft_toupper.c.o
  /Users/sxhondo/ft_printf/libft/srcs/ft_toupper.c
 CMakeFiles/ft_printf.dir/main.c.o
  ../libft/includes/libft.h
+ /Users/sxhondo/ft_printf/incs/ft_printf.h
  /Users/sxhondo/ft_printf/main.c

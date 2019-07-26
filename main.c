@@ -10,47 +10,65 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "incs/ft_printf.h"
 #include <stdio.h>
 #include <libft.h>
 #include <stdarg.h>
+#include <unistd.h>
 
-char 	get_slash(char spec)
+
+t_fmt			*parse_format_string(const char *fmt)
 {
-	printf("%d", spec);
+	int 	i;
+	char 	*new;
+
+	//		%42d%21c
+	while (fmt[i])
+	{
+		while (!ft_isalpha(fmt[i]))
+		{
+
+			i++;
+		}
+		ft_putchar(fmt[i]);
+		i++;
+	}
+
+
+
 }
 
-void	ft_printf(char *fmt, ...)
+int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	va_list		args;
-	int 		ival;
-	int 		i;
+	/* Later I should create some kind of table to compare given values with existing values */
+	int 	i;
+	t_fmt	*format;
 
-	i = 0;
+	format = parse_format_string(fmt);
+
+
+}
+
+int				ft_printf(char *fmt, ...)
+{
+	va_list 	args;
+	int 		done;
+
+	/*
+ 	* va_arg( ) function will never receive arguments of type char, short int, or float.
+	* function only accept arguments of type char *, unsigned int, int or double.
+ 	*/
+
+	if (fmt == NULL)
+		return (-1);
 	va_start(args, fmt); /* устанавливает аrgs на 1-й безымянный аргумент после fmt */
-	while (*fmt)
-	{
-		while(*fmt != '%')
-			ft_putchar(*fmt++);
-		fmt++;
-		if (*fmt == '\\')
-		{
-			*fmt++;
-			ft_putchar(*fmt);
-		}
-		if (*fmt == 'd')
-		{
-			ival = va_arg(args, int); /* va_arg раскрывается в выражение типа [int], которое представляет собой следующий аргумент из args */
-			ft_putnbr(ival);
-		}
-		fmt++;
-	}
+	done = ft_fprintf(1, fmt, args);
 	va_end(args);
-
+	return (done);
 }
 
 int 	main()
 {
-	int j = 21;
-
-	ft_printf("random string: %d", 42);
+	ft_printf("%42d%21c", "value trash");
+//	printf("%char", 'e');
 }

@@ -203,5 +203,6 @@ CMakeFiles/ft_printf.dir/libft/srcs/ft_toupper.c.o: ../libft/includes/libft.h
 CMakeFiles/ft_printf.dir/libft/srcs/ft_toupper.c.o: ../libft/srcs/ft_toupper.c
 
 CMakeFiles/ft_printf.dir/main.c.o: ../libft/includes/libft.h
+CMakeFiles/ft_printf.dir/main.c.o: ../incs/ft_printf.h
 CMakeFiles/ft_printf.dir/main.c.o: ../main.c
 

@@ -74,4 +74,4 @@ add_executable(ft_printf
         libft/srcs/ft_strtrim.c
         libft/srcs/ft_tolower.c
         libft/srcs/ft_toupper.c
-        main.c)
+        main.c incs/ft_printf.h)

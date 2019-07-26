@@ -18,11 +18,17 @@ stdlib.h
 fcntl.h
 -
 
+/Users/sxhondo/ft_printf/incs/ft_printf.h
+
 /Users/sxhondo/ft_printf/main.c
+incs/ft_printf.h
+/Users/sxhondo/ft_printf/incs/ft_printf.h
 stdio.h
 -
 libft.h
 -
 stdarg.h
+-
+unistd.h
 -
 

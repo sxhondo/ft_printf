@@ -82,6 +82,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/sxhondo/ft_printf/incs/ft_printf.h">
+			<Option target="ft_printf"/>
+		</Unit>
 		<Unit filename="/Users/sxhondo/ft_printf/libft/includes/libft.h">
 			<Option target="ft_printf"/>
 		</Unit>
