@@ -17,7 +17,7 @@ char	**ft_strsplit(char const *s, char c)
 	char	**tab;
 	size_t	i;
 	size_t	t;
-	size_t	j;
+
 
 	t = 0;
 	i = 0;
@@ -27,7 +27,6 @@ char	**ft_strsplit(char const *s, char c)
 	{
 		while (s[i] == c)
 			i++;
-		j = i;
 		while (s[i] && s[i] != c)
 			i++;
 	}

@@ -16,37 +16,23 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-
-t_fmt			*parse_format_string(const char *fmt)
-{
-	int 	i;
-	char 	*new;
-
-	//		%42d%21c
-	while (fmt[i])
-	{
-		while (!ft_isalpha(fmt[i]))
-		{
-
-			i++;
-		}
-		ft_putchar(fmt[i]);
-		i++;
-	}
-
-
-
-}
-
 int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	/* Later I should create some kind of table to compare given values with existing values */
-	int 	i;
-	t_fmt	*format;
+	char	buf[1024];
+	char	*str;
 
-	format = parse_format_string(fmt);
-
-
+	str = buf;
+	while (*fmt)
+	{
+		if (*fmt != '%')
+		{
+			*str++ = *fmt++;
+			continue;
+		}
+		fmt++;
+	}
+	//printf("%-1000s\n", buf);
+	printf("hello%10d\n", 10);
 }
 
 int				ft_printf(char *fmt, ...)
@@ -69,6 +55,6 @@ int				ft_printf(char *fmt, ...)
 
 int 	main()
 {
-	ft_printf("%42d%21c", "value trash");
+	ft_printf("some string %d", 42);
 //	printf("%char", 'e');
 }
