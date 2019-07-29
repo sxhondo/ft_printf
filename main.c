@@ -6,7 +6,7 @@
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/23 19:51:38 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/07/23 19:51:39 by sxhondo          ###   ########.fr       */
+/*   Updated: 2019/07/29 14:15:55 by null             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,84 @@
 #include <stdarg.h>
 #include <unistd.h>
 
+#define SIGN	2		/* unsigned/signed long */
+#define SMALL	32		/* Must be 32 == 0x20 */
+#define ZEROPAD	1		/* pad with zero */
+#define PLUS	4		/* show plus */
+#define SPACE	8		/* space if plus */
+#define LEFT	16		/* left justified */
+#define SPECIAL	64		/* 0x */
+
+static int 		skip_atoi(const char **s)
+{
+	int 	i;
+
+	i = 0;
+	while (ft_isdigit(**s))
+		i = i * 10 + *((*s)++) - '0';
+	return (i);
+}
+
+int 			process_flags(const char *fmt)
+{
+	int 	flags;
+
+	++fmt; /* skip % */
+	while (*fmt)
+	{
+		if (*fmt == '-')
+		{
+			flags |= LEFT; /* left justified */
+			process_flags(++fmt);
+		}
+		if (*fmt == '+')
+		{
+			flags |= PLUS; /* show plus */
+			process_flags(++fmt);
+		}
+		if (*fmt == ' ')
+		{
+			flags |= SPACE;/* space if plus */
+			process_flags(++fmt);
+		}
+		if (*fmt == '#')
+		{
+			flags |= SPECIAL; /* 0x */
+			process_flags(++fmt);
+		}
+		if (*fmt == '0')
+		{
+			flags |= ZEROPAD;/* pad with zero */
+			process_flags(++fmt);
+		}
+		fmt++;
+	}
+	return (flags);
+}
+
+int 			get_fwidth(const char *fmt, va_list args, int flags)
+{
+	int 	width = -1;
+	if (ft_isdigit(*fmt))
+		width = skip_atoi(&fmt);
+	else if (*fmt == '*')
+	{
+		++fmt;
+		width = va_arg(args, int);
+		flags |= 16;
+	}
+	return (width);
+
+}
 int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char	buf[1024];
-	char	*str;
+	char		buf[1024];
+	char		*str;
+	int 		flags;
+	int 		fwidth;
 
+	flags = 0;
+	fwidth = -1;
 	str = buf;
 	while (*fmt)
 	{
@@ -29,10 +102,12 @@ int				ft_fprintf(int fd, const char *fmt, va_list args)
 			*str++ = *fmt++;
 			continue;
 		}
+		flags = process_flags(fmt);
+//		fwidth = get_fwidth(fmt, args, flags);
 		fmt++;
 	}
-	//printf("%-1000s\n", buf);
-	printf("hello%10d\n", 10);
+	printf("FLAGS [%d]\n", flags);
+//	printf("FIELD WIDTH [%d]\n", fwidth);
 }
 
 int				ft_printf(char *fmt, ...)
@@ -55,6 +130,6 @@ int				ft_printf(char *fmt, ...)
 
 int 	main()
 {
-	ft_printf("some string %d", 42);
-//	printf("%char", 'e');
+	ft_printf("%+d", 42);
+//	printf("%+10d%+d", -42, 21);
 }
