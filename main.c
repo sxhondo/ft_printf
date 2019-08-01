@@ -24,12 +24,33 @@
 
 typedef struct		s_fmt
 {
+	struct s_fmt 	*next;
 	char 			type;
 	unsigned int	width;
 	unsigned int	precision;
 	int 			flags;
 	int 			iter;
 }					t_fmt;
+
+void			print_and_free_fmt(t_fmt **fmt, char buf[])
+{
+	t_fmt		*curr;
+	t_fmt		*next;
+
+	curr = *fmt;
+	while (curr)
+	{
+		printf("FLAGS: [%d]\n", curr->flags);
+		printf("WIDTH: [%d]\n", curr->width);
+		printf("PRECISION: [%d]\n", curr->precision);
+		printf("DATA_TYPE: [%c]\n", curr->type);
+		printf("BUF: [%s]\n", buf);
+		printf("----------------------\n");
+		next = curr->next;
+		free (curr);
+		curr = next;
+	}
+}
 
 static int 		skip_atoi(const char *s)
 {
@@ -47,7 +68,7 @@ t_fmt 		*process_flags(const char *fmt)
 	t_fmt	*tmp;
 
 	tmp = ft_memalloc(sizeof(t_fmt));
-	while (!ft_isdigit(*fmt) || *fmt == '0')
+	while ((!ft_isdigit(*fmt) || *fmt == '0') && *fmt)
 	{
 		if (*fmt == '*')
 			break;
@@ -95,13 +116,14 @@ unsigned int		process_width(const char *fmt, va_list args, t_fmt *data)
 		++fmt;
 		data->width = va_arg(args, int);
 	}
-	return (NULL);
+	return (0);
 }
 
 unsigned int		process_precision(const char *fmt, va_list args)
 {
 	unsigned int	precision;
 
+	precision = 0;
 	while (*fmt != '.')
 		fmt++;
 	fmt++;
@@ -115,42 +137,72 @@ unsigned int		process_precision(const char *fmt, va_list args)
 	return (precision);
 }
 
-char			*process_datatype(const char *fmt, va_list args, t_fmt *data)
+int			process_datatype(const char *fmt, va_list args, t_fmt *data)
 {
-	printf("FORMAT STRING [%s]\n", fmt);
+//	printf("FORMAT STRING [%s]\n", fmt);
 	int 	i;
 
 	i = 0;
 	while (fmt[i])
 	{
 		if (fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'p')
+		{
 			data->type = fmt[i];
+			break;
+		}
 		i++;
 	}
-	return (NULL);
+	return (i);
+}
 
+void			add_data(t_fmt **data, t_fmt *node)
+{
+	t_fmt		*tmp;
+	t_fmt		*new;
+
+	tmp = *data;
+	new = ft_memalloc(sizeof(t_fmt));
+	new->flags = node->flags;
+	new->type = node->type;
+	new->precision = node->precision;
+	new->width = node->width;
+	new->iter = node->iter;
+
+	if (!*data)
+		*data = new;
+	else
+	{
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+		new->next = NULL;
+	}
 }
 
 int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	char				buf[1024];
 	char				*str;
+	int 				jump;
+	t_fmt				*node;
 	t_fmt				*data;
 
 	str = buf;
-	while (*fmt != '%')
-		*str++ = *fmt++;
-	data = process_flags(fmt);
-	process_width(fmt + data->iter + 1, args, data);
-	data->precision = process_precision(fmt, args);
-	process_datatype(fmt, args, data);
-
-
-	printf("FLAGS [%d]\n", data->flags);
-	printf("WIDTH [%d]\n", data->width);
-	printf("PRECISION [%d]\n", data->precision);
-	printf("DATA_TYPE: [%c]\n", data->type);
-	printf("BUF [%s]\n", buf);
+	while (*fmt)
+	{
+		while (*fmt != '%')
+			*str++ = *fmt++;
+		node = process_flags(fmt);
+		process_width(fmt + node->iter + 1, args, node);
+		node->precision = process_precision(fmt, args);
+		jump = (process_datatype(fmt, args, node) + 1);
+		/* just for tests */
+			va_arg(args, int);
+		add_data(&data, node);
+		free (node);
+		fmt += jump;
+	}
+	print_and_free_fmt(&data, buf);
 }
 
 int				ft_printf(char *fmt, ...)
@@ -173,6 +225,6 @@ int				ft_printf(char *fmt, ...)
 
 int 	main()
 {
-	ft_printf("this is string %*.5p", 'A');
-//	printf("%10s", "hello");
+	ft_printf("%*.5c = %10.*s and %#20.13p", 2, 'a', 4, "str");
+//	printf("%*.5c = %10.*s", 10, 'b', 1, "str");
 }
