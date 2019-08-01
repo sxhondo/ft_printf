@@ -3,9 +3,11 @@ project(ft_printf C)
 
 set(CMAKE_C_STANDARD 11)
 
+include_directories(incs)
 include_directories(libft/includes)
 
 add_executable(ft_printf
+        incs/ft_printf.h
         libft/includes/libft.h
         libft/srcs/ft_atoi.c
         libft/srcs/ft_bzero.c
@@ -74,4 +76,4 @@ add_executable(ft_printf
         libft/srcs/ft_strtrim.c
         libft/srcs/ft_tolower.c
         libft/srcs/ft_toupper.c
-        main.c incs/ft_printf.h)
+        main.c)

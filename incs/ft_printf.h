@@ -13,13 +13,13 @@
 #ifndef FT_PRINTF_FT_PRINTF_H
 #define FT_PRINTF_FT_PRINTF_H
 
-typedef struct 		s_fmt
-{
-	struct s_fmt 	*next;
-	void 			*flags;
-	int 			width;
-	int 			precision;
-	char 			type;
-}					t_fmt;
+//typedef struct 		s_fmt
+//{
+//	struct s_fmt 	*next;
+//	void 			*flags;
+//	int 			width;
+//	int 			precision;
+//	char 			type;
+//}					t_fmt;
 
 #endif //FT_PRINTF_FT_PRINTF_H

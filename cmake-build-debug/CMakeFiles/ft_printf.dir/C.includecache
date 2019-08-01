@@ -18,11 +18,11 @@ stdlib.h
 fcntl.h
 -
 
-D:/Projects/ft_printf/incs/ft_printf.h
+/Users/sxhondo/ft_printf/incs/ft_printf.h
 
-D:/Projects/ft_printf/main.c
+/Users/sxhondo/ft_printf/main.c
 incs/ft_printf.h
-D:/Projects/ft_printf/incs/ft_printf.h
+/Users/sxhondo/ft_printf/incs/ft_printf.h
 stdio.h
 -
 libft.h

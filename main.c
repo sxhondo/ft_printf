@@ -16,98 +16,141 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-#define SIGN	2		/* unsigned/signed long */
-#define SMALL	32		/* Must be 32 == 0x20 */
 #define ZEROPAD	1		/* pad with zero */
 #define PLUS	4		/* show plus */
 #define SPACE	8		/* space if plus */
 #define LEFT	16		/* left justified */
 #define SPECIAL	64		/* 0x */
 
-static int 		skip_atoi(const char **s)
+typedef struct		s_fmt
+{
+	char 			type;
+	unsigned int	width;
+	unsigned int	precision;
+	int 			flags;
+	int 			iter;
+}					t_fmt;
+
+static int 		skip_atoi(const char *s)
 {
 	int 	i;
 
 	i = 0;
-	while (ft_isdigit(**s))
-		i = i * 10 + *((*s)++) - '0';
+	while (ft_isdigit(*s))
+		i = i * 10 + *s++ - '0';
 	return (i);
 }
 
-int 			process_flags(const char *fmt)
+t_fmt 		*process_flags(const char *fmt)
 {
 	int 	flags;
+	t_fmt	*tmp;
 
-	++fmt; /* skip % */
-	while (*fmt)
+	tmp = ft_memalloc(sizeof(t_fmt));
+	while (!ft_isdigit(*fmt) || *fmt == '0')
 	{
+		if (*fmt == '*')
+			break;
+		++fmt;
 		if (*fmt == '-')
 		{
-			flags |= LEFT; /* left justified */
-			process_flags(++fmt);
+			tmp->flags |= LEFT;
+			tmp->iter++;
+			continue;
 		}
 		if (*fmt == '+')
 		{
-			flags |= PLUS; /* show plus */
-			process_flags(++fmt);
+			tmp->flags |= PLUS;
+			tmp->iter++;
+			continue;
 		}
 		if (*fmt == ' ')
 		{
-			flags |= SPACE;/* space if plus */
-			process_flags(++fmt);
+			tmp->flags |= SPACE;
+			tmp->iter++;
+			continue;
 		}
 		if (*fmt == '#')
 		{
-			flags |= SPECIAL; /* 0x */
-			process_flags(++fmt);
+			tmp->flags |= SPECIAL;
+			tmp->iter++;
+			continue;
 		}
 		if (*fmt == '0')
 		{
-			flags |= ZEROPAD;/* pad with zero */
-			process_flags(++fmt);
+			tmp->flags |= ZEROPAD;
+			tmp->iter++;
+			continue;
 		}
-		fmt++;
 	}
-	return (flags);
+	return (tmp);
 }
 
-int 			get_fwidth(const char *fmt, va_list args, int flags)
+unsigned int		process_width(const char *fmt, va_list args, t_fmt *data)
 {
-	int 	width = -1;
 	if (ft_isdigit(*fmt))
-		width = skip_atoi(&fmt);
+		data->width = skip_atoi(fmt);
 	else if (*fmt == '*')
 	{
 		++fmt;
-		width = va_arg(args, int);
-		flags |= 16;
+		data->width = va_arg(args, int);
 	}
-	return (width);
+	return (NULL);
+}
+
+unsigned int		process_precision(const char *fmt, va_list args)
+{
+	unsigned int	precision;
+
+	while (*fmt != '.')
+		fmt++;
+	fmt++;
+	if (ft_isdigit(*fmt))
+		precision = skip_atoi(fmt);
+	else if (*fmt == '*')
+	{
+		fmt++;
+		precision = va_arg(args, int);
+	}
+	return (precision);
+}
+
+char			*process_datatype(const char *fmt, va_list args, t_fmt *data)
+{
+	printf("FORMAT STRING [%s]\n", fmt);
+	int 	i;
+
+	i = 0;
+	while (fmt[i])
+	{
+		if (fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'p')
+			data->type = fmt[i];
+		i++;
+	}
+	return (NULL);
 
 }
+
 int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char		buf[1024];
-	char		*str;
-	int 		flags;
-	int 		fwidth;
+	char				buf[1024];
+	char				*str;
+	t_fmt				*data;
 
-	flags = 0;
-	fwidth = -1;
 	str = buf;
-	while (*fmt)
-	{
-		if (*fmt != '%')
-		{
-			*str++ = *fmt++;
-			continue;
-		}
-		flags = process_flags(fmt);
-//		fwidth = get_fwidth(fmt, args, flags);
-		fmt++;
-	}
-	printf("FLAGS [%d]\n", flags);
-//	printf("FIELD WIDTH [%d]\n", fwidth);
+	while (*fmt != '%')
+		*str++ = *fmt++;
+	data = process_flags(fmt);
+	process_width(fmt + data->iter + 1, args, data);
+	data->precision = process_precision(fmt, args);
+	process_datatype(fmt, args, data);
+
+
+	printf("FLAGS [%d]\n", data->flags);
+	printf("WIDTH [%d]\n", data->width);
+	printf("PRECISION [%d]\n", data->precision);
+	printf("DATA_TYPE: [%c]\n", data->type);
+	printf("BUF [%s]\n", buf);
 }
 
 int				ft_printf(char *fmt, ...)
@@ -130,6 +173,6 @@ int				ft_printf(char *fmt, ...)
 
 int 	main()
 {
-	ft_printf("%+d", 42);
-//	printf("%+10d%+d", -42, 21);
+	ft_printf("this is string %*.5p", 'A');
+//	printf("%10s", "hello");
 }
