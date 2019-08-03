@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_vec_resize.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/26 16:34:24 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/07/26 16:34:26 by sxhondo          ###   ########.fr       */
+/*   Created: 2019/08/03 18:33:01 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/03 18:40:02 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_FT_PRINTF_H
-#define FT_PRINTF_FT_PRINTF_H
-
-#include <stdio.h>
 #include "libft.h"
-#include <stdarg.h>
-#include <unistd.h>
 
-typedef struct		s_fmt
+t_vec	*ft_vec_resize(t_vec **vec)
 {
-	struct s_fmt 	*next;
-	char 			type;
-	unsigned int	width;
-	unsigned int	precision;
-	int 			flags;
-	char 			*str;
-	char 			*iter;
-}					t_fmt;
+	void	*data;
 
-#endif //FT_PRINTF_FT_PRINTF_H
+	data = (*vec)->data;
+	if (!((*vec)->data = ft_memalloc((*vec)->total * (*vec)->type)))
+		return (NULL);
+	(*vec)->data = ft_memcpy((*vec)->data, data, (*vec)->total * (*vec)->type);
+	(*vec)->capacity = (*vec)->total;
+	free(data);
+	return (*vec);
+}

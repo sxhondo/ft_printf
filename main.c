@@ -11,10 +11,6 @@
 /* ************************************************************************** */
 
 #include "incs/ft_printf.h"
-#include <stdio.h>
-#include <libft.h>
-#include <stdarg.h>
-#include <unistd.h>
 
 #define ZEROPAD	1		/* pad with zero */
 #define PLUS	4		/* show plus */
@@ -22,17 +18,7 @@
 #define LEFT	16		/* left justified */
 #define SPECIAL	64		/* 0x */
 
-typedef struct		s_fmt
-{
-	struct s_fmt 	*next;
-	char 			type;
-	unsigned int	width;
-	unsigned int	precision;
-	int 			flags;
-	int 			iter;
-}					t_fmt;
-
-void			print_and_free_fmt(t_fmt **fmt, char buf[])
+void			print_and_free_data(t_fmt **fmt)
 {
 	t_fmt		*curr;
 	t_fmt		*next;
@@ -44,11 +30,40 @@ void			print_and_free_fmt(t_fmt **fmt, char buf[])
 		printf("WIDTH: [%d]\n", curr->width);
 		printf("PRECISION: [%d]\n", curr->precision);
 		printf("DATA_TYPE: [%c]\n", curr->type);
-		printf("BUF: [%s]\n", buf);
+		printf("STR: [%s]\n", curr->str);
 		printf("----------------------\n");
 		next = curr->next;
 		free (curr);
 		curr = next;
+	}
+}
+
+void			add_data_refresh_node(t_fmt **data, t_fmt *node)
+{
+	t_fmt		*tmp;
+	t_fmt		*new;
+
+	tmp = *data;
+	new = ft_memalloc(sizeof(t_fmt));
+	new->flags = node->flags;
+	new->type = node->type;
+	new->precision = node->precision;
+	new->width = node->width;
+	new->iter = node->iter;
+	new->str = node->str;
+
+	node->flags = 0;
+	node->width= 0;
+	node->precision = 0;
+
+	if (!*data)
+		*data = new;
+	else
+	{
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+		new->next = NULL;
 	}
 }
 
@@ -62,147 +77,120 @@ static int 		skip_atoi(const char *s)
 	return (i);
 }
 
-t_fmt 		*process_flags(const char *fmt)
+int 			ft_isspecial(char ch)
 {
-	int 	flags;
-	t_fmt	*tmp;
-
-	tmp = ft_memalloc(sizeof(t_fmt));
-	while ((!ft_isdigit(*fmt) || *fmt == '0') && *fmt)
-	{
-		if (*fmt == '*')
-			break;
-		++fmt;
-		if (*fmt == '-')
-		{
-			tmp->flags |= LEFT;
-			tmp->iter++;
-			continue;
-		}
-		if (*fmt == '+')
-		{
-			tmp->flags |= PLUS;
-			tmp->iter++;
-			continue;
-		}
-		if (*fmt == ' ')
-		{
-			tmp->flags |= SPACE;
-			tmp->iter++;
-			continue;
-		}
-		if (*fmt == '#')
-		{
-			tmp->flags |= SPECIAL;
-			tmp->iter++;
-			continue;
-		}
-		if (*fmt == '0')
-		{
-			tmp->flags |= ZEROPAD;
-			tmp->iter++;
-			continue;
-		}
-	}
-	return (tmp);
+	if (ch == '*')
+		return (0);
+	if (ch >= ' ' && ch <= '0')
+		return (1);
+	return (0);
 }
 
-unsigned int		process_width(const char *fmt, va_list args, t_fmt *data)
+int 			process_flags(t_fmt *node)
 {
-	if (ft_isdigit(*fmt))
-		data->width = skip_atoi(fmt);
-	else if (*fmt == '*')
+	while (*node->iter++ && ft_isspecial(*node->iter))
 	{
-		++fmt;
-		data->width = va_arg(args, int);
+		if (*node->iter == '-')
+		{
+			node->flags |= LEFT;
+			continue;
+		}
+		if (*node->iter == '+')
+		{
+			node->flags |= PLUS;
+			continue;
+		}
+		if (*node->iter == ' ')
+		{
+			node->flags |= SPACE;
+			continue;
+		}
+		if (*node->iter == '#')
+		{
+			node->flags |= SPECIAL;
+			continue;
+		}
+		if (*node->iter == '0')
+		{
+			node->flags |= ZEROPAD;
+			continue;
+		}
 	}
 	return (0);
 }
 
-unsigned int		process_precision(const char *fmt, va_list args)
+unsigned int		process_width(t_fmt *node, va_list args)
 {
-	unsigned int	precision;
-
-	precision = 0;
-	while (*fmt != '.')
-		fmt++;
-	fmt++;
-	if (ft_isdigit(*fmt))
-		precision = skip_atoi(fmt);
-	else if (*fmt == '*')
+	if (ft_isdigit(*node->iter))
 	{
-		fmt++;
-		precision = va_arg(args, int);
+		node->width = skip_atoi(node->iter);
+		node->iter += ft_nblen(node->width);
 	}
-	return (precision);
+	else if (*node->iter == '*')
+	{
+		++node->iter;
+		node->width = va_arg(args, int);
+	}
+	return (0);
 }
 
-int			process_datatype(const char *fmt, va_list args, t_fmt *data)
+unsigned int		process_precision(t_fmt *node, va_list args)
 {
-//	printf("FORMAT STRING [%s]\n", fmt);
-	int 	i;
-
-	i = 0;
-	while (fmt[i])
+	if (*node->iter == '.')
+		node->iter++;
+	if (ft_isdigit(*node->iter))
 	{
-		if (fmt[i] == 'c' || fmt[i] == 's' || fmt[i] == 'p')
-		{
-			data->type = fmt[i];
-			break;
-		}
-		i++;
+		node->precision = skip_atoi(node->iter);
+		node->iter += ft_nblen(node->precision);
 	}
-	return (i);
-}
-
-void			add_data(t_fmt **data, t_fmt *node)
-{
-	t_fmt		*tmp;
-	t_fmt		*new;
-
-	tmp = *data;
-	new = ft_memalloc(sizeof(t_fmt));
-	new->flags = node->flags;
-	new->type = node->type;
-	new->precision = node->precision;
-	new->width = node->width;
-	new->iter = node->iter;
-
-	if (!*data)
-		*data = new;
-	else
+	else if (*node->iter == '*')
 	{
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-		new->next = NULL;
+		node->iter++;
+		node->precision = va_arg(args, int);
 	}
+	return (0);
 }
 
 int				ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char				buf[1024];
-	char				*str;
-	int 				jump;
+	char 				buf[1024];
+	char 				*str;
 	t_fmt				*node;
 	t_fmt				*data;
+	t_vec				*vec;
+
+	if (!(vec = ft_vec_init(ft_strlen(fmt), sizeof(char))))
+		return (0);
+	while (*fmt)
+		ft_vec_add(&vec, (void *)fmt++);
+	ft_vec_add(&vec, "\0");
+	if (!(ft_vec_resize(&vec)))
+	{
+		ft_vec_del(&vec);
+		return (0);
+	}
 
 	str = buf;
-	while (*fmt)
+	data = NULL;
+	node = ft_memalloc(sizeof(t_fmt));
+	node->iter = (char *)vec->data;
+	while (*node->iter)
 	{
-		while (*fmt != '%')
-			*str++ = *fmt++;
-		node = process_flags(fmt);
-		process_width(fmt + node->iter + 1, args, node);
-		node->precision = process_precision(fmt, args);
-		jump = (process_datatype(fmt, args, node) + 1);
-		/* just for tests */
+		while (*node->iter != '%')
+			*str++ = *node->iter++;
+		process_flags(node);
+		process_width(node, args);
+		process_precision(node, args);
+		node->type = *node->iter++;
+
+			/* just for tests */
 			va_arg(args, int);
-		add_data(&data, node);
-		free (node);
-		fmt += jump;
+		add_data_refresh_node(&data, node);
 	}
-	print_and_free_fmt(&data, buf);
+	print_and_free_data(&data);
+	ft_vec_del(&vec);
+	free (node);
+	return (0);
 }
 
 int				ft_printf(char *fmt, ...)
@@ -225,6 +213,8 @@ int				ft_printf(char *fmt, ...)
 
 int 	main()
 {
-	ft_printf("%*.5c = %10.*s and %#20.13p", 2, 'a', 4, "str");
+
+//	ft_printf("str%14.14284c stringi %s", 'c');
+	ft_printf("hello%0#10.15s = %013.14c", "str");
 //	printf("%*.5c = %10.*s", 10, 'b', 1, "str");
 }

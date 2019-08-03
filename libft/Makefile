@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+         #
+#    By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/04/15 22:10:26 by sxhondo           #+#    #+#              #
-#    Updated: 2019/07/16 18:16:14 by sxhondo          ###   ########.fr        #
+#    Created: 2019/07/23 14:11:08 by sxhondo           #+#    #+#              #
+#    Updated: 2019/07/23 14:11:13 by sxhondo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,14 +76,18 @@ SRCS_LIST = \
 	ft_strjoin_free.c\
 	ft_lstfree.c\
 	ft_lstpushback.c\
-	ft_realloc.c
+	ft_realloc.c \
+	ft_vec_init.c \
+	ft_vec_resize.c \
+	ft_vec_add.c \
+	ft_vec_del.c
 	
 NAME = libft.a
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 	#Directories
-INC_DIR= includes/
+INC_DIR= incs/
 SRCS_DIR = srcs/
 OBJ_DIR= obj/
 
@@ -94,20 +98,25 @@ OBJECTS = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all: $(NAME) 
 
-$(NAME): $(OBJ_DIR)	
+$(NAME): $(OBJ_DIR)
+	@echo "\033[32m\033[1m$(NAME) - compiling\033[0m"	
 	@$(CC) $(CFLAGS) -I $(INC_DIR) -c $(SOURCES)
 	@mv $(OBJ_LIST) $(OBJ_DIR)
 	@ar rc $(NAME) $(OBJECTS)
 	@ranlib $(NAME)	
 
 $(OBJ_DIR):
+	@echo "\033[33m\033[1m$(NAME) - creating obj directory:\033[0m"
 	@mkdir -p $(OBJ_DIR)
 
 clean:
+	@echo "\033[36m\033[1m$(NAME) - clean:\033[0m"
 	@rm -rf $(OBJ_DIR)
 
 fclean: clean
+	@echo "\033[36m\033[1m$(NAME) - fclean:\033[0m"
 	@rm -rf $(NAME)
 
 re: fclean all
 
+.PHONY: all clean fclean re

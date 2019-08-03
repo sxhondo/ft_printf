@@ -1,36 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strsplit.c                                      :+:      :+:    :+:   */
+/*   ft_vec_add.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/19 17:24:22 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/07/16 18:15:09 by sxhondo          ###   ########.fr       */
+/*   Created: 2019/08/03 18:33:45 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/03 18:39:55 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	**ft_strsplit(char const *s, char c)
+t_vec	*ft_vec_add(t_vec **vec, void *item)
 {
-	char	**tab;
-	size_t	i;
-	size_t	t;
-	size_t	j;
+	void			*tmp;
+	t_vec			*p;
 
-	t = 0;
-	i = 0;
-	if (!s || !(tab = ft_memalloc(sizeof(char *) * (ft_cntwrds(s, c) + 1))))
+	if (!*vec)
 		return (NULL);
-	while (s[i])
+	p = *vec;
+	tmp = p->data;
+	if (p->total >= p->capacity)
 	{
-		while (s[i] == c)
-			i++;
-		j = i;
-		while (s[i] && s[i] != c)
-			i++;
+		if (!(p->data = ft_memalloc(p->capacity * p->type * 2)))
+		{
+			ft_memdel(&(p->data));
+			ft_memdel((void*)&p);
+			return (NULL);
+		}
+		ft_memcpy(p->data, tmp, p->capacity * p->type);
+		ft_memdel(&tmp);
+		p->capacity *= 2;
 	}
-	tab[t] = NULL;
-	return (tab);
+	ft_memcpy(p->data + (p->type * p->total), item, p->type);
+	p->total++;
+	return (p);
 }

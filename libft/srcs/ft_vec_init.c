@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_vec_init.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/26 16:34:24 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/07/26 16:34:26 by sxhondo          ###   ########.fr       */
+/*   Created: 2019/08/03 18:34:12 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/03 18:39:48 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_FT_PRINTF_H
-#define FT_PRINTF_FT_PRINTF_H
-
-#include <stdio.h>
 #include "libft.h"
-#include <stdarg.h>
-#include <unistd.h>
 
-typedef struct		s_fmt
+t_vec	*ft_vec_init(size_t size, int type)
 {
-	struct s_fmt 	*next;
-	char 			type;
-	unsigned int	width;
-	unsigned int	precision;
-	int 			flags;
-	char 			*str;
-	char 			*iter;
-}					t_fmt;
+	t_vec	*vec;
 
-#endif //FT_PRINTF_FT_PRINTF_H
+	if (!size || !(vec = (t_vec*)malloc(sizeof(t_vec))))
+		return (NULL);
+	vec->capacity = size;
+	vec->total = 0;
+	vec->type = type;
+	if (!(vec->data = ft_memalloc(size * type)))
+	{
+		free(vec);
+		return (NULL);
+	}
+	return (vec);
+}

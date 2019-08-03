@@ -1,32 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_vec_del.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/26 16:34:24 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/07/26 16:34:26 by sxhondo          ###   ########.fr       */
+/*   Created: 2019/08/03 18:32:35 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/03 18:39:41 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_FT_PRINTF_H
-#define FT_PRINTF_FT_PRINTF_H
-
-#include <stdio.h>
 #include "libft.h"
-#include <stdarg.h>
-#include <unistd.h>
 
-typedef struct		s_fmt
+void	ft_vec_del(t_vec **vec)
 {
-	struct s_fmt 	*next;
-	char 			type;
-	unsigned int	width;
-	unsigned int	precision;
-	int 			flags;
-	char 			*str;
-	char 			*iter;
-}					t_fmt;
-
-#endif //FT_PRINTF_FT_PRINTF_H
+	free((*vec)->data);
+	free(*vec);
+	*vec = NULL;
+}
