@@ -67,6 +67,7 @@ SRCS_LIST = \
 	ft_strndup.c\
 	ft_lstnew.c\
 	ft_lstdelone.c\
+	ft_lstlen.c \
 	ft_lstdel.c\
 	ft_lstiter.c\
 	ft_lstadd.c\

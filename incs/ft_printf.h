@@ -13,8 +13,8 @@
 #ifndef FT_PRINTF_FT_PRINTF_H
 #define FT_PRINTF_FT_PRINTF_H
 
-#include <stdio.h>
 #include "libft.h"
+#include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
 
@@ -25,8 +25,16 @@ typedef struct		s_fmt
 	unsigned int	width;
 	unsigned int	precision;
 	int 			flags;
-	char 			*str;
 	char 			*iter;
 }					t_fmt;
+
+
+unsigned int		process_precision(t_fmt *node, va_list args);
+unsigned int		process_width(t_fmt *node, va_list args);
+int 				process_flags(t_fmt *node);
+void				add_data_refresh_node(t_fmt **data, t_fmt *node);
+void				free_data(t_fmt **fmt);
+void				print_data(t_fmt **fmt);
+void				print_csp(t_fmt **fmt, va_list args, int fd);
 
 #endif //FT_PRINTF_FT_PRINTF_H
