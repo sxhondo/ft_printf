@@ -12,109 +12,42 @@
 
 #include "ft_printf.h"
 
-char 			*parse_16table(t_list **row)
+void					print_module(t_fmt *fmt, va_list args, int fd)
 {
-	char 		table[] = "0123456789abcdef";
-	char 		*str;
-	int 		i;
-	t_list		*next;
-	t_list		*curr;
-
-	i = 2;
-	curr = *row;
-	str = ft_strnew(ft_lstlen(&curr) + 2);
-	ft_strcat(str, "0x");
-	while (curr)
-	{
-		next = curr->next;
-		str[i] = table[*(int *)curr->content];
-		ft_memdel(&curr->content);
-		free(curr);
-		curr = next;
-		i++;
-	}
-	return (str);
-}
-
-char					*base_16(void	*p)
-{
-	unsigned long long 	nb;
-	unsigned long long 	minus;
-	unsigned long long 	next;
-	unsigned long long 	save;
-	t_list				*node;
-	t_list				*row;
-
-	row = NULL;
-	nb = (unsigned long long)p;
-	save = 16;
-	while (save > 15)
-	{
-		next = nb / 16;
-		save = next * 16;
-		minus = nb - save;
-		nb = next;
-		node = ft_lstnew(&minus, sizeof(unsigned long long));
-		ft_lstadd(&row, node);
-	}
-	return (parse_16table(&row));
-
-}
-
-void			print_csp(t_fmt **fmt, va_list args, int fd)
-{
-	uint64_t 	*point;
-	t_vec		*container;
-	t_fmt		*tmp;
-	char 		*pnt;
-	char 		ch;
-	char 		*str;
-	int 		i;
-
+	int 	i;
 
 	i = 0;
-	tmp = *fmt;
-	if (tmp->type == 'c')
+	if (ft_strlen(fmt->type) > 3) //TODO: some handler
+		printf("WRONG AMOUNT\n");
+	while (fmt->type)
 	{
-		ch = va_arg(args, int);
-		if (tmp->width > 1)
+		if (fmt->type[i] == 'c')
 		{
-			container = ft_vec_init(tmp->width + 2, sizeof(char));
-			ft_memset(container->data, ' ', tmp->width - 1);
-			((char *)container->data)[tmp->width - 1] = ch;
-			ft_putstr(container->data);
-			ft_vec_del(&container);
+			print_char(&fmt, args, fd);
+			break;
 		}
-		else
-			write(fd, &ch, 1);
-	}
-	if (tmp->type == 's')
-	{
-		/* processing precision for a string*/
-		if (tmp->precision != -1)
-			str = ft_strndup(va_arg(args, char *), tmp->precision);
-		else
-			str = va_arg(args, char*);
-		/* processing width */
-		container = ft_vec_init(tmp->width + 1, sizeof(char));
-		if (tmp->width > ft_strlen(str))
-			ft_memset(container->data, ' ', tmp->width - ft_strlen(str));
-		ft_strcat(container->data, str);
-		ft_putstr(container->data);
-		ft_vec_del(&container);
-		if (tmp->precision != -1)
-			ft_strdel(&str);
-	}
-	if (tmp->type == 'p')
-	{
-		point = va_arg(args, void *);
-		pnt = base_16(point);
-		write(fd, pnt, ft_strlen(pnt));
-		ft_strdel(&pnt);
+		if (fmt->type[i] == 's')
+		{
+			print_str(&fmt, args, fd);
+			break;
+		}
+		if (fmt->type[i] == 'p')
+		{
+			print_ptr(&fmt, args, fd);
+			break;
+		}
+		if (*fmt->type == 'c' || *fmt->type == 's' || *fmt->type == 'p'
+			|| *fmt->type == 'd' || *fmt->type == 'i' || *fmt->type == 'o'
+			|| *fmt->type == 'u' || *fmt->type == 'x' || *fmt->type == 'X')
+		{
+			print_diouxX(&fmt, args, fd);
+			break;
+		}
+		i++;
 	}
 }
 
-t_fmt					*ft_fprintf(int fd, const char *fmt, va_list args)
+int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	int 				i;
 	char 				*fmcp;
@@ -129,24 +62,27 @@ t_fmt					*ft_fprintf(int fd, const char *fmt, va_list args)
 	node->iter = fmcp;
 	while (*node->iter)
 	{
-		while (*node->iter != '%')
+		while (*node->iter != '%' && *node->iter)
 			write(fd, &*node->iter++, 1);
+		if (!*node->iter)
+			break;
 		/* parsing */
 		process_flags(node);
 		process_width(node, args);
 		process_precision(node, args);
-		node->type = *node->iter++;
+		process_datatype(node, args);
 
 		/* debugging */
-		print_data(&node);
-		if (node->type == 'c' || node->type == 's' || node->type == 'p')
-			print_csp(&node, args, fd);
+		print_collected_data(&node);
 
+		/* printing */
+		print_module(node, args, fd);
 		add_data_refresh_node(&data, node);
 	}
+	free_data(&data);
 	ft_strdel(&fmcp);
 	free (node);
-	return (data);
+	return (0);
 }
 
 int				ft_printf(char *fmt, ...)

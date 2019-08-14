@@ -18,85 +18,6 @@
 #define LEFT	16		/* left justified */
 #define SPECIAL	64		/* 0x */
 
-void			print_data(t_fmt **fmt)
-{
-	t_fmt		*curr;
-
-	curr = *fmt;
-	while (curr)
-	{
-
-		printf("\n--------arg----------\n");
-		printf("FLAGS: \t\t\t[%d]\n", curr->flags);
-		printf("WIDTH: \t\t\t[%d]\n", curr->width);
-		printf("PRECISION: \t\t[%d]\n", curr->precision);
-		printf("DATA_TYPE: \t\t[%c]\n", curr->type);
-		printf("-------output---------\n");
-		curr = curr->next;
-	}
-}
-
-void			free_data(t_fmt **fmt)
-{
-	t_fmt		*curr;
-	t_fmt		*next;
-
-	curr = *fmt;
-	while (curr)
-	{
-		next = curr->next;
-		free (curr);
-		curr = next;
-	}
-}
-
-void			add_data_refresh_node(t_fmt **data, t_fmt *node)
-{
-	t_fmt		*tmp;
-	t_fmt		*new;
-
-	tmp = *data;
-	new = ft_memalloc(sizeof(t_fmt));
-	new->flags = node->flags;
-	new->type = node->type;
-	new->precision = node->precision;
-	new->width = node->width;
-	new->iter = node->iter;
-
-//	node->flags = 0;
-	node->width = 0;
-	node->precision = -1;
-
-	if (!*data)
-		*data = new;
-	else
-	{
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-		new->next = NULL;
-	}
-}
-
-static int 		skip_atoi(const char *s)
-{
-	int 		i;
-
-	i = 0;
-	while (ft_isdigit(*s))
-		i = i * 10 + *s++ - '0';
-	return (i);
-}
-
-static int		ft_isspecial(char ch)
-{
-	if (ch == '*' || ch == '.')
-		return (0);
-	if (ch >= ' ' && ch <= '0')
-		return (1);
-	return (0);
-}
-
 int 			process_flags(t_fmt *node)
 {
 	while (*node->iter++ && ft_isspecial(*node->iter))
@@ -160,4 +81,27 @@ unsigned int		process_precision(t_fmt *node, va_list args)
 		node->precision = va_arg(args, int);
 	}
 	return (0);
+}
+
+void					process_datatype(t_fmt *fmt, va_list args)
+{
+	int 	i;
+	char 	str[3];
+
+	i = 0;
+	while (*fmt->iter)
+	{
+		if (i >= 3)
+			;
+		str[i] = *fmt->iter;
+		if (*fmt->iter == 'c' || *fmt->iter == 's' || *fmt->iter == 'p'
+			|| *fmt->iter == 'd' || *fmt->iter == 'i' || *fmt->iter == 'o'
+			|| *fmt->iter == 'u' || *fmt->iter == 'x' || *fmt->iter == 'X')
+			break;
+		fmt->iter++;
+		i++;
+	}
+	fmt->iter++; // kostyl sorry
+	str[i + 1] = '\0';
+	fmt->type = ft_strdup(str);
 }
