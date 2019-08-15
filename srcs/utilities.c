@@ -1,5 +1,24 @@
 #include <ft_printf.h>
 
+int			search_spec(char *str, char ch)
+{
+	int 	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == ch)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char 		small_itoa(int nb)
+{
+	return (nb % 10 + '0');
+}
+
 int 		skip_atoi(const char *s)
 {
 	int 		i;
@@ -19,48 +38,12 @@ int			ft_isspecial(char ch)
 	return (0);
 }
 
-void			add_data_refresh_node(t_fmt **data, t_fmt *node)
+void			refresh_node(t_fmt *node)
 {
-	t_fmt		*tmp;
-	t_fmt		*new;
-
-	tmp = *data;
-	new = ft_memalloc(sizeof(t_fmt));
-	new->flags = node->flags;
-	new->type = ft_strdup(node->type);
-	new->precision = node->precision;
-	new->width = node->width;
-	new->iter = node->iter;
-
 	node->width = 0;
 	node->precision = -1;
 	ft_strdel(&node->type);
-	if (!*data)
-		*data = new;
-	else
-	{
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-		new->next = NULL;
-	}
 }
-
-void			free_data(t_fmt **fmt)
-{
-	t_fmt		*curr;
-	t_fmt		*next;
-
-	curr = *fmt;
-	while (curr)
-	{
-		next = curr->next;
-		ft_strdel(&curr->type);
-		free (curr);
-		curr = next;
-	}
-}
-
 
 void			print_collected_data(t_fmt **fmt)
 {

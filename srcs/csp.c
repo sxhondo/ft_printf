@@ -12,56 +12,6 @@
 
 #include "ft_printf.h"
 
-static char 			*parse_16table(t_list **row)
-{
-
-	char 		table[] = "0123456789abcdef";
-	char 		*str;
-	int 		i;
-	t_list		*next;
-	t_list		*curr;
-
-	i = 2;
-	curr = *row;
-	str = ft_strnew(ft_lstlen(&curr) + 2);
-	ft_strcat(str, "0x");
-	while (curr)
-	{
-		next = curr->next;
-		str[i] = table[*(int *)curr->content];
-		ft_memdel(&curr->content);
-		free(curr);
-		curr = next;
-		i++;
-	}
-	return (str);
-}
-
-char					*base_16(void	*p)
-{
-	unsigned long long 	nb;
-	unsigned long long 	minus;
-	unsigned long long 	next;
-	unsigned long long 	save;
-	t_list				*node;
-	t_list				*row;
-
-	row = NULL;
-	nb = (unsigned long long)p;
-	save = 16;
-	while (save > 15)
-	{
-		next = nb / 16;
-		save = next * 16;
-		minus = nb - save;
-		nb = next;
-		node = ft_lstnew(&minus, sizeof(unsigned long long));
-		ft_lstadd(&row, node);
-	}
-	return (parse_16table(&row));
-
-}
-
 void			print_char(t_fmt **fmt, va_list args, int fd)
 {
 	t_vec		*container;
@@ -105,15 +55,30 @@ void			print_str(t_fmt **fmt, va_list args, int fd)
 		ft_strdel(&str);
 }
 
+char 			*add_0x(char *str)
+{
+	char 	*newstr;
+
+	newstr = ft_strnew(ft_strlen(str) + 2);
+	ft_strcat(newstr, "0x");
+	ft_strcat(newstr, str);
+	return (newstr);
+}
+
 void			print_ptr(t_fmt **fmt, va_list args, int fd)
 {
 	uint64_t 	*point;
 	char 		*pnt;
+	char 		*zero_x;
 	t_fmt		*tmp;
 
 	tmp = *fmt;
 	point = va_arg(args, void *);
-	pnt = base_16(point);
-	write(fd, pnt, ft_strlen(pnt));
+	pnt = base_any(point, 16);
+	zero_x = ft_strnew(ft_strlen(pnt) + 2);
+	ft_strcat(zero_x, "0x");
+	ft_strcat(zero_x, pnt);
 	ft_strdel(&pnt);
+	write(fd, zero_x, ft_strlen(zero_x));
+	ft_strdel(&zero_x);
 }

@@ -12,26 +12,55 @@
 
 #include "ft_printf.h"
 
-void			print_diouxX(t_fmt **fmt, va_list args, int fd)
+char 				*print_oxX(t_fmt **fmt, va_list args, int fd)
 {
+	int 		i;
 	t_fmt		*tmp;
-	int 		num;
-	uint32_t 	unum;
+	uint64_t  	*nb;
+	char 		*number;
 
+	i = 0;
 	tmp = *fmt;
-
-	/* if no modifiers INT is displayed  */
-	if (tmp->type[0] == 'd') // TODO: create container for flags/precision/width
+	nb = va_arg(args, void *);
+	if (search_spec(tmp->type, 'o'))
 	{
-		num = va_arg(args, int);
-		ft_putnbr_fd(num, fd);
+		number = base_any(nb, 8);
+		ft_putstr(number);
+		ft_strdel(&number);
 	}
-//	if (tmp->type[0] == 'u')
-//	{
-//		unum = va_arg(args, void *);
-//		printf("%u", num);
-////		ft_putnbr(num);
-//	}
+	else if (search_spec(tmp->type, 'x'))
+	{
+		number = base_any(nb, 16);
+		ft_putstr(number);
+		ft_strdel(&number);
+	}
+	else if (search_spec(tmp->type, 'X'))
+	{
+		number = base_any(nb, 16);
+		while (number[i++])
+			number[i] = ft_toupper(number[i]);
+		ft_putstr(number);
+		ft_strdel(&number);
+	}
+	return (NULL);
 
+}
 
+void			print_di(t_fmt **fmt, va_list args, int fd)
+{
+	int 		num;
+
+	num = va_arg(args, int);
+	ft_putnbr_fd(num, fd);
+}
+
+void			print_u(t_fmt **fmt, va_list args, int fd)
+{
+	int 	n;
+	unsigned int un;
+
+	n = va_arg(args, int);
+	un = n;
+	ft_putnbr(un);
+//	printf("SIGNED NUMBER: %d\n", num);
 }

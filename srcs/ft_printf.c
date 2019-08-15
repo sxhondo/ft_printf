@@ -14,36 +14,41 @@
 
 void					print_module(t_fmt *fmt, va_list args, int fd)
 {
-	int 	i;
-
-	i = 0;
 	if (ft_strlen(fmt->type) > 3) //TODO: some handler
 		printf("WRONG AMOUNT\n");
 	while (fmt->type)
 	{
-		if (fmt->type[i] == 'c')
+		if (search_spec(fmt->type, 'c'))
 		{
 			print_char(&fmt, args, fd);
 			break;
 		}
-		if (fmt->type[i] == 's')
+		if (search_spec(fmt->type, 's'))
 		{
 			print_str(&fmt, args, fd);
 			break;
 		}
-		if (fmt->type[i] == 'p')
+		if (search_spec(fmt->type, 'p'))
 		{
 			print_ptr(&fmt, args, fd);
 			break;
 		}
-		if (*fmt->type == 'c' || *fmt->type == 's' || *fmt->type == 'p'
-			|| *fmt->type == 'd' || *fmt->type == 'i' || *fmt->type == 'o'
-			|| *fmt->type == 'u' || *fmt->type == 'x' || *fmt->type == 'X')
+		if (search_spec(fmt->type, 'd') || search_spec(fmt->type, 'i'))
 		{
-			print_diouxX(&fmt, args, fd);
+			print_di(&fmt, args, fd);
 			break;
 		}
-		i++;
+		if (search_spec(fmt->type, 'u'))
+		{
+			print_u(&fmt, args, fd);
+			break;
+		}
+		if (search_spec(fmt->type, 'o') || search_spec(fmt->type, 'x')
+		|| search_spec(fmt->type, 'X'))
+		{
+			print_oxX(&fmt, args, fd);
+			break;
+		}
 	}
 }
 
@@ -77,9 +82,10 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 
 		/* printing */
 		print_module(node, args, fd);
-		add_data_refresh_node(&data, node);
+
+		refresh_node(node);
+
 	}
-	free_data(&data);
 	ft_strdel(&fmcp);
 	free (node);
 	return (0);

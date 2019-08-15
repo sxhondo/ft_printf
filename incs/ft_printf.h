@@ -22,8 +22,8 @@ typedef struct		s_fmt
 {
 	struct s_fmt 	*next;
 	char 			*type;
-	unsigned int	width;
-	unsigned int	precision;
+	int				width;
+	int				precision;
 	int 			flags;
 	char 			*iter;
 }					t_fmt;
@@ -38,19 +38,30 @@ void				process_datatype(t_fmt *fmt, va_list args);
 	/* utilities */
 int 				skip_atoi(const char *s);
 int					ft_isspecial(char ch);
-void				add_data_refresh_node(t_fmt **data, t_fmt *node);
+char 				small_itoa(int nb);
+void				refresh_node(t_fmt *node);
+int					search_spec(char *str, char ch);
 void				print_collected_data(t_fmt **fmt);
-void				free_data(t_fmt **fmt);
+
+
+/* tables */
+char 				*base_any(void *p, int base);
+char 				*parse_oct_table(t_list **row);
+char 				*parse_hex_table(t_list **row);
+
 
 	/* prints */
 /* char, string, pointer*/
 void				print_char(t_fmt **fmt, va_list args, int fd);
 void				print_str(t_fmt **fmt, va_list args, int fd);
 void				print_ptr(t_fmt **fmt, va_list args, int fd);
-//void				print_csp(t_fmt **fmt, va_list args, int fd)
 
 /* decimal */
-void				print_diouxX(t_fmt **fmt, va_list args, int fd);
+void				print_di(t_fmt **fmt, va_list args, int fd);
+void				print_u(t_fmt **fmt, va_list args, int fd);
+char 				*print_oxX(t_fmt **fmt, va_list args, int fd);
+
+
 
 
 int					ft_printf(char *fmt, ...);

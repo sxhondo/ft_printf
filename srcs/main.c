@@ -15,11 +15,11 @@
 
 int 	main()
 {
-	ft_printf("%10d",  42);
-//	printf("%10d", -42);
-//	printf("%u\n", 42);
+	void	*p;
 
-
+	ft_printf("%u", -123);
+//	ft_putchar('\n');
+//	printf("%u", -123);
 
 
 
