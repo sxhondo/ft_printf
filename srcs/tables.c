@@ -13,6 +13,7 @@ char 					*base_any(void *p, int base)
 	row = NULL;
 	nb = (unsigned long long)p;
 	save = base;
+
 	while (save > (base - 1))
 	{
 		next = nb / base;
@@ -22,11 +23,25 @@ char 					*base_any(void *p, int base)
 		node = ft_lstnew(&minus, sizeof(unsigned long long));
 		ft_lstadd(&row, node);
 	}
+	if (base == 2)
+		return (parse_bin_table(&row));
 	if (base == 8)
 		return (parse_oct_table(&row));
 	if (base == 16)
 		return (parse_hex_table(&row));
 
+}
+
+char 			*parse_bin_table(t_list **row)
+{
+	t_list	*tmp;
+
+	tmp = *row;
+	while (tmp)
+	{
+		ft_putnbr(*(int *)tmp->content);
+		tmp = tmp->next;
+	}
 }
 
 char 			*parse_hex_table(t_list **row)

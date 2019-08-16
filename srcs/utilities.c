@@ -1,4 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilities.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/16 15:08:28 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/16 15:08:29 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_printf.h>
+
+void	put_uns_number(unsigned int nb, int fd)
+{
+	if (nb >= 10)
+	{
+		put_uns_number(nb / 10, fd);
+		ft_putchar_fd(nb % 10 + '0', fd);
+	}
+	else
+		ft_putchar_fd(nb + '0', fd);
+}
+
 
 int			search_spec(char *str, char ch)
 {

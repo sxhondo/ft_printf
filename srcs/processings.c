@@ -51,7 +51,7 @@ int 			process_flags(t_fmt *node)
 	return (0);
 }
 
-unsigned int		process_width(t_fmt *node, va_list args)
+int				process_width(t_fmt *node, va_list args)
 {
 	if (ft_isdigit(*node->iter))
 	{
@@ -66,7 +66,7 @@ unsigned int		process_width(t_fmt *node, va_list args)
 	return (0);
 }
 
-unsigned int		process_precision(t_fmt *node, va_list args)
+int				process_precision(t_fmt *node, va_list args)
 {
 	if (*node->iter == '.')
 		node->iter++;

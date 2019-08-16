@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <limits.h>
+
 
 typedef struct		s_fmt
 {
@@ -29,8 +31,8 @@ typedef struct		s_fmt
 }					t_fmt;
 
 	/* processings */
-unsigned int		process_precision(t_fmt *node, va_list args);
-unsigned int		process_width(t_fmt *node, va_list args);
+int					process_precision(t_fmt *node, va_list args);
+int					process_width(t_fmt *node, va_list args);
 int 				process_flags(t_fmt *node);
 void				process_datatype(t_fmt *fmt, va_list args);
 
@@ -42,12 +44,15 @@ char 				small_itoa(int nb);
 void				refresh_node(t_fmt *node);
 int					search_spec(char *str, char ch);
 void				print_collected_data(t_fmt **fmt);
+void				put_uns_number(unsigned int nb, int fd);
+
 
 
 /* tables */
 char 				*base_any(void *p, int base);
 char 				*parse_oct_table(t_list **row);
 char 				*parse_hex_table(t_list **row);
+char 				*parse_bin_table(t_list **row);
 
 
 	/* prints */
@@ -57,11 +62,8 @@ void				print_str(t_fmt **fmt, va_list args, int fd);
 void				print_ptr(t_fmt **fmt, va_list args, int fd);
 
 /* decimal */
-void				print_di(t_fmt **fmt, va_list args, int fd);
-void				print_u(t_fmt **fmt, va_list args, int fd);
+void				print_diu(t_fmt **fmt, va_list args, int fd);
 char 				*print_oxX(t_fmt **fmt, va_list args, int fd);
-
-
 
 
 int					ft_printf(char *fmt, ...);

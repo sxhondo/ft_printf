@@ -33,14 +33,10 @@ void					print_module(t_fmt *fmt, va_list args, int fd)
 			print_ptr(&fmt, args, fd);
 			break;
 		}
-		if (search_spec(fmt->type, 'd') || search_spec(fmt->type, 'i'))
+		if (search_spec(fmt->type, 'd') || search_spec(fmt->type, 'i')
+			|| search_spec(fmt->type, 'u'))
 		{
-			print_di(&fmt, args, fd);
-			break;
-		}
-		if (search_spec(fmt->type, 'u'))
-		{
-			print_u(&fmt, args, fd);
+			print_diu(&fmt, args, fd);
 			break;
 		}
 		if (search_spec(fmt->type, 'o') || search_spec(fmt->type, 'x')

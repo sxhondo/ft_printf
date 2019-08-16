@@ -17,9 +17,12 @@ int 	main()
 {
 	void	*p;
 
-	ft_printf("%u", -123);
-//	ft_putchar('\n');
-//	printf("%u", -123);
+//	ft_printf("%10.3p", p);
+//	printf("\n%.3p", p);
+
+
+
+
 
 
 
