@@ -76,6 +76,7 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		print_module(node, args, fd);
 
 		refresh_node(node);
+		node->iter++;
 
 	}
 	ft_strdel(&fmcp);

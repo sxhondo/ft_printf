@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tables.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/16 18:30:42 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/16 18:30:43 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ft_printf.h"
 
@@ -29,6 +40,7 @@ char 					*base_any(void *p, int base)
 		return (parse_oct_table(&row));
 	if (base == 16)
 		return (parse_hex_table(&row));
+	return (NULL);
 
 }
 
@@ -42,6 +54,7 @@ char 			*parse_bin_table(t_list **row)
 		ft_putnbr(*(int *)tmp->content);
 		tmp = tmp->next;
 	}
+	return (NULL);
 }
 
 char 			*parse_hex_table(t_list **row)

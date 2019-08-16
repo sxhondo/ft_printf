@@ -16,8 +16,9 @@ int 	main()
 {
 	void	*p;
 
-	ft_printf("%hu", -1);
-	printf("\n%hu", 1);
+	ft_printf("This is a simple test");
+	printf("This is a simple test.");
+//	printf("%1234");
 
 
 

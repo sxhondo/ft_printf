@@ -33,6 +33,7 @@ char			*apply_width(void *p, int width, char type)
 		container[width - 1] = *(char *)p;
 		return (container);
 	}
+	return (NULL);
 }
 
 void			print_char(t_fmt **fmt, va_list args, int fd)

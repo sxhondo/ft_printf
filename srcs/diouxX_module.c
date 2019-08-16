@@ -12,20 +12,61 @@
 
 #include "ft_printf.h"
 
+char 			*get_type(char *str)
+{
+	int 	i;
+
+	i = 0;
+	if (str[i] == 'h')
+	{
+		if (str[i + 1] == 'h')
+			return (ft_strdup("char"));
+		return (ft_strdup("short"));
+	}
+	if (str[i] == 'l')
+	{
+		if (str[i + 1] == 'l')
+			return (ft_strdup("long long"));
+		return (ft_strdup("long"));
+	}
+	return (ft_strdup("int"));
+}
+
 void			print_diu(t_fmt **fmt, va_list args, int fd)
 {
-	unsigned int	un;
-	int 			n;
+	char 			*type;
+	intmax_t 		n;
+	uintmax_t		un;
 
 	if (search_spec((*fmt)->type, 'd') || search_spec((*fmt)->type, 'i'))
 	{
 		n = va_arg(args, int);
-		ft_putnbr_fd(n, fd);
+		type = get_type((*fmt)->type);
+		if (ft_strequ(type, "char"))
+			ft_putnbr_fd((char)n, fd);
+		else if (ft_strequ(type, "int"))
+			ft_putnbr_fd((int)n, fd);
+		else if (ft_strequ(type, "short"))
+			ft_putnbr_fd((short)n, fd);
+		else if (ft_strequ(type, "long"))
+			ft_putnbr_fd((long)n, fd);
+		else if (ft_strequ(type, "long long"))
+			ft_putnbr_fd((long long)n, fd);
 	}
 	if (search_spec((*fmt)->type, 'u'))
 	{
 		un = va_arg(args, unsigned int);
-		put_uns_number((unsigned int)un, fd);
+		type = get_type((*fmt)->type);
+		if (ft_strequ(type, "char"))
+			put_uns_number((unsigned char)un, fd);
+		else if (ft_strequ(type, "int"))
+			put_uns_number((unsigned int)un, fd);
+		else if (ft_strequ(type, "short"))
+			put_uns_number((unsigned short)un, fd);
+		else if (ft_strequ(type, "long")) //DONT UNDERSTAND
+			put_uns_number((unsigned long)un, fd);
+		else if (ft_strequ(type, "long long"))
+			put_uns_number((unsigned long long)un, fd);
 	}
 }
 

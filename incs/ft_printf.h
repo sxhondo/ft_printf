@@ -13,7 +13,7 @@
 #ifndef FT_PRINTF_FT_PRINTF_H
 #define FT_PRINTF_FT_PRINTF_H
 
-#include "libft.h"
+#include "../libft/incs/libft.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
