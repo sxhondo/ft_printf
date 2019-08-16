@@ -27,7 +27,6 @@ void			print_diu(t_fmt **fmt, va_list args, int fd)
 		un = va_arg(args, unsigned int);
 		put_uns_number((unsigned int)un, fd);
 	}
-
 }
 
 char 				*print_oxX(t_fmt **fmt, va_list args, int fd)
@@ -46,17 +45,12 @@ char 				*print_oxX(t_fmt **fmt, va_list args, int fd)
 		ft_putstr(number);
 		ft_strdel(&number);
 	}
-	else if (search_spec(tmp->type, 'x'))
+	else if (search_spec(tmp->type, 'x') || search_spec(tmp->type, 'X'))
 	{
 		number = base_any(nb, 16);
-		ft_putstr(number);
-		ft_strdel(&number);
-	}
-	else if (search_spec(tmp->type, 'X'))
-	{
-		number = base_any(nb, 16);
-		while (number[i++])
-			number[i] = ft_toupper(number[i]);
+		if (search_spec(tmp->type, 'X'))
+			while (number[i++])
+				number[i] = ft_toupper(number[i]);
 		ft_putstr(number);
 		ft_strdel(&number);
 	}

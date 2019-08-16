@@ -50,13 +50,9 @@ void					print_module(t_fmt *fmt, va_list args, int fd)
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	int 				i;
 	char 				*fmcp;
 	t_fmt				*node;
-	t_fmt				*data;
 
-	i = 0;
-	data = NULL;
 	fmcp = ft_strdup(fmt);
 	node = ft_memalloc(sizeof(t_fmt));
 	node->precision = -1;

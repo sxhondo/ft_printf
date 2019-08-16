@@ -11,14 +11,13 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include "limits.h"
 
 int 	main()
 {
 	void	*p;
 
-//	ft_printf("%10.3p", p);
-//	printf("\n%.3p", p);
+	ft_printf("%hu", -1);
+	printf("\n%hu", 1);
 
 
 

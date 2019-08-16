@@ -3,10 +3,10 @@
 
 char 					*base_any(void *p, int base)
 {
-	unsigned long long 	nb;
-	unsigned long long 	minus;
-	unsigned long long 	next;
-	unsigned long long 	save;
+	uintmax_t 	nb;
+	uintmax_t 	minus;
+	uintmax_t 	next;
+	uintmax_t 	save;
 	t_list				*node;
 	t_list				*row;
 

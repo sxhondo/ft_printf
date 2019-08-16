@@ -48,7 +48,7 @@ void				put_uns_number(unsigned int nb, int fd);
 
 
 
-/* tables */
+	/* tables */
 char 				*base_any(void *p, int base);
 char 				*parse_oct_table(t_list **row);
 char 				*parse_hex_table(t_list **row);
