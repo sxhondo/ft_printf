@@ -77,12 +77,13 @@ void			print_collected_data(t_fmt **fmt)
 	while (curr)
 	{
 
-		printf("\n--------arg----------\n");
+		printf("\n--------FORMAT----------\n");
 		printf("FLAGS: \t\t\t[%d]\n", curr->flags);
 		printf("WIDTH: \t\t\t[%d]\n", curr->width);
 		printf("PRECISION: \t\t[%d]\n", curr->precision);
-		printf("DATA_TYPE: \t\t[%s]\n", curr->type);
-		printf("-------output---------\n");
+		printf("QUALIFIER: \t\t[%d]\n", curr->qualifier);
+		printf("CURRENT BUF: \t%s\n", curr->buf);
+		printf("------------------------\n");
 		curr = curr->next;
 	}
 }

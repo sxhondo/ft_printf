@@ -25,16 +25,18 @@ typedef struct		s_fmt
 	struct s_fmt 	*next;
 	char 			*type;
 	int				width;
-	int				precision;
 	int 			flags;
+	int 			qualifier;
+	int				precision;
 	char 			*iter;
+	char 			buf[1024];
 }					t_fmt;
 
 	/* processings */
 int					process_precision(t_fmt *node, va_list args);
 int					process_width(t_fmt *node, va_list args);
 int 				process_flags(t_fmt *node);
-void				process_datatype(t_fmt *fmt, va_list args);
+void				process_conversion_qualifier(t_fmt	*node, va_list args);
 
 
 	/* utilities */
@@ -46,6 +48,8 @@ int					search_spec(char *str, char ch);
 void				print_collected_data(t_fmt **fmt);
 void				put_uns_number(unsigned int nb, int fd);
 
+	/* handlers */
+void 				handle_wrong_flags(t_fmt *fmt);
 
 
 	/* tables */
@@ -57,8 +61,8 @@ char 				*parse_bin_table(t_list **row);
 
 	/* prints */
 /* char, string, pointer*/
-void				print_char(t_fmt **fmt, va_list args, int fd);
-void				print_str(t_fmt **fmt, va_list args, int fd);
+void				get_char(t_fmt **fmt, va_list args, int fd, char *str);
+void				get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 void				print_ptr(t_fmt **fmt, va_list args, int fd);
 
 /* decimal */

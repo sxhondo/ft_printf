@@ -20,6 +20,7 @@
 
 int 			process_flags(t_fmt *node)
 {
+	node->flags = 0;
 	while (*node->iter++ && ft_isspecial(*node->iter))
 	{
 		if (*node->iter == '-')
@@ -53,6 +54,7 @@ int 			process_flags(t_fmt *node)
 
 int				process_width(t_fmt *node, va_list args)
 {
+	node->width = -1;
 	if (ft_isdigit(*node->iter))
 	{
 		node->width = skip_atoi(node->iter);
@@ -83,25 +85,17 @@ int				process_precision(t_fmt *node, va_list args)
 	return (0);
 }
 
-void					process_datatype(t_fmt *fmt, va_list args)
+void			process_conversion_qualifier(t_fmt	*node, va_list args)
 {
-	int 	i;
-	char 	str[3];
-
-	i = 0;
-	while (*fmt->iter)
+	node->qualifier = -1;
+	if (*node->iter == 'h' || *node->iter == 'l' || *node->iter == 'L')
 	{
-		if (i >= 3)
-			;
-		str[i] = *fmt->iter;
-		if (*fmt->iter == 'c' || *fmt->iter == 's' || *fmt->iter == 'p'
-			|| *fmt->iter == 'd' || *fmt->iter == 'i' || *fmt->iter == 'o'
-			|| *fmt->iter == 'u' || *fmt->iter == 'x' || *fmt->iter == 'X')
-			break;
-		fmt->iter++;
-		i++;
+		node->qualifier = *node->iter;
+		node->iter++;
+		if (*node->iter == 'h')
+		{
+			node->qualifier *= 2;
+			node->iter++;
+		}
 	}
-	fmt->iter++; // kostyl sorry
-	str[i + 1] = '\0';
-	fmt->type = ft_strdup(str);
 }

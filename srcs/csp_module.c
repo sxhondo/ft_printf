@@ -36,50 +36,64 @@ char			*apply_width(void *p, int width, char type)
 	return (NULL);
 }
 
-void			print_char(t_fmt **fmt, va_list args, int fd)
+void			get_char(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
-	char 		*buf;
-	t_fmt		*tmp;
-	char 		ch;
+	char 	ch;
+	t_fmt	*tmp;
 
 	tmp = *fmt;
-	ch = va_arg(args, int);
-
-	if (tmp->width > 1)
+	ch = (unsigned char)va_arg(args, int);
+//	print_collected_data(fmt);
+	if (tmp->width > -1) //TODO: communication with flags!
 	{
-		buf = apply_width(&ch, tmp->width, 'c'); //todo: choose symbol to set (from flags)
-		ft_putstr(buf);
-		ft_strdel(&buf);
+		while (--tmp->width > 0)
+			*buf_ptr++ = ' ';
 	}
-	else
-		write(fd, &ch, 1);
+	*buf_ptr = ch;
+	ft_putstr(tmp->buf);
+
 }
 
-void			print_str(t_fmt **fmt, va_list args, int fd)
+void			get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
-	char 		*buf;
-	char 		*str;
-	t_fmt		*tmp;
+	t_fmt	*tmp;
+	char 	*str;
 
 	tmp = *fmt;
-	/* processing precision for a string*/
-	if (tmp->precision != -1)
-		str = ft_strndup(va_arg(args, char *), tmp->precision);
-	else
-		str = va_arg(args, char*);
-	/* processing width */
-	if (tmp->width > 1)
-	{
-		buf = apply_width(&str, tmp->width, 's');
-		ft_putstr(buf);
-		ft_strdel(&buf);
-		if (tmp->precision != -1)
-			ft_strdel(&str);
-		return;
-	}
-	ft_putstr(str);
-	if (tmp->precision != -1)
-		ft_strdel(&str);
+	str = va_arg(args, char *);
+
+	print_collected_data(fmt);
+	if (tmp->width > -1)
+		while (--tmp->width > 0)
+			*buf_ptr++ = ' ';
+	while (tmp->precision--)
+		*buf_ptr++ = *str++;
+	ft_putstr(tmp->buf);
+
+
+//	char 		*buf;
+//	char 		*str;
+//	t_fmt		*tmp;
+//
+//	tmp = *fmt;
+//	/* processing precision for a string*/
+//	if (tmp->precision != -1)
+//		str = ft_strndup(va_arg(args, char *), tmp->precision);
+//	else
+//		str = va_arg(args, char*);
+//	/* processing width */
+//	if (tmp->width > 1)
+//	{
+//		buf = apply_width(&str, tmp->width, 's');
+//		ft_putstr(buf);
+//		ft_strdel(&buf);
+//		if (tmp->precision != -1)
+//			ft_strdel(&str);
+//		return;
+//	}
+//	ft_putstr(str);
+//	if (tmp->precision != -1)
+//		ft_strdel(&str);
 }
 
 char 			*add_0x(char *str)

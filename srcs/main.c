@@ -16,9 +16,9 @@ int 	main()
 {
 	void	*p;
 
-	ft_printf("This is a simple test");
-	printf("This is a simple test.");
-//	printf("%1234");
+	ft_printf("hello%10.3s", "string");
+	printf("hello%10.3s", "string");
+//	printf("\nRETURN: [%d]\n", printf("hi%s", "string"));
 
 
 

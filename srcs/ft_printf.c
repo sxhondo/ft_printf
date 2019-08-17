@@ -10,77 +10,48 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <ft_printf.h>
 #include "ft_printf.h"
 
-void					print_module(t_fmt *fmt, va_list args, int fd)
+void					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
 {
-	if (ft_strlen(fmt->type) > 3) //TODO: some handler
-		printf("WRONG AMOUNT\n");
-	while (fmt->type)
-	{
-		if (search_spec(fmt->type, 'c'))
-		{
-			print_char(&fmt, args, fd);
-			break;
-		}
-		if (search_spec(fmt->type, 's'))
-		{
-			print_str(&fmt, args, fd);
-			break;
-		}
-		if (search_spec(fmt->type, 'p'))
-		{
-			print_ptr(&fmt, args, fd);
-			break;
-		}
-		if (search_spec(fmt->type, 'd') || search_spec(fmt->type, 'i')
-			|| search_spec(fmt->type, 'u'))
-		{
-			print_diu(&fmt, args, fd);
-			break;
-		}
-		if (search_spec(fmt->type, 'o') || search_spec(fmt->type, 'x')
-		|| search_spec(fmt->type, 'X'))
-		{
-			print_oxX(&fmt, args, fd);
-			break;
-		}
-	}
+//	print_collected_data(&fmt);
+
+	if (*fmt->iter == 'c')
+		get_char(&fmt, args, fd, buf_ptr);
+	if (*fmt->iter == 's')
+		get_str(&fmt, args, fd, buf_ptr);
 }
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char 				*fmcp;
-	t_fmt				*node;
+	char 				*buf_ptr; //points to buf
+	char 				*fmcp; //copy of a original format string
+	t_fmt				*format; // list of data
 
 	fmcp = ft_strdup(fmt);
-	node = ft_memalloc(sizeof(t_fmt));
-	node->precision = -1;
-	node->iter = fmcp;
-	while (*node->iter)
+	format = ft_memalloc(sizeof(t_fmt));
+	buf_ptr = format->buf;
+	format->iter = fmcp;
+
+	while (*format->iter)
 	{
-		while (*node->iter != '%' && *node->iter)
-			write(fd, &*node->iter++, 1);
-		if (!*node->iter)
-			break;
-		/* parsing */
-		process_flags(node);
-		process_width(node, args);
-		process_precision(node, args);
-		process_datatype(node, args);
+		while (*format->iter != '%' && *format->iter)
+			*buf_ptr++ = *format->iter++;
+		/*	parsing		*/
+		process_flags(format);
+		process_width(format, args);
+		process_precision(format, args);
+		process_conversion_qualifier(format, args);
 
-		/* debugging */
-		print_collected_data(&node);
+//		print_collected_data(&format);
 
-		/* printing */
-		print_module(node, args, fd);
+		print_module(format, args, fd, buf_ptr);
 
-		refresh_node(node);
-		node->iter++;
-
+		format->iter++;
 	}
 	ft_strdel(&fmcp);
-	free (node);
+	free (format);
 	return (0);
 }
 
