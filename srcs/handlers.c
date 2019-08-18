@@ -12,12 +12,4 @@
 
 #include "ft_printf.h"
 
-void 	handle_wrong_flags(t_fmt *fmt)
-{
-	int 	i;
-
-	i = 0;
-//	while (fmt->iter[i] != )
-	printf("ITER: %s\n", fmt->iter);
-	printf("TYPE %s\n", fmt->type);
-}
+/* */

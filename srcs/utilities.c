@@ -38,11 +38,6 @@ int			search_spec(char *str, char ch)
 	return (0);
 }
 
-char 		small_itoa(int nb)
-{
-	return (nb % 10 + '0');
-}
-
 int 		skip_atoi(const char *s)
 {
 	int 		i;
@@ -62,13 +57,6 @@ int			ft_isspecial(char ch)
 	return (0);
 }
 
-void			refresh_node(t_fmt *node)
-{
-	node->width = 0;
-	node->precision = -1;
-	ft_strdel(&node->type);
-}
-
 void			print_collected_data(t_fmt **fmt)
 {
 	t_fmt		*curr;
@@ -83,6 +71,7 @@ void			print_collected_data(t_fmt **fmt)
 		printf("PRECISION: \t\t[%d]\n", curr->precision);
 		printf("QUALIFIER: \t\t[%d]\n", curr->qualifier);
 		printf("CURRENT BUF: \t%s\n", curr->buf);
+		printf("ITERATOR: \t\t[%s]\n", curr->iter);
 		printf("------------------------\n");
 		curr = curr->next;
 	}

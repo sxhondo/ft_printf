@@ -80,7 +80,7 @@ int				process_precision(t_fmt *node, va_list args)
 	return (0);
 }
 
-void			process_conversion_qualifier(t_fmt	*node, va_list args)
+void			process_length_modifier(t_fmt	*node, va_list args)
 {
 	node->qualifier = -1;
 	if (*node->iter == 'h' || *node->iter == 'l' || *node->iter == 'L')

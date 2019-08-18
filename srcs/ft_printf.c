@@ -13,16 +13,18 @@
 #include <ft_printf.h>
 #include "ft_printf.h"
 
-void					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
+int					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
 {
 //	print_collected_data(&fmt);
 
 	if (*fmt->iter == 'c')
-		get_char(&fmt, args, fd, buf_ptr);
+		return (get_char(&fmt, args, fd, buf_ptr));
 	if (*fmt->iter == 's')
-		get_str(&fmt, args, fd, buf_ptr);
+		return (get_str(&fmt, args, fd, buf_ptr));
 	if (*fmt->iter == 'p')
-		get_ptr(&fmt, args, fd, buf_ptr);
+		return (get_ptr(&fmt, args, fd, buf_ptr));
+	if (*fmt->iter == 'd' || *fmt->iter == 'i')
+		return (get_decimal(&fmt, args, fd, buf_ptr));
 
 }
 
@@ -30,6 +32,7 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	char 				*buf_ptr; //points to buf
 	t_fmt				*format; // list of data
+	int 				done;
 
 	format = ft_memalloc(sizeof(t_fmt));
 	format->iter = fmt;
@@ -44,11 +47,11 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_flags(format);
 		process_width(format, args);
 		process_precision(format, args);
-		process_conversion_qualifier(format, args);
-		print_module(format, args, fd, buf_ptr);
+		process_length_modifier(format, args);
+		buf_ptr += print_module(format, args, fd, buf_ptr);
 		format->iter++;
 	}
-//	ft_strdel(&fmcp);
+	ft_putstr(format->buf);
 	free (format);
 	return (0);
 }
@@ -57,11 +60,6 @@ int				ft_printf(char *fmt, ...)
 {
 	va_list 	args;
 	int 		done;
-
-	/*
- 	* va_arg( ) function will never receive arguments of type char, short int, or float.
-	* function only accept arguments of type char *, unsigned int, int or double.
- 	*/
 
 	if (fmt == NULL)
 		return (-1);

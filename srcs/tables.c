@@ -12,96 +12,44 @@
 
 #include "ft_printf.h"
 
-char 					*base_any(void *p, int base)
+char					*reverse(char buf[], int size)
 {
-	uintmax_t 	nb;
-	uintmax_t 	minus;
+	char 	*s;
+	char 	*str;
+	int		i;
+
+	s = buf;
+	i = 0;
+	str = (char *)malloc(sizeof(char) * size + 1);
+	while (--size >= 0)
+		str[i++] = s[size];
+	str[i] = '\0';
+	return (str);
+}
+
+char 					*base_any(unsigned long num, int base)
+{
+	/* NUM OR SAVE UNINITIALIZED (dunno why) */
+	char 		hex_table[17] = "0123456789abcdef";
+	char 		buf[100];
 	uintmax_t 	next;
 	uintmax_t 	save;
-	t_list		*node;
-	t_list		*row;
+	int 		i;
 
-	row = NULL;
-	nb = (unsigned long)p;
+	i = 0;
 	save = base;
-
 	while (save > (base - 1))
 	{
-		next = nb / base;
+		next = num / base;
 		save = next * base;
-		minus = nb - save;
-		nb = next;
-		node = ft_lstnew(&minus, sizeof(unsigned long long));
-		ft_lstadd(&row, node);
+		if (base == 16)
+			buf[i++] = hex_table[num - save];
+//		if (base == 8)
+//			*p++ = (small_itoa(num - save));
+//		if (base == 2)
+//			*p++ = small_itoa(num - save);
+		num = next;
 	}
-	if (base == 2)
-		return (parse_bin_table(&row));
-	else if (base == 8)
-		return (parse_oct_table(&row));
-	else if (base == 16)
-		return (parse_hex_table(&row));
-	else
-	{
-		ft_lstfree(&node);
-		return (NULL);
-	}
-}
-
-char 			*parse_hex_table(t_list **row)
-{
-
-	char 		table[] = "0123456789abcdef";
-	char 		*str;
-	int 		i;
-	t_list		*next;
-	t_list		*curr;
-
-	i = 0;
-	curr = *row;
-	str = ft_strnew(ft_lstlen(&curr));
-	while (curr)
-	{
-		next = curr->next;
-		str[i] = table[*(int *)curr->content];
-		ft_memdel(&curr->content);
-		free(curr);
-		curr = next;
-		i++;
-	}
-	return (str);
-}
-
-char 			*parse_oct_table(t_list **row)
-{
-	int 	i;
-	char 	*str;
-	t_list	*next;
-	t_list	*curr;
-
-	i = 0;
-	curr = *row;
-	str = ft_strnew(ft_lstlen(&curr));
-	while (curr)
-	{
-		next = curr->next;
-		str[i] = small_itoa(*(int *)curr->content);
-		ft_memdel(&curr->content);
-		free (curr);
-		curr = next;
-		i++;
-	}
-	return (str);
-}
-
-char 			*parse_bin_table(t_list **row)
-{
-	t_list	*tmp;
-
-	tmp = *row;
-	while (tmp)
-	{
-		ft_putnbr(*(int *)tmp->content);
-		tmp = tmp->next;
-	}
-	return (NULL);
+	buf[i] = '\0';
+	return (reverse(buf, i));
 }

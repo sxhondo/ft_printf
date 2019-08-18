@@ -13,8 +13,8 @@
 #ifndef FT_PRINTF_FT_PRINTF_H
 #define FT_PRINTF_FT_PRINTF_H
 
-#include "../libft/incs/libft.h"
 #include <stdio.h>
+#include "../libft/incs/libft.h"
 #include <stdarg.h>
 #include <unistd.h>
 #include <limits.h>
@@ -29,7 +29,6 @@
 typedef struct		s_fmt
 {
 	struct s_fmt 	*next;
-	char 			*type;
 	int				width;
 	unsigned int	flags;
 	int 			qualifier;
@@ -42,38 +41,26 @@ typedef struct		s_fmt
 int					process_precision(t_fmt *node, va_list args);
 int					process_width(t_fmt *node, va_list args);
 int 				process_flags(t_fmt *node);
-void				process_conversion_qualifier(t_fmt	*node, va_list args);
+void				process_length_modifier(t_fmt	*node, va_list args);
 
 
 	/* utilities */
 int 				skip_atoi(const char *s);
 int					ft_isspecial(char ch);
-char 				small_itoa(int nb);
-void				refresh_node(t_fmt *node);
-int					search_spec(char *str, char ch);
 void				print_collected_data(t_fmt **fmt);
+
+
 void				put_uns_number(unsigned int nb, int fd);
-
-	/* handlers */
-void 				handle_wrong_flags(t_fmt *fmt);
+char 				*base_any(uintmax_t num, int base);
 
 
-	/* tables */
-char 				*base_any(void *p, int base);
-char 				*parse_oct_table(t_list **row);
-char 				*parse_hex_table(t_list **row);
-char 				*parse_bin_table(t_list **row);
 
-
-	/* prints */
+	/* conversions */
 /* char, string, pointer*/
-void				get_char(t_fmt **fmt, va_list args, int fd, char *str);
-void				get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
-void				get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
-
-/* decimal */
-void				print_diu(t_fmt **fmt, va_list args, int fd);
-char 				*print_oxX(t_fmt **fmt, va_list args, int fd);
+int					get_char(t_fmt **fmt, va_list args, int fd, char *str);
+int					get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
+int					get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
+int					get_decimal(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 
 
 int					ft_printf(char *fmt, ...);

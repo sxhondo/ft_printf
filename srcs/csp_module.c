@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void			get_char(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
+int			get_char(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
 	t_fmt	*f;
 
@@ -21,30 +21,36 @@ void			get_char(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 	while (f->width > -1 && --f->width > 0 && !(f->flags & LEFT))
 		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
 	*buf_ptr++ = (unsigned char)va_arg(args, int);
-//	ft_putstr(f->buf);
+
+	// RETURN VALUES
 }
 
-void			get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
+int				get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
 	t_fmt		*f;
 	size_t 		len;
+	size_t 		done;
 	char 		*str;
 
 	f = *fmt;
 	str = va_arg(args, char *);
 	len = ft_strnlen(str, f->precision);
+	/* to return jump on the iter */
+//	done = f->width > -1 ? len + f->width : len;
 	/* Applying width (If there IS width and no LEFT-flag) */
 	while (--f->width >= len && f->width > -1 && !(f->flags & LEFT))
 		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
 	while (len--)
 		*buf_ptr++ = *str++;
-//	ft_putstr(f->buf);
+	// RETURN VALUES
+	// return (done);
 }
 
-void			get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
+int				get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
 	t_fmt		*f;
 	int 		i;
+	int 		len;
 	char 		*hex;
 	uintmax_t 	pointer; //aka 'unsigned long',
 	/* Платформа обязана в рамках стандарта С99 поддерживать следующие типы:
@@ -55,10 +61,30 @@ void			get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 
 	i = 0;
 	f = *fmt;
+	if (f->precision != -1)
+	{
+		ft_putstr("'precision' - results in undefined behaviour with 'p' conversion qualifier.");
+		return (0);
+	}
 	pointer = (uintmax_t)va_arg(args, void *);
-	hex = base_any((void *)pointer, 16);
-	*buf_ptr++ = '0';
-	*buf_ptr++ = 'x';
+	hex = base_any(pointer, 16);
+	while (--f->width > ft_strlen(hex) + 1 && f->width > -1 && !(f->flags & LEFT))
+	{
+		/* Original printf filling 'width' with 'zero's even if CLion says its result
+		 * undefinied behaviour. Not sure should I handle this. Just leave both. */
+		if (f->flags & ZERO || f->flags & SPECIAL || f->flags & PLUS
+		|| f->flags & SPACE)
+		{
+			ft_putstr("Flag '0', '+', ' ', '#' - results in undefined behaviour with 'p' conversion qualifier.");
+			ft_strdel(&hex);
+			return (0);
+		}
+//		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+		*buf_ptr++ = ' ';
+	}
+	ft_strcat(buf_ptr, "0x");
+	buf_ptr += 2;
+	/* Iterator here to safely delete 'hex'-string after writing */
 	while (hex[i])
 		*buf_ptr++ = hex[i++];
 	ft_strdel(&hex);
