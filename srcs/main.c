@@ -15,10 +15,9 @@
 int 	main()
 {
 	void	*p;
-
-	ft_printf("hello%10.3s", "string");
-	printf("hello%10.3s", "string");
-//	printf("\nRETURN: [%d]\n", printf("hi%s", "string"));
+	ft_printf("%p\n", p);
+//	printf("hello%10.3s", "string");
+	printf("\n%p", p);
 
 
 

@@ -12,12 +12,6 @@
 
 #include <ft_printf.h>
 
-#define ZEROPAD	1		/* pad with zero */
-#define PLUS	4		/* show plus */
-#define SPACE	8		/* space if plus */
-#define LEFT	16		/* left justified */
-#define SPECIAL	64		/* 0x */
-
 int 			process_flags(t_fmt *node)
 {
 	node->flags = 0;
@@ -45,7 +39,7 @@ int 			process_flags(t_fmt *node)
 		}
 		if (*node->iter == '0')
 		{
-			node->flags |= ZEROPAD;
+			node->flags |= ZERO;
 			continue;
 		}
 	}
@@ -70,6 +64,7 @@ int				process_width(t_fmt *node, va_list args)
 
 int				process_precision(t_fmt *node, va_list args)
 {
+	node->precision = -1;
 	if (*node->iter == '.')
 		node->iter++;
 	if (ft_isdigit(*node->iter))

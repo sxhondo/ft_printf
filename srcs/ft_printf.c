@@ -21,36 +21,34 @@ void					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
 		get_char(&fmt, args, fd, buf_ptr);
 	if (*fmt->iter == 's')
 		get_str(&fmt, args, fd, buf_ptr);
+	if (*fmt->iter == 'p')
+		get_ptr(&fmt, args, fd, buf_ptr);
+
 }
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	char 				*buf_ptr; //points to buf
-	char 				*fmcp; //copy of a original format string
 	t_fmt				*format; // list of data
 
-	fmcp = ft_strdup(fmt);
 	format = ft_memalloc(sizeof(t_fmt));
+	format->iter = fmt;
 	buf_ptr = format->buf;
-	format->iter = fmcp;
-
 	while (*format->iter)
 	{
 		while (*format->iter != '%' && *format->iter)
 			*buf_ptr++ = *format->iter++;
+		if (!*format->iter)
+			break;
 		/*	parsing		*/
 		process_flags(format);
 		process_width(format, args);
 		process_precision(format, args);
 		process_conversion_qualifier(format, args);
-
-//		print_collected_data(&format);
-
 		print_module(format, args, fd, buf_ptr);
-
 		format->iter++;
 	}
-	ft_strdel(&fmcp);
+//	ft_strdel(&fmcp);
 	free (format);
 	return (0);
 }

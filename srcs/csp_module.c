@@ -12,115 +12,55 @@
 
 #include "ft_printf.h"
 
-char			*apply_width(void *p, int width, char type)
-{
-	char 		*container;
-	char 		*str;
-
-	if (type == 's')
-	{
-		str = *(char **)p;
-		container = ft_strnew(width + 1);
-		if (width > ft_strlen(str))
-			ft_memset(container, ' ', width - ft_strlen(str));
-		ft_strcat(container, str);
-		return (container);
-	}
-	if (type == 'c')
-	{
-		container = ft_strnew(width + 1);
-		ft_memset(container, ' ', width);
-		container[width - 1] = *(char *)p;
-		return (container);
-	}
-	return (NULL);
-}
-
 void			get_char(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
-	char 	ch;
-	t_fmt	*tmp;
+	t_fmt	*f;
 
-	tmp = *fmt;
-	ch = (unsigned char)va_arg(args, int);
-//	print_collected_data(fmt);
-	if (tmp->width > -1) //TODO: communication with flags!
-	{
-		while (--tmp->width > 0)
-			*buf_ptr++ = ' ';
-	}
-	*buf_ptr = ch;
-	ft_putstr(tmp->buf);
-
+	f = *fmt;
+	/* Applying width (If there IS width and no LEFT-flag) */
+	while (f->width > -1 && --f->width > 0 && !(f->flags & LEFT))
+		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+	*buf_ptr++ = (unsigned char)va_arg(args, int);
+//	ft_putstr(f->buf);
 }
 
 void			get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
-	t_fmt	*tmp;
-	char 	*str;
+	t_fmt		*f;
+	size_t 		len;
+	char 		*str;
 
-	tmp = *fmt;
+	f = *fmt;
 	str = va_arg(args, char *);
-
-	print_collected_data(fmt);
-	if (tmp->width > -1)
-		while (--tmp->width > 0)
-			*buf_ptr++ = ' ';
-	while (tmp->precision--)
+	len = ft_strnlen(str, f->precision);
+	/* Applying width (If there IS width and no LEFT-flag) */
+	while (--f->width >= len && f->width > -1 && !(f->flags & LEFT))
+		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+	while (len--)
 		*buf_ptr++ = *str++;
-	ft_putstr(tmp->buf);
-
-
-//	char 		*buf;
-//	char 		*str;
-//	t_fmt		*tmp;
-//
-//	tmp = *fmt;
-//	/* processing precision for a string*/
-//	if (tmp->precision != -1)
-//		str = ft_strndup(va_arg(args, char *), tmp->precision);
-//	else
-//		str = va_arg(args, char*);
-//	/* processing width */
-//	if (tmp->width > 1)
-//	{
-//		buf = apply_width(&str, tmp->width, 's');
-//		ft_putstr(buf);
-//		ft_strdel(&buf);
-//		if (tmp->precision != -1)
-//			ft_strdel(&str);
-//		return;
-//	}
-//	ft_putstr(str);
-//	if (tmp->precision != -1)
-//		ft_strdel(&str);
+//	ft_putstr(f->buf);
 }
 
-char 			*add_0x(char *str)
+void			get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
 {
-	char 	*newstr;
+	t_fmt		*f;
+	int 		i;
+	char 		*hex;
+	uintmax_t 	pointer; //aka 'unsigned long',
+	/* Платформа обязана в рамках стандарта С99 поддерживать следующие типы:
+	 * intmax_t, uintmax_t, которые могут представлять максимальные
+	 * целочисленные значения. */
+//	uint64_t 	pointer; //aka 'unsigned long long'
+	/* Тип с точной шириной. Не все системы могут поддерживать все эти типы. */
 
-	newstr = ft_strnew(ft_strlen(str) + 2);
-	ft_strcat(newstr, "0x");
-	ft_strcat(newstr, str);
-	return (newstr);
-}
-
-void			print_ptr(t_fmt **fmt, va_list args, int fd)
-{
-//	uint64_t 	*point; ???
-	int		 	*point;
-	char 		*pnt;
-	char 		*zero_x;
-	t_fmt		*tmp;
-
-	tmp = *fmt;
-	point = va_arg(args, void *);
-	pnt = base_any(point, 16);
-	zero_x = ft_strnew(ft_strlen(pnt) + 2);
-	ft_strcat(zero_x, "0x");
-	ft_strcat(zero_x, pnt);
-	ft_strdel(&pnt);
-	write(fd, zero_x, ft_strlen(zero_x));
-	ft_strdel(&zero_x);
+	i = 0;
+	f = *fmt;
+	pointer = (uintmax_t)va_arg(args, void *);
+	hex = base_any((void *)pointer, 16);
+	*buf_ptr++ = '0';
+	*buf_ptr++ = 'x';
+	while (hex[i])
+		*buf_ptr++ = hex[i++];
+	ft_strdel(&hex);
+	ft_putstr(f->buf);
 }

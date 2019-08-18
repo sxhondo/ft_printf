@@ -19,16 +19,22 @@
 #include <unistd.h>
 #include <limits.h>
 
+#define ZERO	(unsigned)1			/* filling with zeroes */
+#define PLUS	(unsigned)4			/* show plus */
+#define SPACE	(unsigned)8			/* space if plus */
+#define LEFT	(unsigned)16		/* left justified */
+#define SPECIAL	(unsigned)64		/* 0x */
+
 
 typedef struct		s_fmt
 {
 	struct s_fmt 	*next;
 	char 			*type;
 	int				width;
-	int 			flags;
+	unsigned int	flags;
 	int 			qualifier;
 	int				precision;
-	char 			*iter;
+	const char		*iter;
 	char 			buf[1024];
 }					t_fmt;
 
@@ -63,7 +69,7 @@ char 				*parse_bin_table(t_list **row);
 /* char, string, pointer*/
 void				get_char(t_fmt **fmt, va_list args, int fd, char *str);
 void				get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
-void				print_ptr(t_fmt **fmt, va_list args, int fd);
+void				get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 
 /* decimal */
 void				print_diu(t_fmt **fmt, va_list args, int fd);

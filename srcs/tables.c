@@ -18,11 +18,11 @@ char 					*base_any(void *p, int base)
 	uintmax_t 	minus;
 	uintmax_t 	next;
 	uintmax_t 	save;
-	t_list				*node;
-	t_list				*row;
+	t_list		*node;
+	t_list		*row;
 
 	row = NULL;
-	nb = (unsigned long long)p;
+	nb = (unsigned long)p;
 	save = base;
 
 	while (save > (base - 1))
@@ -36,25 +36,15 @@ char 					*base_any(void *p, int base)
 	}
 	if (base == 2)
 		return (parse_bin_table(&row));
-	if (base == 8)
+	else if (base == 8)
 		return (parse_oct_table(&row));
-	if (base == 16)
+	else if (base == 16)
 		return (parse_hex_table(&row));
-	return (NULL);
-
-}
-
-char 			*parse_bin_table(t_list **row)
-{
-	t_list	*tmp;
-
-	tmp = *row;
-	while (tmp)
+	else
 	{
-		ft_putnbr(*(int *)tmp->content);
-		tmp = tmp->next;
+		ft_lstfree(&node);
+		return (NULL);
 	}
-	return (NULL);
 }
 
 char 			*parse_hex_table(t_list **row)
@@ -101,4 +91,17 @@ char 			*parse_oct_table(t_list **row)
 		i++;
 	}
 	return (str);
+}
+
+char 			*parse_bin_table(t_list **row)
+{
+	t_list	*tmp;
+
+	tmp = *row;
+	while (tmp)
+	{
+		ft_putnbr(*(int *)tmp->content);
+		tmp = tmp->next;
+	}
+	return (NULL);
 }
