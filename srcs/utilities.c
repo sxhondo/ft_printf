@@ -66,12 +66,12 @@ void			print_collected_data(t_fmt **fmt)
 	{
 
 		printf("\n--------FORMAT----------\n");
-		printf("FLAGS: \t\t\t[%d]\n", curr->flags);
-		printf("WIDTH: \t\t\t[%d]\n", curr->width);
-		printf("PRECISION: \t\t[%d]\n", curr->precision);
-		printf("QUALIFIER: \t\t[%d]\n", curr->qualifier);
-//		printf("CURRENT BUF: \t%s\n", curr->buf);
-		printf("ITERATOR: \t\t[%s]\n", curr->iter);
+		printf("FLAGS: \t\t\t\t[%d]\n", curr->flags);
+		printf("WIDTH: \t\t\t\t[%d]\n", curr->width);
+		printf("PRECISION: \t\t\t[%d]\n", curr->precision);
+		printf("L_MODIFIER: \t\t[%d] or [%c]\n", curr->lmodifier, curr->lmodifier);
+		printf("BASE: \t\t\t\t[%u]\n", curr->base);
+		printf("ITERATOR: \t\t\t[%s]\n", curr->iter);
 		printf("------------------------\n");
 		curr = curr->next;
 	}

@@ -82,15 +82,25 @@ int				process_precision(t_fmt *node, va_list args)
 
 void			process_length_modifier(t_fmt	*node, va_list args)
 {
-	node->qualifier = -1;
+	node->lmodifier = -1;
 	if (*node->iter == 'h' || *node->iter == 'l' || *node->iter == 'L')
 	{
-		node->qualifier = *node->iter;
+		node->lmodifier = *node->iter;
 		node->iter++;
-		if (*node->iter == 'h')
+		if (*node->iter == 'h' || *node->iter == 'l')
 		{
-			node->qualifier *= 2;
+			node->lmodifier *= 2;
 			node->iter++;
 		}
 	}
+}
+
+void			process_base(t_fmt	*node, va_list args)
+{
+	node->base = 10;
+	if (*node->iter == 'o')
+		node->base = 8;
+	if (*node->iter == 'x' || *node->iter == 'X')
+		node->base = 16;
+//	node->iter++;
 }

@@ -15,7 +15,7 @@
 
 int					print_module(t_fmt *fmt, va_list args)
 {
-//	print_collected_data(&fmt);
+	uint64_t 	num;
 
 	if (*fmt->iter == 'c')
 		return (get_char(&fmt, args));
@@ -23,8 +23,55 @@ int					print_module(t_fmt *fmt, va_list args)
 		return (get_str(&fmt, args));
 	if (*fmt->iter == 'p')
 		return (get_ptr(&fmt, args));
-//	if (*fmt->iter == 'd' || *fmt->iter == 'i')
-//		return (get_decimal(&fmt, args, fd, buf_ptr));
+
+//	print_collected_data(&fmt);
+
+	/* SIGNED GUYS */
+	if (*fmt->iter == 'd' || *fmt->iter == 'i')
+	{
+		if (fmt->lmodifier == 208) // signed char ('hh')
+			;
+		else if (fmt->lmodifier == 104) // signed short int ('h')
+			num = (short)va_arg(args, int);
+		else if (fmt->lmodifier == 108) // signed long int ('l')
+			num = va_arg(args, long int);
+		else if (fmt->lmodifier == 216) // signed long long int ('ll')
+			num = va_arg(args, long long int);
+		else
+			num = va_arg(args, int);
+		//print my number
+	}
+	/* UNSIGNED GUYS */
+
+	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
+			|| *fmt->iter == 'X')
+	{
+		if (fmt->lmodifier == 208) // unsigned char ('hh')
+		{
+			num = (unsigned char)va_arg(args, unsigned int);
+			printf("%hhu\n", num);
+		}
+		else if (fmt->lmodifier == 104) // unsigned short int ('h')
+		{
+			num = (unsigned short)va_arg(args, unsigned int);
+			printf("%hu\n", num);
+		}
+		else if (fmt->lmodifier == 108) // unsigned long int ('l')
+		{
+			num = va_arg(args, unsigned long);
+			printf("%lu\n", num);
+		}
+		else if (fmt->lmodifier == 216) // unsigned long long int ('ll')
+		{
+			num = va_arg(args, unsigned long long);
+			printf("%llu\n", num);
+		}
+		else
+		{
+			num = va_arg(args, unsigned int);
+			printf("%u\n", num);
+		}
+	}
 
 }
 
@@ -47,9 +94,11 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_width(format, args);
 		process_precision(format, args);
 		process_length_modifier(format, args);
+		process_base(format, args);
+
 		print_module(format, args);
 	}
-	ft_putstr(buf);
+//	ft_putstr(buf);
 	free (format);
 	return (0);
 }

@@ -14,14 +14,19 @@
 
 char 		skip_itoa(int nb)
 {
+	static int		left;
+
+	left = nb / 10;
+//	printf("%d", left);
+
 	return (nb % 10 + '0');
 }
 
-int				get_decimal(t_fmt **fmt, va_list args, int fd, char *buf_ptr)
+int				get_decimal(t_fmt **fmt, va_list args)
 {
-	//TODO: get the decimal according flags, width, qualifier...
-	print_collected_data(fmt);
-	exit (0);
+
+//	print_collected_data(fmt);
+//	exit (0);
 
 
 //	char 			*type;
