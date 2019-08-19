@@ -27,13 +27,12 @@ char					*reverse(char buf[], int size)
 	return (str);
 }
 
-char 					*base_any(unsigned long num, int base)
+char 					*base_any(uint64_t  num, int base)
 {
-	/* NUM OR SAVE UNINITIALIZED (dunno why) */
 	char 		hex_table[17] = "0123456789abcdef";
 	char 		buf[100];
-	uintmax_t 	next;
-	uintmax_t 	save;
+	uint64_t 	next;
+	uint64_t 	save;
 	int 		i;
 
 	i = 0;

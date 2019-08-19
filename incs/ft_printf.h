@@ -35,6 +35,7 @@ typedef struct		s_fmt
 	int				precision;
 	const char		*iter;
 	char 			buf[1024];
+//	char 			*buf_ptr;
 }					t_fmt;
 
 	/* processings */
@@ -51,14 +52,15 @@ void				print_collected_data(t_fmt **fmt);
 
 
 void				put_uns_number(unsigned int nb, int fd);
-char 				*base_any(uintmax_t num, int base);
+//char 				*base_any(uintmax_t num, int base);
+char 				*base_any(uint64_t num, int base);
 
 
 
 	/* conversions */
 /* char, string, pointer*/
-int					get_char(t_fmt **fmt, va_list args, int fd, char *str);
-int					get_str(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
+int					get_char(t_fmt **fmt, va_list args, char *str);
+int					get_str(t_fmt **fmt, va_list args, char *buf_ptr);
 int					get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 int					get_decimal(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 

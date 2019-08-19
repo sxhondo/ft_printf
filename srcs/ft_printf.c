@@ -18,13 +18,13 @@ int					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
 //	print_collected_data(&fmt);
 
 	if (*fmt->iter == 'c')
-		return (get_char(&fmt, args, fd, buf_ptr));
+		return (get_char(&fmt, args, buf_ptr));
 	if (*fmt->iter == 's')
-		return (get_str(&fmt, args, fd, buf_ptr));
+		return (get_str(&fmt, args, buf_ptr));
 	if (*fmt->iter == 'p')
 		return (get_ptr(&fmt, args, fd, buf_ptr));
-	if (*fmt->iter == 'd' || *fmt->iter == 'i')
-		return (get_decimal(&fmt, args, fd, buf_ptr));
+//	if (*fmt->iter == 'd' || *fmt->iter == 'i')
+//		return (get_decimal(&fmt, args, fd, buf_ptr));
 
 }
 
@@ -49,7 +49,6 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_precision(format, args);
 		process_length_modifier(format, args);
 		buf_ptr += print_module(format, args, fd, buf_ptr);
-		format->iter++;
 	}
 	ft_putstr(format->buf);
 	free (format);
