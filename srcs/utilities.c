@@ -70,7 +70,7 @@ void			print_collected_data(t_fmt **fmt)
 		printf("WIDTH: \t\t\t[%d]\n", curr->width);
 		printf("PRECISION: \t\t[%d]\n", curr->precision);
 		printf("QUALIFIER: \t\t[%d]\n", curr->qualifier);
-		printf("CURRENT BUF: \t%s\n", curr->buf);
+//		printf("CURRENT BUF: \t%s\n", curr->buf);
 		printf("ITERATOR: \t\t[%s]\n", curr->iter);
 		printf("------------------------\n");
 		curr = curr->next;

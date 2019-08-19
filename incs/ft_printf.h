@@ -34,8 +34,7 @@ typedef struct		s_fmt
 	int 			qualifier;
 	int				precision;
 	const char		*iter;
-	char 			buf[1024];
-//	char 			*buf_ptr;
+	char 			*buf_ptr;
 }					t_fmt;
 
 	/* processings */
@@ -59,10 +58,11 @@ char 				*base_any(uint64_t num, int base);
 
 	/* conversions */
 /* char, string, pointer*/
-int					get_char(t_fmt **fmt, va_list args, char *str);
-int					get_str(t_fmt **fmt, va_list args, char *buf_ptr);
-int					get_ptr(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
-int					get_decimal(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
+int					get_char(t_fmt **fmt, va_list args);
+int					get_str(t_fmt **fmt, va_list args);
+int					get_ptr(t_fmt **fmt, va_list args);
+
+//int					get_decimal(t_fmt **fmt, va_list args, int fd, char *buf_ptr);
 
 
 int					ft_printf(char *fmt, ...);

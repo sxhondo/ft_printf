@@ -15,8 +15,9 @@
 int 	main()
 {
 	void	*p;
-	ft_printf("hello %p lol hello", p);
-//	printf("hello %17p lol", p);
+
+	ft_printf("hello %-10p lol\n", p);
+//	printf("hello %-10p lol\n", p);
 
 
 

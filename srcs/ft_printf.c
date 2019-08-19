@@ -13,16 +13,16 @@
 #include <ft_printf.h>
 #include "ft_printf.h"
 
-int					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
+int					print_module(t_fmt *fmt, va_list args)
 {
 //	print_collected_data(&fmt);
 
 	if (*fmt->iter == 'c')
-		return (get_char(&fmt, args, buf_ptr));
+		return (get_char(&fmt, args));
 	if (*fmt->iter == 's')
-		return (get_str(&fmt, args, buf_ptr));
+		return (get_str(&fmt, args));
 	if (*fmt->iter == 'p')
-		return (get_ptr(&fmt, args, fd, buf_ptr));
+		return (get_ptr(&fmt, args));
 //	if (*fmt->iter == 'd' || *fmt->iter == 'i')
 //		return (get_decimal(&fmt, args, fd, buf_ptr));
 
@@ -30,17 +30,16 @@ int					print_module(t_fmt *fmt, va_list args, int fd, char *buf_ptr)
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char 				*buf_ptr; //points to buf
+	char 				buf[1024];
 	t_fmt				*format; // list of data
-	int 				done;
 
 	format = ft_memalloc(sizeof(t_fmt));
 	format->iter = fmt;
-	buf_ptr = format->buf;
+	format->buf_ptr = buf;
 	while (*format->iter)
 	{
 		while (*format->iter != '%' && *format->iter)
-			*buf_ptr++ = *format->iter++;
+			*format->buf_ptr++ = *format->iter++;
 		if (!*format->iter)
 			break;
 		/*	parsing		*/
@@ -48,9 +47,9 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_width(format, args);
 		process_precision(format, args);
 		process_length_modifier(format, args);
-		buf_ptr += print_module(format, args, fd, buf_ptr);
+		print_module(format, args);
 	}
-	ft_putstr(format->buf);
+	ft_putstr(buf);
 	free (format);
 	return (0);
 }
