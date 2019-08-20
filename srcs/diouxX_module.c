@@ -37,25 +37,37 @@ int			 		itoa_pf(int n, char s[])
 int 				get_num(int64_t num, t_fmt	*fmt)
 {
 	int 			i;
-	t_fmt			*f;
+	char 			sign;
 	char 			tmp[20];
+	char 			*p_tmp;
 	unsigned int 	nblen;
-	char 			*p_tmp = tmp;
 
 	i = 0;
+	sign = 0;
+	p_tmp = tmp;
 	itoa_pf(num, p_tmp);
 	nblen = ft_strlen(tmp);
+
+		/* applying flag ' ' */
+	if (fmt->flags & SPACE && num > 0)
+		sign = ' ';
+
+		/* applying flag '+' */
+	/* printf("%+04d", 42) - gives you +042
+	* but printf("%+4d, 42) - gives _+42
+ 	* So, in case '0' its before width. Without '0' its after...
+ 	* P.S. - decreasing width and checking it in 'if' - is not very good */
+
+	if (fmt->flags & PLUS && fmt->width--)
+		sign = num < 0 ? '-' : '+';
+	else if (num < 0 && fmt->width--)
+		sign = '-';
 
 	/* applying width */
 	while (fmt->width > -1 && --fmt->width >= nblen && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
-	/* applying flag '+' */
-
-//	if (fmt->flags & PLUS)
-//		*fmt->buf_ptr++ = num < 0 ? '-' : '+';
-//	else if (num < 0)
-//		*fmt->buf_ptr++ = '-';
-
+	if (sign)
+		*fmt->buf_ptr++ = sign;
 	while (i < nblen)
 		*fmt->buf_ptr++ = tmp[i++];
 	fmt->iter += 1;
