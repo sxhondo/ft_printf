@@ -16,9 +16,7 @@ int			 		itoa_pf(int n, char s[])
 {
 	int 			sign;
 	char 			*ptr;
-	unsigned int 	len;
 
-	len = ft_nblen(n);
 	ptr = s;
 	if ((sign = n) < 0)
 		n = -n;
@@ -29,14 +27,14 @@ int			 		itoa_pf(int n, char s[])
 		*ptr++ = n % 10 + '0';
 		n /= 10;
 	}
-	if (sign < 0)
-		*ptr++ = '-';
+//	if (sign < 0)
+//		*ptr++ = '-';
 	*ptr++ = '\0';
 	ft_strrev(s);
-	return (len);
+	return (0);
 }
 
-int 		get_num(int64_t num, t_fmt	*fmt)
+int 				get_num(int64_t num, t_fmt	*fmt)
 {
 	int 			i;
 	t_fmt			*f;
@@ -44,15 +42,22 @@ int 		get_num(int64_t num, t_fmt	*fmt)
 	unsigned int 	nblen;
 	char 			*p_tmp = tmp;
 
-	/* 1. Write num in buf_ptr
-	 * 2. According to flags */
-
 	i = 0;
-	nblen = itoa_pf(num, p_tmp);
+	itoa_pf(num, p_tmp);
+	nblen = ft_strlen(tmp);
+
+	/* applying width */
+	while (fmt->width > -1 && --fmt->width >= nblen && !(fmt->flags & LEFT))
+		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+	/* applying flag '+' */
+
+//	if (fmt->flags & PLUS)
+//		*fmt->buf_ptr++ = num < 0 ? '-' : '+';
+//	else if (num < 0)
+//		*fmt->buf_ptr++ = '-';
+
 	while (i < nblen)
 		*fmt->buf_ptr++ = tmp[i++];
 	fmt->iter += 1;
 	return 0;
-//	fmt->iter += 1;
-//	print_collected_data(&fmt);
 }

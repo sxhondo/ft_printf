@@ -16,8 +16,8 @@ int 	main()
 {
 	void	*p;
 
-	ft_printf("%d", 312);
-//	printf("%p", p);
+	ft_printf("%+10d\n", -42);
+//	printf("% 10d", 42);
 
 		/* BASE 10 (UNSIGNED) COMPARE (ft_printf vs. printf) */
 //	int i = -42;
