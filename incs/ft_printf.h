@@ -28,9 +28,8 @@
 
 typedef struct		s_fmt
 {
-	struct s_fmt 	*next;
-	int				width;
 	unsigned int	flags;
+	int				width;
 	int 			lmodifier;
 	int				precision;
 	unsigned int	base;
@@ -64,8 +63,7 @@ int					get_char(t_fmt **fmt, va_list args);
 int					get_str(t_fmt **fmt, va_list args);
 int					get_ptr(t_fmt **fmt, va_list args);
 
-int					get_decimal(t_fmt **fmt, va_list args);
-
+int 				get_num(int64_t num, t_fmt	*fmt);
 
 int					ft_printf(char *fmt, ...);
 

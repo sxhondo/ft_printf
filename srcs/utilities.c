@@ -59,20 +59,15 @@ int			ft_isspecial(char ch)
 
 void			print_collected_data(t_fmt **fmt)
 {
-	t_fmt		*curr;
+	t_fmt		*f;
 
-	curr = *fmt;
-	while (curr)
-	{
-
-		printf("\n--------FORMAT----------\n");
-		printf("FLAGS: \t\t\t\t[%d]\n", curr->flags);
-		printf("WIDTH: \t\t\t\t[%d]\n", curr->width);
-		printf("PRECISION: \t\t\t[%d]\n", curr->precision);
-		printf("L_MODIFIER: \t\t[%d] or [%c]\n", curr->lmodifier, curr->lmodifier);
-		printf("BASE: \t\t\t\t[%u]\n", curr->base);
-		printf("ITERATOR: \t\t\t[%s]\n", curr->iter);
-		printf("------------------------\n");
-		curr = curr->next;
-	}
+	f = *fmt;
+	printf("\n--------FORMAT----------\n");
+	printf("FLAGS: \t\t\t\t[%d]\n", f->flags);
+	printf("WIDTH: \t\t\t\t[%d]\n", f->width);
+	printf("PRECISION: \t\t\t[%d]\n", f->precision);
+	printf("L_MODIFIER: \t\t[%d] or [%c]\n", f->lmodifier, f->lmodifier);
+	printf("BASE: \t\t\t\t[%u]\n", f->base);
+	printf("ITERATOR: \t\t\t[%s]\n", f->iter);
+	printf("------------------------\n");
 }

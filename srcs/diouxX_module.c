@@ -12,84 +12,47 @@
 
 #include "ft_printf.h"
 
-char 		skip_itoa(int nb)
+int			 		itoa_pf(int n, char s[])
 {
-	static int		left;
+	int 			sign;
+	char 			*ptr;
+	unsigned int 	len;
 
-	left = nb / 10;
-//	printf("%d", left);
-
-	return (nb % 10 + '0');
+	len = ft_nblen(n);
+	ptr = s;
+	if ((sign = n) < 0)
+		n = -n;
+	if (n == 0)
+		*ptr++ = '0';
+	while (n != 0)
+	{
+		*ptr++ = n % 10 + '0';
+		n /= 10;
+	}
+	if (sign < 0)
+		*ptr++ = '-';
+	*ptr++ = '\0';
+	ft_strrev(s);
+	return (len);
 }
 
-int				get_decimal(t_fmt **fmt, va_list args)
+int 		get_num(int64_t num, t_fmt	*fmt)
 {
+	int 			i;
+	t_fmt			*f;
+	char 			tmp[20];
+	unsigned int 	nblen;
+	char 			*p_tmp = tmp;
 
-//	print_collected_data(fmt);
-//	exit (0);
+	/* 1. Write num in buf_ptr
+	 * 2. According to flags */
 
-
-//	char 			*type;
-//	intmax_t 		n;
-//	uintmax_t		un;
-//
-//	if (search_spec((*fmt)->type, 'd') || search_spec((*fmt)->type, 'i'))
-//	{
-//		n = va_arg(args, int);
-//		type = get_type((*fmt)->type);
-//		if (ft_strequ(type, "char"))
-//			ft_putnbr_fd((char)n, fd);
-//		else if (ft_strequ(type, "int"))
-//			ft_putnbr_fd((int)n, fd);
-//		else if (ft_strequ(type, "short"))
-//			ft_putnbr_fd((short)n, fd);
-//		else if (ft_strequ(type, "long"))
-//			ft_putnbr_fd((long)n, fd);
-//		else if (ft_strequ(type, "long long"))
-//			ft_putnbr_fd((long long)n, fd);
-//	}
-//	if (search_spec((*fmt)->type, 'u'))
-//	{
-//		un = va_arg(args, unsigned int);
-//		type = get_type((*fmt)->type);
-//		if (ft_strequ(type, "char"))
-//			put_uns_number((unsigned char)un, fd);
-//		else if (ft_strequ(type, "int"))
-//			put_uns_number((unsigned int)un, fd);
-//		else if (ft_strequ(type, "short"))
-//			put_uns_number((unsigned short)un, fd);
-//		else if (ft_strequ(type, "long")) //DONT UNDERSTAND
-//			put_uns_number((unsigned long)un, fd);
-//		else if (ft_strequ(type, "long long"))
-//			put_uns_number((unsigned long long)un, fd);
-//	}
+	i = 0;
+	nblen = itoa_pf(num, p_tmp);
+	while (i < nblen)
+		*fmt->buf_ptr++ = tmp[i++];
+	fmt->iter += 1;
+	return 0;
+//	fmt->iter += 1;
+//	print_collected_data(&fmt);
 }
-
-//char 				*print_oxX(t_fmt **fmt, va_list args, int fd)
-//{
-//	int 		i;
-//	t_fmt		*tmp;
-//	int		  	*nb;
-//	char 		*number;
-//
-//	i = 0;
-//	tmp = *fmt;
-//	nb = va_arg(args, void *);
-//	if (search_spec(tmp->type, 'o'))
-//	{
-//		number = base_any(nb, 8);
-//		ft_putstr(number);
-//		ft_strdel(&number);
-//	}
-//	else if (search_spec(tmp->type, 'x') || search_spec(tmp->type, 'X'))
-//	{
-//		number = base_any(nb, 16);
-//		if (search_spec(tmp->type, 'X'))
-//			while (number[i++])
-//				number[i] = ft_toupper(number[i]);
-//		ft_putstr(number);
-//		ft_strdel(&number);
-//	}
-//	return (NULL);
-//
-//}

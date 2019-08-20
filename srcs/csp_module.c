@@ -15,14 +15,13 @@
 int			get_char(t_fmt **fmt, va_list args)
 {
 	t_fmt	*f;
-	int 	done;
 
 	f = *fmt;
 //	if (f->precision != -1) ?
 //		"'precision' - results in undefined behaviour with 'p' conversion qualifier.");
 	/* applying width (If there IS width and no LEFT-flag) */
-	while (f->width > -1 && --f->width > 0 && !(f->flags & LEFT))
-		*f->buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+	while (--f->width > 0 && !(f->flags & LEFT))
+		*f->buf_ptr++ = f->flags & ZERO ? '0' : ' ';
 	*f->buf_ptr++ = (unsigned char)va_arg(args, int);
 	f->iter += 1;
 //	return (?);
@@ -32,15 +31,14 @@ int				get_str(t_fmt **fmt, va_list args)
 {
 	t_fmt			*f;
 	size_t 			len;
-	size_t 			done;
 	const char 		*str;
 
 	f = *fmt;
 	str = va_arg(args, const char *);
 	len = ft_strnlen(str, f->precision);
 	/* applying width (If there IS width and no LEFT-flag) */
-	while (--f->width >= len && f->width > -1 && !(f->flags & LEFT))
-		*f->buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+	while (f->width > -1 && --f->width >= len && !(f->flags & LEFT))
+		*f->buf_ptr++ = f->flags & ZERO ? '0' : ' ';
 	while (len--)
 		*f->buf_ptr++ = *str++;
 	f->iter += 1;
@@ -61,7 +59,7 @@ int				get_ptr(t_fmt **fmt, va_list args)
 	uint64_t 		pointer; //aka 'unsigned long long'
 	/* Тип с точной шириной. Не все системы могут поддерживать эти типы. ~ wiki */
 //	unsigned long 	pointer;
-	i = 0;
+
 	f = *fmt;
 	pointer = (uint64_t)va_arg(args, void *);
 
@@ -71,6 +69,7 @@ int				get_ptr(t_fmt **fmt, va_list args)
 	/* seems like valgrind things that return of va_arg (called with void *)
 	 * can't be initialized. */
 	hex = base_any(pointer, 16);
+
 	while (--f->width > ft_strlen(hex) + 1 && f->width > -1 && !(f->flags & LEFT))
 	{
 		/* Original printf filling 'width' with 'zero's even if CLion says its result
@@ -80,7 +79,7 @@ int				get_ptr(t_fmt **fmt, va_list args)
 		|| f->flags & SPACE){
 			ft_putstr("Flag '0', '+', ' ', '#' - results in undefined behaviour with 'p' conversion qualifier.");
 			ft_strdel(&hex);} */
-//		*buf_ptr++ = ((f->flags & ZERO) && !(f->flags & LEFT)) ? '0' : ' ';
+//		*buf_ptr++ = f->flags & ZERO ? '0' : ' ';
 		*f->buf_ptr++ = ' ';
 	}
 	/* adding '0x' in buffer, moving pointer */
@@ -88,6 +87,7 @@ int				get_ptr(t_fmt **fmt, va_list args)
 	*f->buf_ptr++ = 'x';
 
 	/* Filling buf. Iterator here to safely delete 'hex'-string after writing */
+	i = 0;
 	while (hex[i])
 		*f->buf_ptr++ = hex[i++];
 	ft_strdel(&hex);
