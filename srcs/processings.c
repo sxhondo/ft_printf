@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_format_string.c                              :+:      :+:    :+:   */
+/*   processings.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/04 17:15:47 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/08/04 17:15:50 by sxhondo          ###   ########.fr       */
+/*   Created: 2019/08/21 20:21:55 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/21 20:21:57 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,7 @@ void			process_base(t_fmt	*node, va_list args)
 		node->base = 8;
 	if (*node->iter == 'x' || *node->iter == 'X')
 		node->base = 16;
+	if (*node->iter == 'b')
+		node->base = 2;
 //	node->iter++;
 }

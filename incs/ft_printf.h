@@ -53,17 +53,18 @@ void				print_collected_data(t_fmt **fmt);
 
 
 void				put_uns_number(unsigned int nb, int fd);
-//char 				*base_any(uintmax_t num, int base);
-char 				*base_any(uint64_t num, int base);
 
 
 
 	/* conversions */
-int					get_char(t_fmt **fmt, va_list args);
-int					get_str(t_fmt **fmt, va_list args);
-int					get_ptr(t_fmt **fmt, va_list args);
+int					get_char(t_fmt *fmt, va_list args);
+int					get_str(t_fmt *fmt, va_list args);
+int					get_ptr(t_fmt *fmt, va_list args);
 
-int 				get_num(int64_t num, t_fmt	*fmt);
+int 				get_num(int64_t num, t_fmt *fmt, int sig);
+
+char		 		*itoa_pf(uint64_t n, char *s, int sig, unsigned base);
+
 
 int					ft_printf(char *fmt, ...);
 

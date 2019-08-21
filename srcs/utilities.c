@@ -12,32 +12,6 @@
 
 #include <ft_printf.h>
 
-void	put_uns_number(unsigned int nb, int fd)
-{
-	if (nb >= 10)
-	{
-		put_uns_number(nb / 10, fd);
-		ft_putchar_fd(nb % 10 + '0', fd);
-	}
-	else
-		ft_putchar_fd(nb + '0', fd);
-}
-
-
-int			search_spec(char *str, char ch)
-{
-	int 	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == ch)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 int 		skip_atoi(const char *s)
 {
 	int 		i;

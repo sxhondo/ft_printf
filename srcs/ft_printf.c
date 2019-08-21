@@ -14,69 +14,55 @@
 
 int					print_module(t_fmt *fmt, va_list args)
 {
-	int64_t 	num;
+	uint64_t 	num = 0;
 
 	if (*fmt->iter == 'c')
-		return (get_char(&fmt, args));
-	if (*fmt->iter == 's')
-		return (get_str(&fmt, args));
-	if (*fmt->iter == 'p')
-		return (get_ptr(&fmt, args));
+		return (get_char(fmt, args));
+	else if (*fmt->iter == 's')
+		return (get_str(fmt, args));
+	else if (*fmt->iter == 'p')
+		return (get_ptr(fmt, args));
 
-	/* SIGNED GUYS */
+	/* SIGNED */
 	if (*fmt->iter == 'd' || *fmt->iter == 'i')
 	{
-		if (fmt->lmodifier == 208) // signed char ('hh')
-			;
-		else if (fmt->lmodifier == 104) // signed short int ('h')
-			num = (short)va_arg(args, int);
-		else if (fmt->lmodifier == 108) // signed long int ('l')
+		if (fmt->lmodifier == 208) // char ('hh')
+			num = va_arg(args, int);
+		else if (fmt->lmodifier == 104) // short int ('h')
+			num = va_arg(args, int);
+		else if (fmt->lmodifier == 108) // long int ('l')
 			num = va_arg(args, long int);
-		else if (fmt->lmodifier == 216) // signed long long int ('ll')
+		else if (fmt->lmodifier == 216) // long long int ('ll')
 			num = va_arg(args, long long int);
 		else
 			num = va_arg(args, int);
-		get_num(num, fmt);
+		get_num(num, fmt, 1);
 	}
 
-	/* UNSIGNED GUYS */
-//	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
-//			|| *fmt->iter == 'X')
-//	{
-//		if (fmt->lmodifier == 208) // unsigned char ('hh')
-//		{
-//			num = (unsigned char)va_arg(args, unsigned int);
-//			printf("%hhu\n", num);
-//		}
-//		else if (fmt->lmodifier == 104) // unsigned short int ('h')
-//		{
-//			num = (unsigned short)va_arg(args, unsigned int);
-//			printf("%hu\n", num);
-//		}
-//		else if (fmt->lmodifier == 108) // unsigned long int ('l')
-//		{
-//			num = va_arg(args, unsigned long);
-//			printf("%lu\n", num);
-//		}
-//		else if (fmt->lmodifier == 216) // unsigned long long int ('ll')
-//		{
-//			num = va_arg(args, unsigned long long);
-//			printf("%llu\n", num);
-//		}
-//		else
-//		{
-//			num = va_arg(args, unsigned int);
-//			printf("%u\n", num);
-//		}
-//	}
-//	get_num(num, fmt);
-
+	/* UNSIGNED */
+	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
+			|| *fmt->iter == 'X' || *fmt->iter == 'b')
+	{
+		if (fmt->lmodifier == 208) // unsigned char ('hh')
+			num = (unsigned char)va_arg(args, unsigned int);
+		else if (fmt->lmodifier == 104) // unsigned short int ('h')
+			num = (unsigned short)va_arg(args, unsigned int);
+		else if (fmt->lmodifier == 108) // unsigned long int ('l')
+			num = va_arg(args, unsigned long);
+		else if (fmt->lmodifier == 216) // unsigned long long int ('ll')
+			num = va_arg(args, unsigned long long);
+		else
+			num = va_arg(args, unsigned int);
+		get_num(num, fmt, 0);
+	}
+	return (0);
 }
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	char 				buf[1024];
-	t_fmt				*format; // list of data
+	char 				*ptr = buf;
+	t_fmt				*format;
 
 	format = ft_memalloc(sizeof(t_fmt));
 	format->iter = fmt;
@@ -87,7 +73,7 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 			*format->buf_ptr++ = *format->iter++;
 		if (!*format->iter)
 			break;
-		/*	parsing		*/
+		/* processings */
 		process_flags(format);
 		process_width(format, args);
 		process_precision(format, args);
@@ -96,9 +82,11 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 
 		print_module(format, args);
 	}
-	ft_putstr(buf);
+	/* print buf */
+	while (*ptr)
+		write(fd, &*ptr++, 1);
 	free (format);
-	return (0);
+	return (format->buf_ptr - buf);
 }
 
 int				ft_printf(char *fmt, ...)
