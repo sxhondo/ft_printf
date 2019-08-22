@@ -14,8 +14,10 @@
 
 int					print_module(t_fmt *fmt, va_list args)
 {
-	uint64_t 	num = 0;
+	uint64_t 		num = 0;
 
+	if (*fmt->iter == '%')
+		return (get_percent(fmt));
 	if (*fmt->iter == 'c')
 		return (get_char(fmt, args));
 	else if (*fmt->iter == 's')
@@ -27,9 +29,9 @@ int					print_module(t_fmt *fmt, va_list args)
 	if (*fmt->iter == 'd' || *fmt->iter == 'i')
 	{
 		if (fmt->lmodifier == 208) // char ('hh')
-			num = va_arg(args, int);
+			num = (char)va_arg(args, int);
 		else if (fmt->lmodifier == 104) // short int ('h')
-			num = va_arg(args, int);
+			num = (short)va_arg(args, int);
 		else if (fmt->lmodifier == 108) // long int ('l')
 			num = va_arg(args, long int);
 		else if (fmt->lmodifier == 216) // long long int ('ll')
@@ -55,7 +57,7 @@ int					print_module(t_fmt *fmt, va_list args)
 			num = va_arg(args, unsigned int);
 		get_num(num, fmt, 0);
 	}
-	return (0);
+	return (0); // ?
 }
 
 int 					ft_fprintf(int fd, const char *fmt, va_list args)
@@ -79,7 +81,6 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_precision(format, args);
 		process_length_modifier(format, args);
 		process_base(format, args);
-
 		print_module(format, args);
 	}
 	/* print buf */

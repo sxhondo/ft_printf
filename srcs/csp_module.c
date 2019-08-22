@@ -12,11 +12,19 @@
 
 #include "ft_printf.h"
 
+int 		get_percent(t_fmt *fmt)
+{
+	print_collected_data(&fmt);
+	exit (0);
+	while (--fmt->width > 0 && !(fmt->flags & LEFT))
+		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+	*fmt->buf_ptr++ = '%';
+	fmt->iter += 1;
+	return (0);
+}
+
 int			get_char(t_fmt *fmt, va_list args)
 {
-//	t_fmt	*f;
-//
-//	f = *fmt;
 //	if (f->precision != -1) ?
 //		"'precision' - results in undefined behaviour with 'p' conversion qualifier.");
 	/* applying width (If there IS width and no LEFT-flag) */
@@ -24,16 +32,14 @@ int			get_char(t_fmt *fmt, va_list args)
 		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
 	*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
 	fmt->iter += 1;
-//	return (?);
+	return (0); // ?
 }
 
 int				get_str(t_fmt *fmt, va_list args)
 {
-//	t_fmt			*f;
 	size_t 			len;
 	const char 		*str;
 
-//	f = *fmt;
 	str = va_arg(args, const char *);
 	len = ft_strnlen(str, fmt->precision);
 	/* applying width (If there IS width and no LEFT-flag) */
@@ -42,13 +48,11 @@ int				get_str(t_fmt *fmt, va_list args)
 	while (len--)
 		*fmt->buf_ptr++ = *str++;
 	fmt->iter += 1;
-//	return (?);
+	return (0); // ?
 }
 
 int				get_ptr(t_fmt *fmt, va_list args)
 {
-//	t_fmt			*f;
-	int 			i;
 	char 			hex[15];
 	char 			*hex_ptr = hex;
 //	uintmax_t 	pointer; //aka 'unsigned long',
@@ -61,7 +65,6 @@ int				get_ptr(t_fmt *fmt, va_list args)
 	/* Тип с точной шириной. Не все системы могут поддерживать эти типы. ~ wiki */
 //	unsigned long 	pointer;
 
-//	f = *fmt;
 	pointer = (uint64_t)va_arg(args, void *);
 
 //	if (f->precision != -1)
@@ -69,7 +72,7 @@ int				get_ptr(t_fmt *fmt, va_list args)
 
 	/* seems like valgrind things that return of va_arg (called with void *)
 	 * can't be initialized. */
-	itoa_pf(pointer, hex_ptr, 0, 16);
+	itoa_base(pointer, hex_ptr, 0, 16);
 	while (--fmt->width > ft_strlen(hex) + 1 && fmt->width > -1 && !(fmt->flags & LEFT))
 	{
 		/* Original printf filling 'width' with 'zero's even if CLion says its result
@@ -87,10 +90,9 @@ int				get_ptr(t_fmt *fmt, va_list args)
 	*fmt->buf_ptr++ = 'x';
 
 	/* Filling buf. Iterator here to safely delete 'hex'-string after writing */
-	i = 0;
 	while (*hex_ptr)
 		*fmt->buf_ptr++ = *hex_ptr++;
 	fmt->iter += 1;
-//	return (?);
+	return (0); // ?
 
 }

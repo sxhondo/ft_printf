@@ -23,7 +23,8 @@
 #define PLUS	(unsigned)4			/* show plus */
 #define SPACE	(unsigned)8			/* space if plus */
 #define LEFT	(unsigned)16		/* left justified */
-#define SPECIAL	(unsigned)64		/* 0x */
+#define CASE	(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase */
+#define SPECIAL	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
 
 
 typedef struct		s_fmt
@@ -44,29 +45,16 @@ int 				process_flags(t_fmt *node);
 void				process_length_modifier(t_fmt	*node, va_list args);
 void				process_base(t_fmt	*node, va_list args);
 
-
-
-	/* utilities */
-int 				skip_atoi(const char *s);
-int					ft_isspecial(char ch);
-void				print_collected_data(t_fmt **fmt);
-
-
-void				put_uns_number(unsigned int nb, int fd);
-
-
-
 	/* conversions */
-int					get_char(t_fmt *fmt, va_list args);
+int					get_percent(t_fmt *fmt);
+int 				get_num(int64_t num, t_fmt *fmt, int sig);
 int					get_str(t_fmt *fmt, va_list args);
 int					get_ptr(t_fmt *fmt, va_list args);
+int					get_char(t_fmt *fmt, va_list args);
 
-int 				get_num(int64_t num, t_fmt *fmt, int sig);
-
-char		 		*itoa_pf(uint64_t n, char *s, int sig, unsigned base);
-
+char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base);
 
 int					ft_printf(char *fmt, ...);
-
+void				print_collected_data(t_fmt **fmt);
 
 #endif //FT_PRINTF_FT_PRINTF_H

@@ -12,46 +12,30 @@
 
 #include "ft_printf.h"
 
-char		 		*itoa_pf(uint64_t num, char *s, int sig, unsigned base)
+char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 {
 	char 			hex_table[17] = "0123456789abcdef";
-	uint64_t 		next;
-	uint64_t 		save;
+	uint64_t 		rmndr;
 	char 			*ptr;
+	int 			save;
 
-	save = base;
 	ptr = s;
-
-	/* This is for unsigned numbers (so 8, 16, 2 - bases) */
-	if (base != 10)
-	{
-		while (save > (base - 1))
-		{
-			next = num / base;
-			save = next * base;
-			if (base == 16)
-				*ptr++ = hex_table[num - save];
-			if (base == 8 || base == 2)
-				*ptr++ = (num - save) % 10 + '0';
-			num = next;
-		}
-	}
-	/* This is for signed numbers */
-	if ((int)num < 0 && sig == 1)
+	rmndr = 1;
+	if ((save = num) < 0 && sig == 1)
 		num = -num;
-	if (num == 0 && base == 10) //this is only for base10
-		*ptr++ = '0';
-	while (num != 0)
+	while ((rmndr * base) >= base)
 	{
-		*ptr++ = num % 10 + '0';
-		num /= 10;
+		rmndr = num / base;
+		if (base == 10 || base == 8 || base == 2)
+			*ptr++ = (num - (rmndr * base)) % 10 + '0';
+		if (base == 16)
+			*ptr++ = hex_table[num - (rmndr * base)];
+		num = rmndr;
 	}
-	*ptr = '\0';
+	*ptr++ = '\0';
 	ft_strrev(s);
-	return (0);
+	return (0); // ?
 }
-
-
 
 int 				get_num(int64_t num, t_fmt *fmt, int sig)
 {
@@ -63,21 +47,24 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	char 			*p_tmp;
 	unsigned int 	nblen;
 
+	p_tmp = tmp;
 	i = 0;
 	prec = 0;
 	sign = 0;
-	p_tmp = tmp;
 
-	/* this function should return pointer to a new array (for 'P' conversion) */
-	itoa_pf(num, p_tmp, sig, fmt->base);
+	itoa_base(num, tmp, sig, fmt->base);
+	nblen = ft_strlen(tmp);
 
-	/* uppercasing */
+		/* getting 'S.P.E.C.I.A.L.' */
+		/*  */
+	nblen += (fmt->flags & SPECIAL && ft_strcmp(tmp, "0")) ? 2 : 0;
+
+	/* applying uppercase */
 	while (*fmt->iter == 'X' && tmp[i])
 	{
 		tmp[i] = ft_toupper(tmp[i]);
 		i++;
 	}
-	nblen = ft_strlen(tmp);
 
 	/* applying flag ' ' */
 	if (fmt->flags & SPACE && num > 0)
@@ -98,21 +85,36 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	while (fmt->precision-- > nblen && fmt->precision > -1 && ++prec)
 		fmt->width--;
 
-	/* applying width */
-	while (fmt->width > -1 && --fmt->width >= nblen && !(fmt->flags & LEFT))
+		/* applying flag '-' */
+		/* If 'LEFT' first write num, then width */
+	while (fmt->flags & LEFT && *p_tmp)
+		*fmt->buf_ptr++ = *p_tmp++;
+
+		/* applying width */
+	while (fmt->width > -1 && --fmt->width >= nblen)
 		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
 
-	/* applying precision */
+	/* applying special */
+	if (fmt->flags & SPECIAL && (fmt->base == 8 || fmt->base == 16) && ft_strcmp(tmp, "0"))
+	{
+		*fmt->buf_ptr++ = '0';
+		if (fmt->base == 16)
+			*fmt->buf_ptr++ = fmt->flags & CASE ? 'X' : 'x';
+		nblen -= 2;
+	}
+		/* applying precision */
 	while (prec-- > 0)
 		*fmt->buf_ptr++ = '0';
 
-	/* applying sign */
+		/* applying sign */
 	if (sign)
 		*fmt->buf_ptr++ = sign;
 
-	/* writing buf */
-	while (nblen--)
+		/* writing buf */
+		/* Only if buf wasnt already written by 'LEFT'*/
+	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;
+	*fmt->buf_ptr = '\0';
 	fmt->iter += 1;
-	return (0);
+	return (0); // ?
 }

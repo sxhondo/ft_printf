@@ -12,6 +12,25 @@
 
 #include <ft_printf.h>
 
+int 		skip_atoi(const char *s)
+{
+	int 		i;
+
+	i = 0;
+	while (ft_isdigit(*s))
+		i = i * 10 + *s++ - '0';
+	return (i);
+}
+
+int			ft_isspecial(char ch)
+{
+	if (ch == '*' || ch == '.' || ch == '%')
+		return (0);
+	if (ch >= ' ' && ch <= '0')
+		return (1);
+	return (0);
+}
+
 int 			process_flags(t_fmt *node)
 {
 	node->flags = 0;
@@ -100,9 +119,12 @@ void			process_base(t_fmt	*node, va_list args)
 	node->base = 10;
 	if (*node->iter == 'o')
 		node->base = 8;
-	if (*node->iter == 'x' || *node->iter == 'X')
+	else if (*node->iter == 'x' || *node->iter == 'X')
+	{
+		if (*node->iter == 'X')
+			node->flags |= CASE;
 		node->base = 16;
-	if (*node->iter == 'b')
+	}
+	else if (*node->iter == 'b')
 		node->base = 2;
-//	node->iter++;
 }

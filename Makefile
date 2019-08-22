@@ -20,6 +20,7 @@ all: $(NAME)
 
 $(NAME): $(LIB)
 	@gcc  -c srcs/*.c -I libft/incs/ -I incs/
+
 	@ar -q $(NAME) *.o
 
 $(LIB):

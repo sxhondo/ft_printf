@@ -12,25 +12,6 @@
 
 #include <ft_printf.h>
 
-int 		skip_atoi(const char *s)
-{
-	int 		i;
-
-	i = 0;
-	while (ft_isdigit(*s))
-		i = i * 10 + *s++ - '0';
-	return (i);
-}
-
-int			ft_isspecial(char ch)
-{
-	if (ch == '*' || ch == '.')
-		return (0);
-	if (ch >= ' ' && ch <= '0')
-		return (1);
-	return (0);
-}
-
 void			print_collected_data(t_fmt **fmt)
 {
 	t_fmt		*f;
