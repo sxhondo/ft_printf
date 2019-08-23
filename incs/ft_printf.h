@@ -24,7 +24,7 @@
 #define SPACE	(unsigned)8			/* space if plus */
 #define LEFT	(unsigned)16		/* left justified */
 #define CASE	(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase */
-#define SPECIAL	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
+#define SHARP	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
 
 
 typedef struct		s_fmt

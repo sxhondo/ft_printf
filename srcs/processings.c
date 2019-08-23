@@ -53,7 +53,7 @@ int 			process_flags(t_fmt *node)
 		}
 		if (*node->iter == '#')
 		{
-			node->flags |= SPECIAL;
+			node->flags |= SHARP;
 			continue;
 		}
 		if (*node->iter == '0')

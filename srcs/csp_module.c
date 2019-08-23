@@ -14,11 +14,13 @@
 
 int 		get_percent(t_fmt *fmt)
 {
-	print_collected_data(&fmt);
-	exit (0);
-	while (--fmt->width > 0 && !(fmt->flags & LEFT))
+	if (fmt->flags & LEFT)
+		*fmt->buf_ptr++ = '%';
+	while (--fmt->width > 0)
 		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
-	*fmt->buf_ptr++ = '%';
+	if (!(fmt->flags & LEFT))
+		*fmt->buf_ptr++ = '%';
+	*fmt->buf_ptr = '\0';
 	fmt->iter += 1;
 	return (0);
 }

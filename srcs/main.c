@@ -16,8 +16,8 @@ int 	main()
 {
 	void	*p;
 
-	printf("\nRETURN [%d]\n", (int)ft_printf("%0#10x", 42));
-//	printf("RETURN [%d]\n", (int)printf("%#10x", 42));
+	printf("\nRETURN [%d]\n", (int)ft_printf("%#.1x", 0));
+//	printf("\nRETURN [%d]\n", (int)printf("%#.0x", 0));
 
 		/* BASE 10 (UNSIGNED) COMPARE (ft_printf vs. printf) */
 //	int i = -42;

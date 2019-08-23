@@ -17,6 +17,7 @@ char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 	char 			hex_table[17] = "0123456789abcdef";
 	uint64_t 		rmndr;
 	char 			*ptr;
+	char 			*p;
 	int 			save;
 
 	ptr = s;
@@ -34,7 +35,7 @@ char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 	}
 	*ptr++ = '\0';
 	ft_strrev(s);
-	return (0); // ?
+	return (s); // ?
 }
 
 int 				get_num(int64_t num, t_fmt *fmt, int sig)
@@ -52,13 +53,38 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	prec = 0;
 	sign = 0;
 
-	itoa_base(num, tmp, sig, fmt->base);
+		/* applying SHARP */
+	if (fmt->flags & SHARP && num != 0)
+	{
+		if (fmt->flags & ZERO)
+		{
+			*fmt->buf_ptr++ = '0';
+			fmt->width--;
+			if (fmt->base == 16)
+			{
+				*fmt->buf_ptr++ = fmt->flags & CASE ? 'X' : 'x';
+				fmt->width--;
+			}
+		}
+		else
+		{
+			*p_tmp++ = '0';
+			if (fmt->base == 16)
+				*p_tmp++ = fmt->flags & CASE ? 'X' : 'x';
+		}
+	}
+	itoa_base(num, p_tmp, sig, fmt->base);
+
+	/* If '0x' or '0' was written, move pointer back */
+	if (p_tmp - tmp)
+	{
+		if (fmt->base == 8)
+			p_tmp -= 1;
+		else if (fmt->base == 16)
+			p_tmp -= 2;
+	}
+
 	nblen = ft_strlen(tmp);
-
-		/* getting 'S.P.E.C.I.A.L.' */
-		/*  */
-	nblen += (fmt->flags & SPECIAL && ft_strcmp(tmp, "0")) ? 2 : 0;
-
 	/* applying uppercase */
 	while (*fmt->iter == 'X' && tmp[i])
 	{
@@ -82,26 +108,19 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		sign = '-';
 
 		/* getting precision */
-	while (fmt->precision-- > nblen && fmt->precision > -1 && ++prec)
-		fmt->width--;
+	if (fmt->precision > -1)
+		while (fmt->precision-- > nblen && ++prec)
+			fmt->width--;
 
-		/* applying flag '-' */
-		/* If 'LEFT' first write num, then width */
+	/* applying flag '-' */
+	/* If 'LEFT' first write num, then width */
 	while (fmt->flags & LEFT && *p_tmp)
 		*fmt->buf_ptr++ = *p_tmp++;
 
-		/* applying width */
+	/* applying width */
 	while (fmt->width > -1 && --fmt->width >= nblen)
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+		*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) ? '0' : ' ';
 
-	/* applying special */
-	if (fmt->flags & SPECIAL && (fmt->base == 8 || fmt->base == 16) && ft_strcmp(tmp, "0"))
-	{
-		*fmt->buf_ptr++ = '0';
-		if (fmt->base == 16)
-			*fmt->buf_ptr++ = fmt->flags & CASE ? 'X' : 'x';
-		nblen -= 2;
-	}
 		/* applying precision */
 	while (prec-- > 0)
 		*fmt->buf_ptr++ = '0';
@@ -111,10 +130,14 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		*fmt->buf_ptr++ = sign;
 
 		/* writing buf */
-		/* Only if buf wasnt already written by 'LEFT'*/
+		/* Only if buf wasnt already written by 'LEFT' */
+
 	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;
 	*fmt->buf_ptr = '\0';
 	fmt->iter += 1;
+	print_collected_data(&fmt);
+//	ft_putstr(tmp);
+//	exit (0);
 	return (0); // ?
 }
