@@ -27,30 +27,49 @@ int 		get_percent(t_fmt *fmt)
 
 int			get_char(t_fmt *fmt, va_list args)
 {
-//	if (f->precision != -1) ?
-//		"'precision' - results in undefined behaviour with 'p' conversion qualifier.");
-	/* applying width (If there IS width and no LEFT-flag) */
-	while (--fmt->width > 0 && !(fmt->flags & LEFT))
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
-	*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+	unsigned char	ch;
+
 	fmt->iter += 1;
-	return (0); // ?
+	/* applying width (If there IS width and no LEFT-flag) */
+	if (fmt->flags & LEFT)
+		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+	while (--fmt->width > 0)
+		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+	if (fmt->precision > -1)
+		while (--fmt->precision >= 1)
+			*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+	else if (!(fmt->flags & LEFT))
+		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+	return (0);
 }
 
 int				get_str(t_fmt *fmt, va_list args)
 {
-	size_t 			len;
+	int 			len;
+	int 			lcpy;
 	const char 		*str;
+	char 			zero[] = "(null)";
+	char 			*ptr = zero;
 
-	str = va_arg(args, const char *);
+	fmt->iter += 1;
+	if (!(str = va_arg(args, const char *)))
+	{
+		while (*ptr)
+			*fmt->buf_ptr++ = *ptr++;
+		return (0);
+	}
+	if (*str == '\0')
+		len -= 1;
 	len = ft_strnlen(str, fmt->precision);
 	/* applying width (If there IS width and no LEFT-flag) */
-	while (fmt->width > -1 && --fmt->width >= len && !(fmt->flags & LEFT))
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
-	while (len--)
+	lcpy = len;
+	while (fmt->flags & LEFT && lcpy--)
 		*fmt->buf_ptr++ = *str++;
-	fmt->iter += 1;
-	return (0); // ?
+	while (fmt->width > -1 && --fmt->width >= len)
+		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+	while (len-- && lcpy > 0)
+		*fmt->buf_ptr++ = *str++;
+	return (0);
 }
 
 int				get_ptr(t_fmt *fmt, va_list args)

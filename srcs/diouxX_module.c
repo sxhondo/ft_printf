@@ -97,20 +97,24 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		sign = ' ';
 
 		/* getting flag '+' */
-	/* printf("%+04d", 42) - gives you +042
-	* but printf("%+4d, 42) - gives _+42
- 	* So, in case '0' its before width. Without '0' its after...
- 	* P.S. - decreasing width and checking it in 'if' - is not very good */
-
+	/* decreasing width and checking it in 'if' - is not very good */
 	if (fmt->flags & PLUS && fmt->width--)
 		sign = num < 0 ? '-' : '+';
 	else if (num < 0 && fmt->width--)
 		sign = '-';
 
 		/* getting precision */
-	if (fmt->precision > -1)
+	/* if precision is set but like this "." or ".0" and num is 0 - don't print anything */
+	if (fmt->precision == 0 && num == 0)
+	{
+		nblen = 0;
+		fmt->width -= 1;
+	}
+	/* else get precision */
+	else if (fmt->precision > -1)
 		while (fmt->precision-- > nblen && ++prec)
 			fmt->width--;
+
 
 	/* applying flag '-' */
 	/* If 'LEFT' first write num, then width */
@@ -124,7 +128,6 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		/* applying precision */
 	while (prec-- > 0)
 		*fmt->buf_ptr++ = '0';
-
 		/* applying sign */
 	if (sign)
 		*fmt->buf_ptr++ = sign;
@@ -134,10 +137,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;
-	*fmt->buf_ptr = '\0';
 	fmt->iter += 1;
-	print_collected_data(&fmt);
-//	ft_putstr(tmp);
-//	exit (0);
-	return (0); // ?
+//	print_collected_data(&fmt);
+	return (0);
 }

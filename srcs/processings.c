@@ -85,7 +85,10 @@ int				process_precision(t_fmt *node, va_list args)
 {
 	node->precision = -1;
 	if (*node->iter == '.')
+	{
 		node->iter++;
+		node->precision++;
+	}
 	if (ft_isdigit(*node->iter))
 	{
 		node->precision = skip_atoi(node->iter);

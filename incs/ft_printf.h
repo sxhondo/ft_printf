@@ -35,7 +35,7 @@ typedef struct		s_fmt
 	int				precision;
 	unsigned int	base;
 	const char		*iter;
-	char 			*buf_ptr;
+	unsigned char	*buf_ptr;
 }					t_fmt;
 
 	/* processings */

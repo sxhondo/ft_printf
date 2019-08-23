@@ -60,10 +60,10 @@ int					print_module(t_fmt *fmt, va_list args)
 	return (0); // ?
 }
 
-int 					ft_fprintf(int fd, const char *fmt, va_list args)
+long 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	char 				buf[1024];
-	char 				*ptr = buf;
+	unsigned char		buf[1024];
+	unsigned char		*ptr = buf;
 	t_fmt				*format;
 
 	format = ft_memalloc(sizeof(t_fmt));
@@ -84,6 +84,7 @@ int 					ft_fprintf(int fd, const char *fmt, va_list args)
 		print_module(format, args);
 	}
 	/* print buf */
+	*format->buf_ptr = '\0';
 	while (*ptr)
 		write(fd, &*ptr++, 1);
 	free (format);
