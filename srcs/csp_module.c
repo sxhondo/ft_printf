@@ -27,8 +27,6 @@ int 		get_percent(t_fmt *fmt)
 
 int			get_char(t_fmt *fmt, va_list args)
 {
-	unsigned char	ch;
-
 	fmt->iter += 1;
 	/* applying width (If there IS width and no LEFT-flag) */
 	if (fmt->flags & LEFT)
@@ -49,13 +47,13 @@ int				get_str(t_fmt *fmt, va_list args)
 	int 			lcpy;
 	const char 		*str;
 	char 			zero[] = "(null)";
-	char 			*ptr = zero;
+	char 			*z = zero;
 
 	fmt->iter += 1;
 	if (!(str = va_arg(args, const char *)))
 	{
-		while (*ptr)
-			*fmt->buf_ptr++ = *ptr++;
+		while (*z)
+			*fmt->buf_ptr++ = *z++;
 		return (0);
 	}
 	if (*str == '\0')

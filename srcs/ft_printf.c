@@ -85,21 +85,21 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 	}
 	/* print buf */
 	*format->buf_ptr = '\0';
-	while (*ptr)
+	while (*ptr != '\0')
 		write(fd, &*ptr++, 1);
 	free (format);
 	return (format->buf_ptr - buf);
 }
 
-int				ft_printf(char *fmt, ...)
+int				ft_printf(const char * restrict format, ...)
 {
 	va_list 	args;
 	int 		done;
 
-	if (fmt == NULL)
+	if (!format)
 		return (-1);
-	va_start(args, fmt); /* устанавливает аrgs на 1-й безымянный аргумент после fmt */
-	done = ft_fprintf(1, fmt, args);
+	va_start(args, format); /* устанавливает аrgs на 1-й безымянный аргумент после fmt */
+	done = (int)ft_fprintf(1, format, args);
 	va_end(args);
 	return (done);
 }
