@@ -20,9 +20,9 @@
 #include <limits.h>
 
 #define ZERO	(unsigned)1			/* filling with zeroes */
-#define PLUS	(unsigned)4			/* show plus */
+#define PLUS	(unsigned)4			/* show sign of number */
 #define SPACE	(unsigned)8			/* space if plus */
-#define LEFT	(unsigned)16		/* left justified */
+#define LEFT	(unsigned)16		/* left alignment */
 #define CASE	(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase */
 #define SHARP	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
 
@@ -43,6 +43,7 @@ int					process_precision(t_fmt *node, va_list args);
 int					process_width(t_fmt *node, va_list args);
 int 				process_flags(t_fmt *node);
 void				process_length_modifier(t_fmt	*node, va_list args);
+//void 				process_lmodifier(t_fmt *fmt);
 void				process_base(t_fmt	*node, va_list args);
 
 	/* conversions */
