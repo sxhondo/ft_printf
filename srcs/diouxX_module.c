@@ -49,10 +49,6 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	unsigned int 	nblen;
 
 	p_tmp = tmp;
-	i = 0;
-	prec = 0;
-	sign = 0;
-
 		/* applying SHARP */
 	if (fmt->flags & SHARP && num != 0)
 	{
@@ -86,6 +82,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 	nblen = ft_strlen(tmp);
 	/* applying uppercase */
+	i = 0;
 	while (*fmt->iter == 'X' && tmp[i])
 	{
 		tmp[i] = ft_toupper(tmp[i]);
@@ -93,6 +90,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	}
 
 	/* applying flag ' ' */
+	sign = 0;
 	if (fmt->flags & SPACE && num > 0)
 		sign = ' ';
 
@@ -105,6 +103,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 		/* getting precision */
 	/* if precision is set but like this "." or ".0" and num is 0 - don't print anything */
+	prec = 0;
 	if (fmt->precision == 0 && num == 0)
 	{
 		nblen = 0;
