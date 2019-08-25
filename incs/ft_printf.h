@@ -39,12 +39,12 @@ typedef struct		s_fmt
 }					t_fmt;
 
 	/* processings */
-int					process_precision(t_fmt *node, va_list args);
-int					process_width(t_fmt *node, va_list args);
-int 				process_flags(t_fmt *node);
-void				process_length_modifier(t_fmt	*node, va_list args);
+int					process_precision(t_fmt *fmt, va_list args);
+int					process_width(t_fmt *fmt, va_list args);
+int 				process_flags(t_fmt *fmt);
+void				process_length_modifier(t_fmt *fmt, va_list args);
 //void 				process_lmodifier(t_fmt *fmt);
-void				process_base(t_fmt	*node, va_list args);
+void				process_base(t_fmt	*fmt, va_list args);
 
 	/* conversions */
 int					get_percent(t_fmt *fmt);

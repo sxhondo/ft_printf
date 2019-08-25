@@ -31,73 +31,73 @@ int			ft_isspecial(char ch)
 	return (0);
 }
 
-int 			process_flags(t_fmt *node)
+int 			process_flags(t_fmt *fmt)
 {
-	node->flags = 0;
-	while (*node->iter++ && ft_isspecial(*node->iter))
+	fmt->flags = 0;
+	while (*fmt->iter++ && ft_isspecial(*fmt->iter))
 	{
-		if (*node->iter == '-')
+		if (*fmt->iter == '-')
 		{
 			node->flags |= LEFT;
 			continue;
 		}
-		if (*node->iter == '+')
+		if (*fmt->iter == '+')
 		{
 			node->flags |= PLUS;
 			continue;
 		}
-		if (*node->iter == ' ')
+		if (*fmt->iter == ' ')
 		{
-			node->flags |= SPACE;
+			fmt->flags |= SPACE;
 			continue;
 		}
-		if (*node->iter == '#')
+		if (*fmt->iter == '#')
 		{
-			node->flags |= SHARP;
+			fmt->flags |= SHARP;
 			continue;
 		}
-		if (*node->iter == '0')
+		if (*fmt->iter == '0')
 		{
-			node->flags |= ZERO;
+			fmt->flags |= ZERO;
 			continue;
 		}
 	}
 	return (0);
 }
 
-int				process_width(t_fmt *node, va_list args)
+int				process_width(t_fmt *fmt, va_list args)
 {
-	node->width = -1;
+	fmt->width = -1;
 	if (ft_isdigit(*node->iter))
 	{
-		node->width = skip_atoi(node->iter);
-		node->iter += ft_nblen(node->width);
+		fmt->width = skip_atoi(fmt->iter);
+		fmt->iter += ft_nblen(fmt->width);
 	}
-	else if (*node->iter == '*')
+	else if (*fmt->iter == '*')
 	{
-		++node->iter;
-		node->width = va_arg(args, int);
+		++fmt->iter;
+		fmt->width = va_arg(args, int);
 	}
 	return (0);
 }
 
-int				process_precision(t_fmt *node, va_list args)
+int				process_precision(t_fmt *fmt, va_list args)
 {
-	node->precision = -1;
-	if (*node->iter == '.')
+	fmt->precision = -1;
+	if (*fmt->iter == '.')
 	{
-		node->iter++;
-		node->precision++;
+		fmt->iter++;
+		fmt->precision++;
 	}
-	if (ft_isdigit(*node->iter))
+	if (ft_isdigit(*fmt->iter))
 	{
-		node->precision = skip_atoi(node->iter);
-		node->iter += ft_nblen(node->precision);
+		fmt->precision = skip_atoi(fmt->iter);
+		fmt->iter += ft_nblen(fmt->precision);
 	}
-	else if (*node->iter == '*')
+	else if (*fmt->iter == '*')
 	{
-		node->iter++;
-		node->precision = va_arg(args, int);
+		fmt->iter++;
+		fmt->precision = va_arg(args, int);
 	}
 	return (0);
 }
@@ -121,32 +121,32 @@ int				process_precision(t_fmt *node, va_list args)
 // 		fmt->lmofidier |= 32; // 'L'
 // }
 
-void			process_length_modifier(t_fmt	*node, va_list args)
+void			process_length_modifier(t_fmt	*fmt, va_list args)
 {
-	node->lmodifier = -1;
-	if (*node->iter == 'h' || *node->iter == 'l' || *node->iter == 'L')
+	fmt->lmodifier = -1;
+	if (*fmt->iter == 'h' || *fmt->iter == 'l' || *fmt->iter == 'L')
 	{
-		node->lmodifier = *node->iter;
-		node->iter++;
-		if (*node->iter == 'h' || *node->iter == 'l')
+		fmt->lmodifier = *fmt->iter;
+		fmt->iter++;
+		if (*fmt->iter == 'h' || *fmt->iter == 'l')
 		{
-			node->lmodifier *= 2;
-			node->iter++;
+			fmt->lmodifier *= 2;
+			fmt->iter++;
 		}
 	}
 }
 
-void			process_base(t_fmt	*node, va_list args)
+void			process_base(t_fmt	*fmt, va_list args)
 {
-	node->base = 10;
-	if (*node->iter == 'o')
-		node->base = 8;
-	else if (*node->iter == 'x' || *node->iter == 'X')
+	fmt->base = 10;
+	if (*fmt->iter == 'o')
+		fmt->base = 8;
+	else if (*fmt->iter == 'x' || *fmt->iter == 'X')
 	{
-		if (*node->iter == 'X')
-			node->flags |= CASE;
-		node->base = 16;
+		if (*fmt->iter == 'X')
+			fmt->flags |= CASE;
+		fmt->base = 16;
 	}
-	else if (*node->iter == 'b')
-		node->base = 2;
+	else if (*fmt->iter == 'b')
+		fmt->base = 2;
 }
