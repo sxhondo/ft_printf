@@ -6,7 +6,7 @@
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/21 20:21:21 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/08/21 20:21:22 by sxhondo          ###   ########.fr       */
+/*   Updated: 2019/08/27 00:27:18 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 	}
 	*ptr++ = '\0';
 	ft_strrev(s);
-	return (s); // ?
+	return (NULL);
 }
 
 int 				get_num(int64_t num, t_fmt *fmt, int sig)
@@ -51,7 +51,8 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	unsigned int 	nblen;
 
 	p_tmp = tmp;
-		/* applying SHARP */
+
+		/* apply SHARP */
 	if (fmt->flags & SHARP && num != 0)
 	{
 		if (fmt->flags & ZERO)
@@ -73,8 +74,9 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	}
 
 	itoa_base(num, p_tmp, sig, fmt->base);
+	nblen = ft_strlen(tmp);
 
-	/* If '0x' or '0' was written, move pointer back */
+		/* if '0x' or '0' was written(pointer to buf - buf > 0), move pointer back */
 	if (p_tmp - tmp)
 	{
 		if (fmt->base == 8)
@@ -83,8 +85,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 			p_tmp -= 2;
 	}
 
-	nblen = ft_strlen(tmp);
-	/* applying uppercase */
+		/* apply uppercase */
 	i = 0;
 	while (*fmt->iter == 'X' && tmp[i])
 	{
@@ -92,7 +93,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		i++;
 	}
 
-	/* applying flag ' ' */
+		/* apply flag ' '. Write space in var sign. */
 	sign = 0;
 	if (fmt->flags & SPACE && num > 0 && num != UINT32_MAX)
 	{
@@ -100,29 +101,29 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		fmt->width--;
 	}
 
-		/* getting flag '+' */
-	/* decreasing width and checking it in 'if' - is not very good */
+		/* get flag '+' */
+	/* if flags 'plus' write +/- in var sign. Else only for negative nums */
 	if (fmt->flags & PLUS && fmt->width-- && num != UINT32_MAX)
 		sign = num < 0 ? '-' : '+';
 	else if (num < 0 && fmt->width--)
 		sign = '-';
 
-		/* getting precision */
-	/* if precision is set but like this "." or ".0" and num is 0 - don't print anything */
+		/* get precision */
+	/* precision like this "." or ".0" and num is 0 - don't print anything */
 	prec = 0;
 	if (fmt->precision == 0 && num == 0)
 	{
 		nblen = 0;
 		fmt->width -= 1;
 	}
-	/* else get precision */
+	/* else get precision and decrease width */
 	else if (fmt->precision > -1)
 		while (fmt->precision-- > nblen && ++prec)
 			fmt->width--;
 
 
-		/* applying sign  */
-	/* if ZERO or LEFT promoted write in buf directly */
+		/* apply sign */
+	/* if ZERO or LEFT promoted we can already write sign in buf */
 	if (sign && (fmt->flags & ZERO || fmt->flags & LEFT))
 	{
 		*fmt->buf_ptr++ = sign;
@@ -130,32 +131,34 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	}
 
 		/* apply precision */
-	/* In case of LEFT write directly in buf (before everything) */
+	/* if LEFT promoted we can already write precision in buf */
 	while (fmt->flags & LEFT && prec-- > 0)
 		*fmt->buf_ptr++ = '0';
 
 
-		/* apply flag '-' */
-	/* If 'LEFT' first write num, then width */
+		/* apply flag left alignment ('-') */
+	/* if LEFT promoted we can already write num in buf */
 	while (fmt->flags & LEFT && *p_tmp)
 		*fmt->buf_ptr++ = *p_tmp++;
 
-	/* applying width */
-	while (fmt->width > -1 && --fmt->width >= nblen)
+		/* apply width */
+	/* if flag zero promoted fill the field with '0' else with ' '. 
+	 * Original printf ignores zero-filling when the precision promoted. Dunno why */
+	while (fmt->width > -1 && --fmt->width >= nblen) // !(fmt->flags & LEFT) ?
 		*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) && prec < 1 ? '0' : ' ';
 
 		/* apply sign */
-	/* if previous sign-check was not made */
+	/* if previous sign-check was not made write in buf sign */
 	if (sign)
 		*fmt->buf_ptr++ = sign;
 
 		/* apply precision */
-	/* If previous check wasnt made. (after everything) */
+	/* If previous check was not made write in buf '0's */
 	while (prec-- > 0)
 		*fmt->buf_ptr++ = '0';
 
-		/* writing buf */
-	/* if buf wasnt already written by 'LEFT' */
+		/* write buf */
+	/* if buf was not already written by 'LEFT' */
 	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;
 	fmt->iter += 1;

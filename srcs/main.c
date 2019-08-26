@@ -6,7 +6,7 @@
 /*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/04 20:32:45 by sxhondo           #+#    #+#             */
-/*   Updated: 2019/08/04 20:32:46 by sxhondo          ###   ########.fr       */
+/*   Updated: 2019/08/27 00:30:46 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,5 @@ int 	main()
 	printf("\nRETURN [%d]\n", ft_printf("%hhi", -42));
 //	printf("\nRETURN [%d]\n", printf("%lu", -42));
 
-
-
-		/* BASE 10 (UNSIGNED) COMPARE (ft_printf vs. printf) */
-//	int i = -42;
-//	printf("\tUNSIGNED INT: \n");
-//	ft_printf("%u", i);
-//	printf("%u\n", i);
-//	printf("\t------------------\n");
-//
-//	printf("\tUNSIGNED CHAR: \n");
-//	ft_printf("%hhu", i);
-//	printf("%hhu\n", i);
-//	printf("\t------------------\n");
-//
-//	printf("UNSIGNED SHORT \n");
-//	ft_printf("%hu", i);
-//	printf("%hu\n", i);
-//	printf("\t------------------\n");
-//
-//	printf("UNSIGNED LONG \n");
-//	ft_printf("%lu", i);
-//	printf("%lu\n", i);
-//	printf("\t------------------\n");
-//
-//	printf("UNSIGNED LONG LONG \n");
-//	ft_printf("%llu", i);
-//	printf("%llu\n", i);
-//	printf("\t------------------\n");
 	return (0);
 }
