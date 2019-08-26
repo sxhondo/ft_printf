@@ -31,7 +31,8 @@ typedef struct		s_fmt
 {
 	unsigned int	flags;
 	int				width;
-	int 			lmodifier;
+//	int 			lmodifier;
+	unsigned int	lmodifier;
 	int				precision;
 	unsigned int	base;
 	const char		*iter;
@@ -42,8 +43,8 @@ typedef struct		s_fmt
 int					process_precision(t_fmt *fmt, va_list args);
 int					process_width(t_fmt *fmt, va_list args);
 int 				process_flags(t_fmt *fmt);
-void				process_length_modifier(t_fmt *fmt, va_list args);
-//void 				process_lmodifier(t_fmt *fmt);
+//void				process_length_modifier(t_fmt *fmt, va_list args);
+void 				process_lmodifier(t_fmt *fmt);
 void				process_base(t_fmt	*fmt, va_list args);
 
 	/* conversions */

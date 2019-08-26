@@ -15,12 +15,8 @@
 
 int 	main()
 {
-	printf("\nRETURN [%d]\n", ft_printf("%lu", -42));
+	printf("\nRETURN [%d]\n", ft_printf("%hhi", -42));
 //	printf("\nRETURN [%d]\n", printf("%lu", -42));
-
-
-
-
 
 
 

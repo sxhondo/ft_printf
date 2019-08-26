@@ -102,40 +102,35 @@ int				process_precision(t_fmt *fmt, va_list args)
 	}
 	return (0);
 }
-
-	/* expirimental */
-//#define ZERO	(unsigned)1			/* filling with zeroes */
-//#define PLUS	(unsigned)4			/* show sign of number */
-//#define SPACE	(unsigned)8			/* space if plus */
-//#define LEFT	(unsigned)16		/* left alignment */
-//#define CASE	(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase */
-//#define SHARP	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
-
-// void 			process_lmodifier(t_fmt *fmt)
-// {
-// 	fmt->lmodifier = 0;
-// 	if (fmt->iter == 'h')
-// 		fmt->lmodifier |= (fmt->iter++ == 'h') ? 1 : 4; //'h' OR 'hh'
-// 	else if (fmt->iter == 'l')
-// 		fmt->lmodifier |= (fmt->iter++ == 'l') ? 8 : 16; // 'l' OR 'll'
-// 	else if (fmt->Iter == 'L')
-// 		fmt->lmofidier |= 32; // 'L'
-// }
-
-void			process_length_modifier(t_fmt	*fmt, va_list args)
+	/*hh == 1	h == 4	*/
+	/*ll == 8	l == 16 */
+		/* expirimental */
+void 			process_lmodifier(t_fmt *fmt)
 {
-	fmt->lmodifier = -1;
-	if (*fmt->iter == 'h' || *fmt->iter == 'l' || *fmt->iter == 'L')
-	{
-		fmt->lmodifier = *fmt->iter;
-		fmt->iter++;
-		if (*fmt->iter == 'h' || *fmt->iter == 'l')
-		{
-			fmt->lmodifier *= 2;
-			fmt->iter++;
-		}
-	}
+ 	fmt->lmodifier = 0;
+ 	if (*fmt->iter == 'h')
+ 		fmt->lmodifier |= (*++fmt->iter == 'h') ? (unsigned)1 : (unsigned)4; //'h' OR 'hh'
+ 	else if (*fmt->iter == 'l')
+ 		fmt->lmodifier |= (*++fmt->iter == 'l') ? (unsigned)8 : (unsigned)16; // 'l' OR 'll'
+ 	else if (*fmt->iter == 'L')
+ 		fmt->lmodifier |= (unsigned)32; // 'L'
+ 	fmt->iter += fmt->lmodifier & (unsigned)4 || fmt->lmodifier & (unsigned)16 ? 2 : 1;
 }
+
+//void			process_length_modifier(t_fmt	*fmt, va_list args)
+//{
+//	fmt->lmodifier = -1;
+//	if (*fmt->iter == 'h' || *fmt->iter == 'l' || *fmt->iter == 'L')
+//	{
+//		fmt->lmodifier = *fmt->iter;
+//		fmt->iter++;
+//		if (*fmt->iter == 'h' || *fmt->iter == 'l')
+//		{
+//			fmt->lmodifier *= 2;
+//			fmt->iter++;
+//		}
+//	}
+//}
 
 void			process_base(t_fmt	*fmt, va_list args)
 {

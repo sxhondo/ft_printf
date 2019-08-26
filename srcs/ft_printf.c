@@ -82,8 +82,11 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_flags(format);
 		process_width(format, args);
 		process_precision(format, args);
-		process_length_modifier(format, args);
+		process_lmodifier(format);
+//		process_length_modifier(format, args);
 		process_base(format, args);
+		print_collected_data(&format);
+		exit (0);
 		print_module(format, args);
 	}
 	/* print buf */
