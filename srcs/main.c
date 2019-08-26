@@ -10,12 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../incs/ft_printf.h"
+//#include "ft_printf.h"
 
 int 	main()
 {
-//	printf("\nRETURN [%d]\n", (int)ft_printf("%-5.10o", 2500));
-//	printf("\nRETURN [%d]\n", (int)printf("%-5.10o", 2500));
+	printf("\nRETURN [%d]\n", ft_printf("%lu", -42));
+//	printf("\nRETURN [%d]\n", printf("%lu", -42));
+
+
+
+
+
+
 
 		/* BASE 10 (UNSIGNED) COMPARE (ft_printf vs. printf) */
 //	int i = -42;

@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+//#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
 int 		get_percent(t_fmt *fmt)
 {

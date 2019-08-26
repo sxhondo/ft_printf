@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+//#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
 char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 {
@@ -18,7 +19,8 @@ char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 	uint64_t 		rmndr;
 	char 			*ptr;
 	char 			*p;
-	int 			save;
+//	int				save;
+	int64_t 		save;
 
 	ptr = s;
 	rmndr = 1;
@@ -69,6 +71,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 				*p_tmp++ = fmt->flags & CASE ? 'X' : 'x';
 		}
 	}
+
 	itoa_base(num, p_tmp, sig, fmt->base);
 
 	/* If '0x' or '0' was written, move pointer back */
@@ -91,12 +94,15 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 	/* applying flag ' ' */
 	sign = 0;
-	if (fmt->flags & SPACE && num > 0)
+	if (fmt->flags & SPACE && num > 0 && num != UINT32_MAX)
+	{
 		sign = ' ';
+		fmt->width--;
+	}
 
 		/* getting flag '+' */
 	/* decreasing width and checking it in 'if' - is not very good */
-	if (fmt->flags & PLUS && fmt->width--)
+	if (fmt->flags & PLUS && fmt->width-- && num != UINT32_MAX)
 		sign = num < 0 ? '-' : '+';
 	else if (num < 0 && fmt->width--)
 		sign = '-';
@@ -115,25 +121,41 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 			fmt->width--;
 
 
-	/* applying flag '-' */
+		/* applying sign  */
+	/* if ZERO or LEFT promoted write in buf directly */
+	if (sign && (fmt->flags & ZERO || fmt->flags & LEFT))
+	{
+		*fmt->buf_ptr++ = sign;
+		sign = 0;
+	}
+
+		/* apply precision */
+	/* In case of LEFT write directly in buf (before everything) */
+	while (fmt->flags & LEFT && prec-- > 0)
+		*fmt->buf_ptr++ = '0';
+
+
+		/* apply flag '-' */
 	/* If 'LEFT' first write num, then width */
 	while (fmt->flags & LEFT && *p_tmp)
 		*fmt->buf_ptr++ = *p_tmp++;
 
 	/* applying width */
 	while (fmt->width > -1 && --fmt->width >= nblen)
-		*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) ? '0' : ' ';
+		*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) && prec < 1 ? '0' : ' ';
 
-		/* applying precision */
-	while (prec-- > 0)
-		*fmt->buf_ptr++ = '0';
-		/* applying sign */
+		/* apply sign */
+	/* if previous sign-check was not made */
 	if (sign)
 		*fmt->buf_ptr++ = sign;
 
-		/* writing buf */
-		/* Only if buf wasnt already written by 'LEFT' */
+		/* apply precision */
+	/* If previous check wasnt made. (after everything) */
+	while (prec-- > 0)
+		*fmt->buf_ptr++ = '0';
 
+		/* writing buf */
+	/* if buf wasnt already written by 'LEFT' */
 	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;
 	fmt->iter += 1;

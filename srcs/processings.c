@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_printf.h>
+//#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
 int 		skip_atoi(const char *s)
 {
@@ -38,12 +39,12 @@ int 			process_flags(t_fmt *fmt)
 	{
 		if (*fmt->iter == '-')
 		{
-			node->flags |= LEFT;
+			fmt->flags |= LEFT;
 			continue;
 		}
 		if (*fmt->iter == '+')
 		{
-			node->flags |= PLUS;
+			fmt->flags |= PLUS;
 			continue;
 		}
 		if (*fmt->iter == ' ')
@@ -68,7 +69,7 @@ int 			process_flags(t_fmt *fmt)
 int				process_width(t_fmt *fmt, va_list args)
 {
 	fmt->width = -1;
-	if (ft_isdigit(*node->iter))
+	if (ft_isdigit(*fmt->iter))
 	{
 		fmt->width = skip_atoi(fmt->iter);
 		fmt->iter += ft_nblen(fmt->width);

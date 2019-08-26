@@ -10,10 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+//#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
 int					print_module(t_fmt *fmt, va_list args)
 {
+//	int64_t 		num = 0;
 	uint64_t 		num = 0;
 
 	if (*fmt->iter == '%')
@@ -57,13 +59,14 @@ int					print_module(t_fmt *fmt, va_list args)
 			num = va_arg(args, unsigned int);
 		get_num(num, fmt, 0);
 	}
-	return (0); // ?
+	return (0);
 }
 
 long 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	unsigned char		buf[1024];
 	unsigned char		*ptr = buf;
+	long int 			i;
 	t_fmt				*format;
 
 	format = ft_memalloc(sizeof(t_fmt));
@@ -85,7 +88,8 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 	}
 	/* print buf */
 	*format->buf_ptr = '\0';
-	while (*ptr != '\0')
+	i = 0;
+	while (++i <= format->buf_ptr - buf)
 		write(fd, &*ptr++, 1);
 	free (format);
 	return (format->buf_ptr - buf);

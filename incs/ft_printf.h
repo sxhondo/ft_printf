@@ -54,7 +54,6 @@ int					get_ptr(t_fmt *fmt, va_list args);
 int					get_char(t_fmt *fmt, va_list args);
 
 char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base);
-
 int					ft_printf(const char * restrict format, ...);
 void				print_collected_data(t_fmt **fmt);
 

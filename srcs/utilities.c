@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_printf.h>
+//#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
 void			print_collected_data(t_fmt **fmt)
 {
