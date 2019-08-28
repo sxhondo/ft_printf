@@ -102,37 +102,20 @@ int				process_precision(t_fmt *fmt, va_list args)
 	}
 	return (0);
 }
-	/*hh == 1	h == 4	*/
-	/*ll == 8	l == 16 */
-		/* expirimental */
+
 void 			process_lmodifier(t_fmt *fmt)
 {
  	fmt->lmodifier = 0;
  	if (*fmt->iter == 'h')
- 		fmt->lmodifier |= (*++fmt->iter == 'h') ? (unsigned)1 : (unsigned)4; //'h' OR 'hh'
+ 		fmt->lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
  	else if (*fmt->iter == 'l')
- 		fmt->lmodifier |= (*++fmt->iter == 'l') ? (unsigned)8 : (unsigned)16; // 'l' OR 'll'
+ 		fmt->lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
  	else if (*fmt->iter == 'L')
- 		fmt->lmodifier |= (unsigned)32; // 'L'
- 	fmt->iter += fmt->lmodifier & (unsigned)4 || fmt->lmodifier & (unsigned)16 ? 2 : 1;
+ 		fmt->lmodifier |= LLONG;
+ 	fmt->iter += fmt->lmodifier & CHAR || fmt->lmodifier & LONG_LONG ? 1 : 0;
 }
 
-//void			process_length_modifier(t_fmt	*fmt, va_list args)
-//{
-//	fmt->lmodifier = -1;
-//	if (*fmt->iter == 'h' || *fmt->iter == 'l' || *fmt->iter == 'L')
-//	{
-//		fmt->lmodifier = *fmt->iter;
-//		fmt->iter++;
-//		if (*fmt->iter == 'h' || *fmt->iter == 'l')
-//		{
-//			fmt->lmodifier *= 2;
-//			fmt->iter++;
-//		}
-//	}
-//}
-
-void			process_base(t_fmt	*fmt, va_list args)
+void			process_base(t_fmt	*fmt)
 {
 	fmt->base = 10;
 	if (*fmt->iter == 'o')

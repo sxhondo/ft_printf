@@ -105,7 +105,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	/* if flags 'plus' write +/- in var sign. Else only for negative nums */
 	if (fmt->flags & PLUS && fmt->width-- && num != UINT32_MAX)
 		sign = num < 0 ? '-' : '+';
-	else if (num < 0 && fmt->width--)
+	else if (num < 0 && fmt->width-- && sig != 0)
 		sign = '-';
 
 		/* get precision */
@@ -115,6 +115,9 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	{
 		nblen = 0;
 		fmt->width -= 1;
+		/* #.o or #.0o with arguments '0', '0' - prints: 0 0 */
+		if (fmt->base == 8 && fmt->flags & SHARP)
+			*fmt->buf_ptr++ = *p_tmp++;
 	}
 	/* else get precision and decrease width */
 	else if (fmt->precision > -1)

@@ -19,19 +19,24 @@
 #include <unistd.h>
 #include <limits.h>
 
-#define ZERO	(unsigned)1			/* filling with zeroes */
-#define PLUS	(unsigned)4			/* show sign of number */
-#define SPACE	(unsigned)8			/* space if plus */
-#define LEFT	(unsigned)16		/* left alignment */
-#define CASE	(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase */
-#define SHARP	(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
+#define ZERO		(unsigned)1			/* filling with zeroes OR 'hh' */
+#define SHORT		(unsigned)2			/* short lmodifier - 'h'*/
+#define PLUS		(unsigned)4			/* show sign of number */
+#define SPACE		(unsigned)8			/* space if plus OR 'l' */
+#define LEFT		(unsigned)16		/* left alignment OR 'll' */
+#define CASE		(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase OR 'L'*/
+#define SHARP		(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
 
+#define CHAR		(unsigned)1			/* 'hh' */
+#define SHORT		(unsigned)2			/* 'h'	*/
+#define LONG		(unsigned)8			/* 'l'	*/
+#define LONG_LONG	(unsigned)16		/* 'll'	*/
+#define LLONG		(unsigned)32		/*	'L'	*/
 
 typedef struct		s_fmt
 {
 	unsigned int	flags;
 	int				width;
-//	int 			lmodifier;
 	unsigned int	lmodifier;
 	int				precision;
 	unsigned int	base;
@@ -43,9 +48,8 @@ typedef struct		s_fmt
 int					process_precision(t_fmt *fmt, va_list args);
 int					process_width(t_fmt *fmt, va_list args);
 int 				process_flags(t_fmt *fmt);
-//void				process_length_modifier(t_fmt *fmt, va_list args);
 void 				process_lmodifier(t_fmt *fmt);
-void				process_base(t_fmt	*fmt, va_list args);
+void				process_base(t_fmt	*fmt);
 
 	/* conversions */
 int					get_percent(t_fmt *fmt);
@@ -55,7 +59,7 @@ int					get_ptr(t_fmt *fmt, va_list args);
 int					get_char(t_fmt *fmt, va_list args);
 
 char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base);
-int					ft_printf(const char * restrict format, ...);
-void				print_collected_data(t_fmt **fmt);
+int					ft_printf(const char *restrict format, ...);
+void				print_collected_data(t_fmt *fmt);
 
 #endif //FT_PRINTF_FT_PRINTF_H

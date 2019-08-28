@@ -13,10 +13,21 @@
 //#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
+void			print_collected_data(t_fmt *fmt)
+{
+	printf("\n--------FORMAT----------\n");
+	printf("FLAGS: \t\t\t\t[%d]\n", fmt->flags);
+	printf("WIDTH: \t\t\t\t[%d]\n", fmt->width);
+	printf("PRECISION: \t\t\t[%d]\n", fmt->precision);
+	printf("L_MODIFIER: \t\t[%d] or [%c]\n", fmt->lmodifier, fmt->lmodifier);
+	printf("BASE: \t\t\t\t[%u]\n", fmt->base);
+	printf("ITERATOR: \t\t\t[%s]\n", fmt->iter);
+	printf("------------------------\n");
+}
+
 int					print_module(t_fmt *fmt, va_list args)
 {
-//	int64_t 		num = 0;
-	uint64_t 		num = 0;
+	int64_t 		num = 0;
 
 	if (*fmt->iter == '%')
 		return (get_percent(fmt));
@@ -27,33 +38,33 @@ int					print_module(t_fmt *fmt, va_list args)
 	else if (*fmt->iter == 'p')
 		return (get_ptr(fmt, args));
 
-	/* SIGNED */
+		/* SIGNED */
 	if (*fmt->iter == 'd' || *fmt->iter == 'i')
 	{
-		if (fmt->lmodifier == 208) // char ('hh')
+		if (fmt->lmodifier & CHAR) // char ('hh')
 			num = (char)va_arg(args, int);
-		else if (fmt->lmodifier == 104) // short int ('h')
+		else if (fmt->lmodifier & SHORT) // short int ('h')
 			num = (short)va_arg(args, int);
-		else if (fmt->lmodifier == 108) // long int ('l')
+		else if (fmt->lmodifier & LONG) // long int ('l')
 			num = va_arg(args, long int);
-		else if (fmt->lmodifier == 216) // long long int ('ll')
+		else if (fmt->lmodifier & LONG_LONG) // long long int ('ll')
 			num = va_arg(args, long long int);
 		else
 			num = va_arg(args, int);
 		get_num(num, fmt, 1);
 	}
 
-	/* UNSIGNED */
+		/* UNSIGNED */
 	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
 			|| *fmt->iter == 'X' || *fmt->iter == 'b')
 	{
-		if (fmt->lmodifier == 208) // unsigned char ('hh')
+		if (fmt->lmodifier & CHAR) // unsigned char ('hh')
 			num = (unsigned char)va_arg(args, unsigned int);
-		else if (fmt->lmodifier == 104) // unsigned short int ('h')
+		else if (fmt->lmodifier & SHORT) // unsigned short int ('h')
 			num = (unsigned short)va_arg(args, unsigned int);
-		else if (fmt->lmodifier == 108) // unsigned long int ('l')
+		else if (fmt->lmodifier & LONG) // unsigned long int ('l')
 			num = va_arg(args, unsigned long);
-		else if (fmt->lmodifier == 216) // unsigned long long int ('ll')
+		else if (fmt->lmodifier & LONG_LONG) // unsigned long long int ('ll')
 			num = va_arg(args, unsigned long long);
 		else
 			num = va_arg(args, unsigned int);
@@ -83,10 +94,7 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 		process_width(format, args);
 		process_precision(format, args);
 		process_lmodifier(format);
-//		process_length_modifier(format, args);
-		process_base(format, args);
-		print_collected_data(&format);
-		exit (0);
+		process_base(format);
 		print_module(format, args);
 	}
 	/* print buf */
@@ -98,7 +106,7 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 	return (format->buf_ptr - buf);
 }
 
-int				ft_printf(const char * restrict format, ...)
+int				ft_printf(const char *restrict format, ...)
 {
 	va_list 	args;
 	int 		done;
