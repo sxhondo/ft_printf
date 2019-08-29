@@ -47,9 +47,9 @@ typedef struct		s_fmt
 	/* processings */
 int					process_precision(t_fmt *fmt, va_list args);
 int					process_width(t_fmt *fmt, va_list args);
-int 				process_flags(t_fmt *fmt);
-void 				process_lmodifier(t_fmt *fmt);
-void				process_base(t_fmt	*fmt);
+unsigned int		process_flags(t_fmt *fmt);
+unsigned int		process_lmodifier(t_fmt *fmt);
+unsigned int		process_base(t_fmt	*fmt);
 
 	/* conversions */
 int					get_percent(t_fmt *fmt);
@@ -57,6 +57,8 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig);
 int					get_str(t_fmt *fmt, va_list args);
 int					get_ptr(t_fmt *fmt, va_list args);
 int					get_char(t_fmt *fmt, va_list args);
+
+void 				get_dnum(double dnum, t_fmt	*fmt);
 
 char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base);
 int					ft_printf(const char *restrict format, ...);

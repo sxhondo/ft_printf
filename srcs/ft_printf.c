@@ -28,6 +28,7 @@ void			print_collected_data(t_fmt *fmt)
 int					print_module(t_fmt *fmt, va_list args)
 {
 	int64_t 		num = 0;
+	double			dnum = 0;
 
 	if (*fmt->iter == '%')
 		return (get_percent(fmt));
@@ -70,6 +71,12 @@ int					print_module(t_fmt *fmt, va_list args)
 			num = va_arg(args, unsigned int);
 		get_num(num, fmt, 0);
 	}
+	if (*fmt->iter == 'f')
+	{
+		dnum = va_arg(args, double);
+		get_dnum(dnum, fmt);
+		fmt->iter++;
+	}
 	return (0);
 }
 
@@ -90,11 +97,11 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 		if (!*format->iter)
 			break;
 		/* processings */
-		process_flags(format);
-		process_width(format, args);
-		process_precision(format, args);
-		process_lmodifier(format);
-		process_base(format);
+		format->flags = process_flags(format);
+		format->width = process_width(format, args);
+		format->precision = process_precision(format, args);
+		format->lmodifier = process_lmodifier(format);
+		format->base = process_base(format);
 		print_module(format, args);
 	}
 	/* print buf */

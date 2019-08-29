@@ -32,100 +32,110 @@ int			ft_isspecial(char ch)
 	return (0);
 }
 
-int 			process_flags(t_fmt *fmt)
+unsigned int		process_flags(t_fmt *fmt)
 {
-	fmt->flags = 0;
+	unsigned int	flags;
+
+	flags = 0;
 	while (*fmt->iter++ && ft_isspecial(*fmt->iter))
 	{
 		if (*fmt->iter == '-')
 		{
-			fmt->flags |= LEFT;
+			flags |= LEFT;
 			continue;
 		}
 		if (*fmt->iter == '+')
 		{
-			fmt->flags |= PLUS;
+			flags |= PLUS;
 			continue;
 		}
 		if (*fmt->iter == ' ')
 		{
-			fmt->flags |= SPACE;
+			flags |= SPACE;
 			continue;
 		}
 		if (*fmt->iter == '#')
 		{
-			fmt->flags |= SHARP;
+			flags |= SHARP;
 			continue;
 		}
 		if (*fmt->iter == '0')
 		{
-			fmt->flags |= ZERO;
+			flags |= ZERO;
 			continue;
 		}
 	}
-	return (0);
+	return (flags);
 }
 
 int				process_width(t_fmt *fmt, va_list args)
 {
-	fmt->width = -1;
+	int 	width;
+
+	width = -1;
 	if (ft_isdigit(*fmt->iter))
 	{
-		fmt->width = skip_atoi(fmt->iter);
-		fmt->iter += ft_nblen(fmt->width);
+		width = skip_atoi(fmt->iter);
+		fmt->iter += ft_nblen(width);
 	}
 	else if (*fmt->iter == '*')
 	{
 		++fmt->iter;
-		fmt->width = va_arg(args, int);
+		width = va_arg(args, int);
 	}
-	return (0);
+	return (width);
 }
 
 int				process_precision(t_fmt *fmt, va_list args)
 {
-	fmt->precision = -1;
+	int 	precision;
+
+	precision = -1;
 	if (*fmt->iter == '.')
 	{
 		fmt->iter++;
-		fmt->precision++;
+		precision++;
 	}
 	if (ft_isdigit(*fmt->iter))
 	{
-		fmt->precision = skip_atoi(fmt->iter);
-		fmt->iter += ft_nblen(fmt->precision);
+		precision = skip_atoi(fmt->iter);
+		fmt->iter += ft_nblen(precision);
 	}
 	else if (*fmt->iter == '*')
 	{
 		fmt->iter++;
-		fmt->precision = va_arg(args, int);
+		precision = va_arg(args, int);
 	}
-	return (0);
+	return (precision);
 }
 
-void 			process_lmodifier(t_fmt *fmt)
+unsigned int		process_lmodifier(t_fmt *fmt)
 {
- 	fmt->lmodifier = 0;
+	unsigned int	lmodifier;
+ 	lmodifier = 0;
  	if (*fmt->iter == 'h')
- 		fmt->lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
+ 		lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
  	else if (*fmt->iter == 'l')
- 		fmt->lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
+ 		lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
  	else if (*fmt->iter == 'L')
- 		fmt->lmodifier |= LLONG;
- 	fmt->iter += fmt->lmodifier & CHAR || fmt->lmodifier & LONG_LONG ? 1 : 0;
+ 		lmodifier |= LLONG;
+ 	fmt->iter += lmodifier & CHAR || lmodifier & LONG_LONG ? 1 : 0;
+	return (lmodifier);
 }
 
-void			process_base(t_fmt	*fmt)
+unsigned int		process_base(t_fmt	*fmt)
 {
-	fmt->base = 10;
+	unsigned int	base;
+	base = 10;
 	if (*fmt->iter == 'o')
-		fmt->base = 8;
+		base = 8;
 	else if (*fmt->iter == 'x' || *fmt->iter == 'X')
 	{
 		if (*fmt->iter == 'X')
 			fmt->flags |= CASE;
-		fmt->base = 16;
+		base = 16;
 	}
 	else if (*fmt->iter == 'b')
-		fmt->base = 2;
+		base = 2;
+	return (base);
 }
