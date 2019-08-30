@@ -11,33 +11,6 @@
 /* ************************************************************************** */
 
 #include "../incs/ft_printf.h"
-//
-//int			 		itoa_bas(uint64_t num, char s[], int sig, unsigned base)
-//{
-//	char 			hex_table[17] = "0123456789abcdef";
-//	uint64_t 		rmndr;
-//	char 			*ptr;
-//	char 			*p;
-////	int				save;
-//	int64_t 		save;
-//
-//	ptr = s;
-//	rmndr = 1;
-//	if ((save = num) < 0 && sig == 1)
-//		num = -num;
-//	while ((rmndr * base) >= base)
-//	{
-//		rmndr = num / base;
-//		if (base == 10 || base == 8 || base == 2)
-//			*ptr++ = (num - (rmndr * base)) % 10 + '0';
-//		if (base == 16)
-//			*ptr++ = hex_table[num - (rmndr * base)];
-//		num = rmndr;
-//	}
-//	*ptr++ = '\0';
-//	ft_strrev(s);
-//	return (ft_strlen(s));
-//}
 
 void		 			fraction(double num, char s[])
 {
@@ -48,16 +21,16 @@ void		 			fraction(double num, char s[])
 	i = 0;
 	while (i < 52)
 	{
-		num = (double)num * 2; // последовательно умножаем дробную часть на основание 2
-		whole[i] = (int)num; // получаем целую часть
+		num = (double)num * 2; // multiplicate fraction part by two
+		whole[i] = (int)num; // save whole part
 		if (i == 0)
-			num += 0.0005; // смещение
+			num += 0.0005; // offset ???
 		if ((int)num >= 1)
 			num -= (int)num;
 		i++;
 	}
 	i = -1;
-	while (++i < 52)
+	while (++i < 52) // write in str
 		*s++ = whole[i] + '0';
 }
 
@@ -104,15 +77,13 @@ unsigned  int			bin_to_dec(char *str)
 
 void 					get_dnum(double dnum, t_fmt	*fmt)
 {
-	char 			mas[100];
-	char 			norm_mant[23];
+	char 			mas[100]; //for whole part and fract part (in binary)
 	char 			*m = mas;
-	int 			exp_len;
+	char 			norm_mant[23]; //for normalized mantissa [52] for x64
+	long	 		exp_len; // length of exponenta
 	unsigned int 	sign = dnum > 0 ? 0 : 1;
 
 		/* get mant */
-//	printf("%llu", itoa_base((int)dnum, m, 0, 2));
-//	exit (0);
 	exp_len = itoa_base((int)dnum, m, 0, 2); // 1. get whole part of dnum 2. put bin in mas[]
 	m += exp_len;  // get bin whole part
 //	*m++ = '.'; //show bin of whole part and bin of fract part separated by '.'. Result will be wrong
@@ -157,8 +128,4 @@ void 					get_dnum(double dnum, t_fmt	*fmt)
 		//multiplication
 	double res = res1 * res2; // - 0.000244;
 	printf("Result: %f\n", res);
-
-
-
-
 }
