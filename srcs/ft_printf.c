@@ -56,7 +56,7 @@ int					print_module(t_fmt *fmt, va_list args)
 	}
 
 		/* UNSIGNED */
-	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
+	else if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
 			|| *fmt->iter == 'X' || *fmt->iter == 'b')
 	{
 		if (fmt->lmodifier & CHAR) // unsigned char ('hh')
@@ -71,9 +71,12 @@ int					print_module(t_fmt *fmt, va_list args)
 			num = va_arg(args, unsigned int);
 		get_num(num, fmt, 0);
 	}
-	if (*fmt->iter == 'f')
+	else if (*fmt->iter == 'f')
 	{
-		dnum = va_arg(args, double);
+		if (fmt->lmodifier & LLONG)
+			dnum = va_arg(args, long double);
+		else
+			dnum = va_arg(args, double);
 		get_dnum(dnum, fmt);
 		fmt->iter++;
 	}

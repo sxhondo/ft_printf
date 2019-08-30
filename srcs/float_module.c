@@ -12,6 +12,42 @@
 
 #include "../incs/ft_printf.h"
 
+long					itoa_double(double dnum, unsigned char *p, int precision)
+{
+	int 				i;
+	char 				t;
+	unsigned char		*ptr;
+
+	ptr = p;
+	i = precision;
+	dnum = dnum;
+
+	if (dnum < 0)
+	{
+		dnum = -dnum;
+		*p++ = '-';
+	}
+
+	while ((int)dnum > 0)
+	{
+		dnum /= 10;
+		i++;
+	}
+	dnum *= 10;
+	while (i > 0)
+	{
+		t = (int)dnum;
+		*p++ = t | 0x30;
+		i--;
+		if (i == precision)
+			*p++ = '.';
+		dnum = dnum - (double)t;
+		dnum *= 10;
+	}
+	*p++ = '\0';
+	return (ptr - p);
+}
+
 void		 			fraction(double num, char s[])
 {
 	uint64_t			res;
@@ -75,6 +111,7 @@ unsigned  int			bin_to_dec(char *str)
 	return (res);
 }
 
+
 void 					get_dnum(double dnum, t_fmt	*fmt)
 {
 	char 			mas[100]; //for whole part and fract part (in binary)
@@ -118,14 +155,22 @@ void 					get_dnum(double dnum, t_fmt	*fmt)
 		//	left half of formula
 		//	(-1)^S * 2^(E-127)
 	int64_t  res1 = power_of(-1, (int)sign) * power_of(2, exp_len - 1 + 255 / 2 - 127);
-
+	printf("\nres 1: %11lld\n\t\t\t\t*\n", res1);
 		//	right half of formula
 		//	(1 + M / 2^23)
 	double f1 = (double)mant;
 	double f2 = (double)power_of(2, 23);
 	double res2 = 1 + f1 / f2; // losed precision = 0.000244 ???
-
+	printf("res 2: %11f\n", res2);
 		//multiplication
 	double res = res1 * res2; // - 0.000244;
-	printf("Result: %f\n", res);
+
+		/* writing in buf */
+	unsigned char	fin[100];
+	unsigned char 	*f = fin;
+
+
+	printf("RESULT: %f\n", res1 * res2);
+
+
 }

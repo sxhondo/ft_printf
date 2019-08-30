@@ -63,5 +63,7 @@ void 				get_dnum(double dnum, t_fmt	*fmt);
 long		 		itoa_base(uint64_t num, char s[], int sig, unsigned base);
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
+long				itoa_double(double dnum, unsigned char *p, int precision);
+
 
 #endif //FT_PRINTF_FT_PRINTF_H
