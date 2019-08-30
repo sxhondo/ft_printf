@@ -13,14 +13,12 @@
 //#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
-char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
+long		 		itoa_base(uint64_t num, char s[], int sig, unsigned base)
 {
 	char 			hex_table[17] = "0123456789abcdef";
 	uint64_t 		rmndr;
-	char 			*ptr;
-	char 			*p;
-//	int				save;
 	int64_t 		save;
+	char 			*ptr;
 
 	ptr = s;
 	rmndr = 1;
@@ -35,9 +33,9 @@ char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base)
 			*ptr++ = hex_table[num - (rmndr * base)];
 		num = rmndr;
 	}
-	*ptr++ = '\0';
+	*ptr = '\0';
 	ft_strrev(s);
-	return (NULL);
+	return (ptr - s);
 }
 
 int 				get_num(int64_t num, t_fmt *fmt, int sig)

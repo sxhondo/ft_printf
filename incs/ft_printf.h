@@ -60,7 +60,7 @@ int					get_char(t_fmt *fmt, va_list args);
 
 void 				get_dnum(double dnum, t_fmt	*fmt);
 
-char		 		*itoa_base(uint64_t num, char s[], int sig, unsigned base);
+long		 		itoa_base(uint64_t num, char s[], int sig, unsigned base);
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
 

@@ -11,15 +11,39 @@
 /* ************************************************************************** */
 
 #include "../incs/ft_printf.h"
+//
+//int			 		itoa_bas(uint64_t num, char s[], int sig, unsigned base)
+//{
+//	char 			hex_table[17] = "0123456789abcdef";
+//	uint64_t 		rmndr;
+//	char 			*ptr;
+//	char 			*p;
+////	int				save;
+//	int64_t 		save;
+//
+//	ptr = s;
+//	rmndr = 1;
+//	if ((save = num) < 0 && sig == 1)
+//		num = -num;
+//	while ((rmndr * base) >= base)
+//	{
+//		rmndr = num / base;
+//		if (base == 10 || base == 8 || base == 2)
+//			*ptr++ = (num - (rmndr * base)) % 10 + '0';
+//		if (base == 16)
+//			*ptr++ = hex_table[num - (rmndr * base)];
+//		num = rmndr;
+//	}
+//	*ptr++ = '\0';
+//	ft_strrev(s);
+//	return (ft_strlen(s));
+//}
 
-//what should be: 	0010100000010000011000100100110111010010111100011010
-//my:				0010100000010000011000100100110111010010111100011010
-
-void		 		fraction(double num, char s[])
+void		 			fraction(double num, char s[])
 {
-	uint64_t		res;
-	int 			whole[52];
-	int 			i;
+	uint64_t			res;
+	int 				whole[52];
+	int 				i;
 
 	i = 0;
 	while (i < 52)
@@ -37,54 +61,104 @@ void		 		fraction(double num, char s[])
 		*s++ = whole[i] + '0';
 }
 
-//		446.156250
-//		s0 e10000000111 m0010100000010000011000100100110111010010111100011010
-
-void 				get_dnum(double dnum, t_fmt	*fmt)
+int64_t					power_of(int num, int pow)
 {
-	int 			whole = (int)dnum; //Получаем целую часть
-	char 			whole_ch[100];
-	double 			fract = dnum - whole; //Получаем дробную часть
-	char 			fract_ch[100];
-	char 			whole_fract[100];
-	char 			tab[100];
-	char 			*t = tab;
+	int64_t				res;
+
+	res = 1;
+	while (pow--)
+		res = res * num;
+	return (res);
+}
+
+size_t 					len_bin(char str[])
+{
+	size_t 	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != '0' && str[i] != '1')
+			return (0);
+		i++;
+	}
+	return (i);
+}
+
+unsigned  int			bin_to_dec(char *str)
+{
+	unsigned  int 		res;
+	char 				buf[24];
+	int 				len;
+	int 				i = 0;
+
+	i = 0;
+	res = 0;
+	ft_memcpy(buf, str, 23);
+	len = len_bin(buf);
+
+	while (len--)
+		res += ((unsigned int)buf[i++] - '0') * power_of(2, len);
+	return (res);
+}
+
+void 					get_dnum(double dnum, t_fmt	*fmt)
+{
+	char 			mas[100];
+	char 			norm_mant[23];
+	char 			*m = mas;
+	int 			exp_len;
+	unsigned int 	sign = dnum > 0 ? 0 : 1;
+
+		/* get mant */
+//	printf("%llu", itoa_base((int)dnum, m, 0, 2));
+//	exit (0);
+	exp_len = itoa_base((int)dnum, m, 0, 2); // 1. get whole part of dnum 2. put bin in mas[]
+	m += exp_len;  // get bin whole part
+//	*m++ = '.'; //show bin of whole part and bin of fract part separated by '.'. Result will be wrong
+	fraction(dnum - (int)dnum, m); // 1. get fract part, 2. get bin fract part
+	printf("full mant: %s\n", mas);
+
+		/* get norm mant (23 symb, no first symb)*/
+	ft_memcpy(norm_mant, mas + 1, 23);
+	printf("norm mant:  %s\n", norm_mant);
+
+		/* get decimal mant */
+	unsigned int	mant = bin_to_dec(norm_mant);
+	printf("b10  mant: %d\n\n", mant);
+
+		/* get exp */
+	uint64_t 		dec_exp;
+	char 			bin_exp[8]; //[16] for 64x
+
+	/* get decimal exp */
+		/* amount of bits in whole part + ...*/
+	dec_exp = exp_len - 1 + 255 / 2; // 8 + 127 = 135 (32x) 8 + 1023 = 1031 (64x)
+	printf("b10 exp: %9llu\n", dec_exp);
+
+	/* get bin exp */
+	itoa_base(dec_exp, bin_exp, 0, 2);
+	printf("b2 exp: %10s\n", bin_exp);
 
 
-	itoa_base(whole, whole_ch, 0, 2); // Получаем двоичное представление целой части
-	fraction(fract, fract_ch); // Получаем двоичное представление дробной части
+	//formula to get number back for 32x (aka floats)
+		//F = (-1)^S * 2^(E-127) * (1 + M / 2^23)
 
-	printf("446\t\t\t\t\t0.15625 \n");
-	printf("%s\t\t\t%s\n\n", whole_ch, fract_ch);
+		//	left half of formula
+		//	(-1)^S * 2^(E-127)
+	int64_t  res1 = power_of(-1, (int)sign) * power_of(2, exp_len - 1 + 255 / 2 - 127);
 
-	//	В итоге получаем число: 110111110.00101000000100000110001001001101110100101111000110102
-	//	Сдвинем число на 8 разрядов вправо.
-	//	В результате мы получили основные составляющие экспоненциального нормализованного двоичного числа:
-	//	Мантисса M=1.101111100010100000010000011000100100110111010010111100011010
-	//	Экспонента exp2=8
+		//	right half of formula
+		//	(1 + M / 2^23)
+	double f1 = (double)mant;
+	double f2 = (double)power_of(2, 23);
+	double res2 = 1 + f1 / f2; // losed precision = 0.000244 ???
 
-	tab[0] = whole_ch[0];
-	ft_strcat(t, ".");
-	ft_strcat(t, whole_ch + 1);
-	ft_strcat(t, fract_ch);
-	printf("mant: \t\t\t\t%s", t);
+		//multiplication
+	double res = res1 * res2; // - 0.000244;
+	printf("Result: %f\n", res);
 
-//	Преобразование двоичного нормализованного числа в 32 битный формат IEEE 754.
-//	Первый бит отводится для обозначения знака числа. Поскольку число положительное, то первый бит равен 0
-//	Следующие 8 бит (с 2-го по 9-й) отведены под экспоненту.
-//	Для определения знака экспоненты, чтобы не вводить ещё один бит знака,
-//	добавляют смещение к экспоненте в половину байта +127.
-//	Таким образом, наша экспонента: 8 + 127 = 135
-//	Переведем экспоненту в двоичное представление.
-//	135 = 100001112
 
-	printf("\n\nEXP: 8 + 127 = 135 = 10000111\n\n");
-
-//	Оставшиеся 23 бита отводят для мантиссы. Значит из значения мантиссы нам нужно 23 символа
-//	У нормализованной двоичной мантиссы первый бит всегда равен 1, так как число лежит в диапазоне 1 ≤ M < 2.
-//	Для экономии, единицу не записывают, а записывают только остаток от мантиссы: 10111110001010000001000
-//	Для перевода необходимо умножить разряд числа на соответствующую ему степень разряда.
-//	10111110001010000001000 = 2^22*1 + 2^21*0 + ... = 6231048 = десятичное выражение мантиссы
 
 
 }
