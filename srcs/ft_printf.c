@@ -79,7 +79,6 @@ int					print_module(t_fmt *fmt, va_list args)
 		else
 			dnum = va_arg(args, double);
 		get_dnum(dnum, fmt);
-		fmt->iter++;
 	}
 	return (0);
 }

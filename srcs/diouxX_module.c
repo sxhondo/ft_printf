@@ -93,7 +93,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 		/* apply flag ' '. Write space in var sign. */
 	sign = 0;
-	if (fmt->flags & SPACE && num > 0 && num != UINT32_MAX)
+	if (fmt->flags & SPACE && num >= 0 && num != UINT32_MAX)
 	{
 		sign = ' ';
 		fmt->width--;

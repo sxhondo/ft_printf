@@ -35,8 +35,7 @@ int				get_char(t_fmt *fmt, va_list args)
 	while (--fmt->width > 0)
 		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
 	if (fmt->precision > -1)
-		while (--fmt->precision >= 1)
-			*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
 	else if (!(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
 	return (0);
@@ -72,29 +71,41 @@ int				get_str(t_fmt *fmt, va_list args)
 
 int				get_ptr(t_fmt *fmt, va_list args)
 {
+	int 			hxlen;
 	char 			hex[15];
 	char 			*hex_ptr = hex;
-//	uintmax_t 		pointer; //aka 'unsigned long',
-	/* Платформа обязана в рамках стандарта С99 поддерживать следующие типы:
-	 * intmax_t, uintmax_t, которые могут представлять максимальные целочисленные значения. ~wiki
-	 * UPDATED: uintmax_t/intmax_t не работает на ubuntu. При компиляции:
-	 * "Unknown type uintmax_t, did you mean uint64_t?" */
-
 	uint64_t 		pointer; //aka 'unsigned long long'
-	/* Тип с точной шириной. Не все системы могут поддерживать эти типы. ~ wiki */
-//	unsigned long 	pointer;
 
-	pointer = (uint64_t)va_arg(args, void *);
-
-	/* seems like valgrind things that return of va_arg (called with void *)
-	 * can't be initialized. */
-	itoa_base(pointer, hex_ptr, 0, 16);
-	while (--fmt->width > ft_strlen(hex) + 1 && fmt->width > -1 && !(fmt->flags & LEFT))
-		*fmt->buf_ptr++ = ' ';	
-	*fmt->buf_ptr++ = '0';
-	*fmt->buf_ptr++ = 'x';
-	while (*hex_ptr)
-		*fmt->buf_ptr++ = *hex_ptr++;
 	fmt->iter += 1;
+	pointer = (uint64_t)va_arg(args, void *);
+		/* seems like valgrind things that return of va_arg (called with void *)
+		 * can't be initialized. */
+	itoa_base(pointer, hex_ptr, 0, 16);
+	hxlen = ft_strlen(hex);
+	//	-	-	-	-	-	-	-	-	-	//
+	if (fmt->flags & LEFT)
+	{
+		*fmt->buf_ptr++ = '0';
+		*fmt->buf_ptr++ = 'x';
+		if (fmt->precision > -1)
+			while (fmt->precision-- > hxlen)
+				*fmt->buf_ptr++ = '0';
+		while (*hex_ptr)
+			*fmt->buf_ptr++ = *hex_ptr++;
+	}
+	while (--fmt->width > hxlen + 1 && fmt->width > -1)
+		*fmt->buf_ptr++ = ' ';
+	//	-	-	-	-	-	-	-	-	-	//
+	if (!(fmt->flags & LEFT))
+	{
+		*fmt->buf_ptr++ = '0';
+		*fmt->buf_ptr++ = 'x';
+		if (fmt->precision > 0)
+			while (fmt->precision-- > hxlen)
+				*fmt->buf_ptr++ = '0';
+		while (*hex_ptr && !(fmt->flags & LEFT))
+			*fmt->buf_ptr++ = *hex_ptr++;
+	}
+	//	-	-	-	-	-	-	-	-	-	//
 	return (0);
 }
