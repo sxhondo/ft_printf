@@ -119,7 +119,7 @@ unsigned int		process_lmodifier(t_fmt *fmt)
  		lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
  	else if (*fmt->iter == 'L')
  		lmodifier |= LLONG;
- 	fmt->iter += lmodifier & CHAR || lmodifier & LONG_LONG ? 1 : 0;
+ 	fmt->iter += (lmodifier & CHAR || lmodifier & LLONG) || lmodifier & LONG_LONG ? 1 : 0;
 	return (lmodifier);
 }
 

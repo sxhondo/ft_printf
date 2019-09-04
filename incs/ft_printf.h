@@ -58,12 +58,13 @@ int					get_str(t_fmt *fmt, va_list args);
 int					get_ptr(t_fmt *fmt, va_list args);
 int					get_char(t_fmt *fmt, va_list args);
 
-void 				get_dnum(double dnum, t_fmt	*fmt);
+void 				dnum(long double dnum);
+long				get_dnum(long double dnum, t_fmt *fmt);
 
 long		 		itoa_base(uint64_t num, char s[], int sig, unsigned base);
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
-long				itoa_double(double dnum, unsigned char *p, int precision);
+long				itoa_double(long double dnum, unsigned char *p, int precision);
 
 
 #endif //FT_PRINTF_FT_PRINTF_H

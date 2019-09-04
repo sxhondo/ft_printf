@@ -27,8 +27,8 @@ void			print_collected_data(t_fmt *fmt)
 
 int					print_module(t_fmt *fmt, va_list args)
 {
-	int64_t 		num = 0;
-	double			dnum = 0;
+	int64_t 			num = 0;
+	long double			dnum = 0;
 
 	if (*fmt->iter == '%')
 		return (get_percent(fmt));
@@ -75,6 +75,7 @@ int					print_module(t_fmt *fmt, va_list args)
 	{
 		if (fmt->lmodifier & LLONG)
 			dnum = va_arg(args, long double);
+		/* 'l' promoted with double ignored, same behavior as without it */
 		else
 			dnum = va_arg(args, double);
 		get_dnum(dnum, fmt);
