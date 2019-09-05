@@ -12,10 +12,23 @@
 
 #include "../incs/ft_printf.h"
 
+double			round(double dnum)
+{
+	unsigned char	t;
+
+	// 37.66666 * 100 =3766.66
+	// 3766.66 + .5 =3767.16    for rounding off value
+	// then type cast to int so value is 3767
+	// then divided by 100 so the value converted into 37.67
+
+	float value = (int)(dnum * 100 + .5);
+	return ((double)value / 100);
+}
+
 long					itoa_double(long double dnum, unsigned char *p, int precision)
 {
 	int 				i;
-	char 				t;
+	unsigned char 				t;
 	unsigned char		*ptr;
 
 	ptr = p;
@@ -28,7 +41,7 @@ long					itoa_double(long double dnum, unsigned char *p, int precision)
 		*p++ = '-';
 	}
 
-	while ((int)dnum > 0)
+	while ((uint64_t)dnum > 0)
 	{
 		dnum /= 10;
 		i++;
@@ -36,7 +49,7 @@ long					itoa_double(long double dnum, unsigned char *p, int precision)
 	dnum *= 10;
 	while (i > 0)
 	{
-		t = (int)dnum;
+		t = round(dnum);
 		*p++ = t | 0x30;
 		i--;
 		if (i == precision && precision > 0)
@@ -52,8 +65,8 @@ long					get_dnum(long double dnum, t_fmt *fmt)
 {
 	unsigned  char 	tmp[100];
 	unsigned char 	*p_tmp = tmp;
-	char 	sign;
-	int 	nblen;
+	char 			sign;
+	int 			nblen;
 
 	if (fmt->precision == -1)
 		fmt->precision = 6;
@@ -70,12 +83,6 @@ long					get_dnum(long double dnum, t_fmt *fmt)
 		sign = ' ';
 		fmt->width--;
 	}
-		/* get flag '+' */
-	/* if flags 'plus' write +/- in var sign. Else only for negative nums */
-	if (fmt->flags & PLUS && fmt->width--)
-		sign = dnum < 0 ? '-' : '+';
-	else if (dnum < 0 && fmt->width--)
-		sign = '-';
 
 		/* apply sign */
 	/* if ZERO or LEFT promoted we can already write sign in buf */
@@ -85,7 +92,7 @@ long					get_dnum(long double dnum, t_fmt *fmt)
 		sign = 0;
 	}
 
-	/* apply flag left alignment ('-') */
+		/* apply flag left alignment ('-') */
 	/* if LEFT promoted we can already write num in buf */
 	while (fmt->flags & LEFT && *p_tmp)
 		*fmt->buf_ptr++ = *p_tmp++;

@@ -73,15 +73,17 @@ int				process_width(t_fmt *fmt, va_list args)
 	int 	width;
 
 	width = -1;
+
+	if (*fmt->iter == '*')
+	{
+		++fmt->iter;
+		if (!(width = va_arg(args, int)))
+			width = -1;
+	}
 	if (ft_isdigit(*fmt->iter))
 	{
 		width = skip_atoi(fmt->iter);
 		fmt->iter += ft_nblen(width);
-	}
-	else if (*fmt->iter == '*')
-	{
-		++fmt->iter;
-		width = va_arg(args, int);
 	}
 	return (width);
 }

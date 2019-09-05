@@ -50,6 +50,7 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 
 	p_tmp = tmp;
 
+
 		/* apply SHARP */
 	if (fmt->flags & SHARP && num != 0)
 	{
@@ -63,17 +64,40 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 				fmt->width--;
 			}
 		}
+		else if (fmt->precision > -1)
+		{
+			*fmt->buf_ptr++ = '0';
+			fmt->base == 16 ? fmt->precision++ : fmt->precision--;
+			if (fmt->base == 16)
+			{
+				*fmt->buf_ptr++ = fmt->flags & CASE ? 'X' : 'x';
+				fmt->precision--;
+			}
+		}
 		else
 		{
 			*p_tmp++ = '0';
+//			*fmt->buf_ptr++ = '0';
 			if (fmt->base == 16)
+			{
 				*p_tmp++ = fmt->flags & CASE ? 'X' : 'x';
+			}
 		}
 	}
 
 	itoa_base(num, p_tmp, sig, fmt->base);
 	nblen = ft_strlen(tmp);
 
+		/* apply width */
+	/* for negative width */
+	if (fmt->width < -nblen && fmt->width < 0)
+	{
+		while (*p_tmp)
+			*fmt->buf_ptr++ = *p_tmp++;
+		while (++fmt->width <= -nblen)
+			*fmt->buf_ptr++ = ' ';
+		nblen = 0;
+	}
 		/* if '0x' or '0' was written(pointer to buf - buf > 0), move pointer back */
 	if (p_tmp - tmp)
 	{
@@ -98,7 +122,6 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		sign = ' ';
 		fmt->width--;
 	}
-
 		/* get flag '+' */
 	/* if flags 'plus' write +/- in var sign. Else only for negative nums */
 	if (fmt->flags & PLUS && fmt->width-- && num != UINT32_MAX)
@@ -122,7 +145,6 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		while (fmt->precision-- > nblen && ++prec)
 			fmt->width--;
 
-
 		/* apply sign */
 	/* if ZERO or LEFT promoted we can already write sign in buf */
 	if (sign && (fmt->flags & ZERO || fmt->flags & LEFT))
@@ -130,12 +152,10 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 		*fmt->buf_ptr++ = sign;
 		sign = 0;
 	}
-
 		/* apply precision */
 	/* if LEFT promoted we can already write precision in buf */
 	while (fmt->flags & LEFT && prec-- > 0)
 		*fmt->buf_ptr++ = '0';
-
 
 		/* apply flag left alignment ('-') */
 	/* if LEFT promoted we can already write num in buf */
@@ -158,7 +178,11 @@ int 				get_num(int64_t num, t_fmt *fmt, int sig)
 	while (prec-- > 0)
 		*fmt->buf_ptr++ = '0';
 
-		/* write buf */
+//	if (fmt->width <= -nblen)
+//		while (++fmt->width <= -nblen)
+//			*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) && prec < 1 ? '0' : ' ';
+
+	/* write buf */
 	/* if buf was not already written by 'LEFT' */
 	while (nblen-- && !(fmt->flags & LEFT))
 		*fmt->buf_ptr++ = *p_tmp++;

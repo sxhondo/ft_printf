@@ -12,13 +12,13 @@
 
 #include "incs/ft_printf.h"
 
-//446.15625
 int 	main()
 {
-	void	*p;
+	//"{%#.5x}\n", 1 (precision--)
+	//printf("%#.3o", 1) (precision++)
 
-//	printf("%.0p, %.p", 0, 0);
-	ft_printf("%.0p, %.p", 0, 0);
+	printf("{%#.5x}\n", 1);
+	ft_printf("%#.3o", 1);
 
 
 //	dnum(252.15625);
