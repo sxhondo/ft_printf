@@ -25,78 +25,105 @@ void			print_collected_data(t_fmt *fmt)
 	printf("------------------------\n");
 }
 
-int					print_module(t_fmt *fmt, va_list args)
+void					pcsp(t_fmt	*fmt, va_list args, t_vec *buf)
 {
-	int64_t 			num = 0;
-	long double			dnum = 0;
-
 	if (*fmt->iter == '%')
-		return (get_percent(fmt));
-	if (*fmt->iter == 'c')
-		return (get_char(fmt, args));
+		get_percent(fmt, buf);
+	else if (*fmt->iter == 'c')
+		get_char(fmt, args, buf);
 	else if (*fmt->iter == 's')
-		return (get_str(fmt, args));
+		get_str(fmt, args, buf);
 	else if (*fmt->iter == 'p')
-		return (get_ptr(fmt, args));
+		get_ptr(fmt, args, buf);
+}
 
-		/* SIGNED */
+void					positive_negative_nums(t_fmt *fmt, va_list args, t_vec *buf)
+{
+	int64_t 			num;
+
+	num = 0;
+	if (fmt->lmodifier & CHAR) // char ('hh')
+		num = (char)va_arg(args, int);
+	else if (fmt->lmodifier & SHORT) // short int ('h')
+		num = (short)va_arg(args, int);
+	else if (fmt->lmodifier & LONG) // long int ('l')
+		num = va_arg(args, long int);
+	else if (fmt->lmodifier & LONG_LONG) // long long int ('ll')
+		num = va_arg(args, long long int);
+	else
+		num = va_arg(args, int);
+	get_num(num, fmt, buf);
+}
+
+void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
+{
+	int64_t 			num;
+
+	num = 0;
+	if (fmt->lmodifier & CHAR) // unsigned char ('hh')
+		num = (unsigned char)va_arg(args, unsigned int);
+	else if (fmt->lmodifier & SHORT) // unsigned short int ('h')
+		num = (unsigned short)va_arg(args, unsigned int);
+	else if (fmt->lmodifier & LONG) // unsigned long int ('l')
+		num = va_arg(args, unsigned long);
+	else if (fmt->lmodifier & LONG_LONG) // unsigned long long int ('ll')
+		num = va_arg(args, unsigned long long);
+	else
+		num = va_arg(args, unsigned int);
+	get_num(num, fmt, buf);
+
+}
+
+void				floating_point(t_fmt *fmt, va_list args, t_vec *buf)
+{
+	long double			dnum;
+
+	dnum = 0;
+	if (fmt->lmodifier & LLONG)
+		dnum = va_arg(args, long double);
+	else
+		dnum = va_arg(args, double);
+//	get_dnum(dnum, fmt);
+
+}
+
+int					print_module(t_fmt *fmt, va_list args, t_vec *buf)
+{
+	int64_t 			num;
+
+	num = 0;
+		/* PERCENT, CHAR, STRING, POINTER */
+	if (*fmt->iter == '%' || *fmt->iter == 'c' || *fmt->iter == 's'
+		|| *fmt->iter == 'p')
+		pcsp(fmt, args, buf);
+
+		/* SIGNED NUMS */
 	if (*fmt->iter == 'd' || *fmt->iter == 'i')
-	{
-		if (fmt->lmodifier & CHAR) // char ('hh')
-			num = (char)va_arg(args, int);
-		else if (fmt->lmodifier & SHORT) // short int ('h')
-			num = (short)va_arg(args, int);
-		else if (fmt->lmodifier & LONG) // long int ('l')
-			num = va_arg(args, long int);
-		else if (fmt->lmodifier & LONG_LONG) // long long int ('ll')
-			num = va_arg(args, long long int);
-		else
-			num = va_arg(args, int);
-		get_num(num, fmt, 1);
-	}
+		positive_negative_nums(fmt, args, buf);
 
-		/* UNSIGNED */
-	else if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
+		/* UNSIGNED  NUMS */
+	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
 			|| *fmt->iter == 'X' || *fmt->iter == 'b')
-	{
-		if (fmt->lmodifier & CHAR) // unsigned char ('hh')
-			num = (unsigned char)va_arg(args, unsigned int);
-		else if (fmt->lmodifier & SHORT) // unsigned short int ('h')
-			num = (unsigned short)va_arg(args, unsigned int);
-		else if (fmt->lmodifier & LONG) // unsigned long int ('l')
-			num = va_arg(args, unsigned long);
-		else if (fmt->lmodifier & LONG_LONG) // unsigned long long int ('ll')
-			num = va_arg(args, unsigned long long);
-		else
-			num = va_arg(args, unsigned int);
-		get_num(num, fmt, 0);
-	}
-	else if (*fmt->iter == 'f')
-	{
-		if (fmt->lmodifier & LLONG)
-			dnum = va_arg(args, long double);
-		/* 'l' promoted with double ignored, same behavior as without it */
-		else
-			dnum = va_arg(args, double);
-		get_dnum(dnum, fmt);
-	}
+		positive_nums(fmt, args, buf);
+
+		/* FLOATS */
+	if (*fmt->iter == 'f')
+		floating_point(fmt, args, buf);
 	return (0);
 }
 
 long 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	unsigned char		buf[1024];
-	unsigned char		*ptr = buf;
-	long int 			i;
+	t_vec				*buf;
 	t_fmt				*format;
 
 	format = ft_memalloc(sizeof(t_fmt));
 	format->iter = fmt;
-	format->buf_ptr = buf;
+	buf = ft_vec_init(1, sizeof(char));
 	while (*format->iter)
 	{
 		while (*format->iter != '%' && *format->iter)
-			*format->buf_ptr++ = *format->iter++;
+			ft_vec_add(&buf, (char *)format->iter++);
 		if (!*format->iter)
 			break;
 		/* processings */
@@ -105,15 +132,13 @@ long 					ft_fprintf(int fd, const char *fmt, va_list args)
 		format->precision = process_precision(format, args);
 		format->lmodifier = process_lmodifier(format);
 		format->base = process_base(format);
-		print_module(format, args);
+		print_module(format, args, buf);
 	}
-	/* print buf */
-	*format->buf_ptr = '\0';
-	i = 0;
-	while (++i <= format->buf_ptr - buf)
-		write(fd, &*ptr++, 1);
+	int i = 0;
+	while (++i <= buf->total)
+		write(fd, &*buf->data++, 1);
 	free (format);
-	return (format->buf_ptr - buf);
+	return (buf->total);
 }
 
 int				ft_printf(const char *restrict format, ...)
@@ -123,7 +148,7 @@ int				ft_printf(const char *restrict format, ...)
 
 	if (!format)
 		return (-1);
-	va_start(args, format); /* устанавливает аrgs на 1-й безымянный аргумент после fmt */
+	va_start(args, format);
 	done = (int)ft_fprintf(1, format, args);
 	va_end(args);
 	return (done);

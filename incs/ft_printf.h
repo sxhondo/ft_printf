@@ -41,7 +41,7 @@ typedef struct		s_fmt
 	int				precision;
 	unsigned int	base;
 	const char		*iter;
-	unsigned char	*buf_ptr;
+//	unsigned char	*buf_ptr;
 }					t_fmt;
 
 	/* processings */
@@ -52,16 +52,16 @@ unsigned int		process_lmodifier(t_fmt *fmt);
 unsigned int		process_base(t_fmt	*fmt);
 
 	/* conversions */
-int					get_percent(t_fmt *fmt);
-int 				get_num(int64_t num, t_fmt *fmt, int sig);
-int					get_str(t_fmt *fmt, va_list args);
-int					get_ptr(t_fmt *fmt, va_list args);
-int					get_char(t_fmt *fmt, va_list args);
+int					get_percent(t_fmt *fmt, t_vec *buf);
+int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf);
+int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
+int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
+int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
 
-void 				dnum(long double dnum);
-long				get_dnum(long double dnum, t_fmt *fmt);
+//void 				dnum(long double dnum);
+//long				get_dnum(long double dnum, t_fmt *fmt);
 
-long		 		itoa_base(uint64_t num, char s[], int sig, unsigned base);
+long		 		itoa_base(uint64_t num, char s[], unsigned base);
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
 long				itoa_double(long double dnum, unsigned char *p, int precision);

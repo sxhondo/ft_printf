@@ -13,116 +13,120 @@
 //#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
-int 				get_percent(t_fmt *fmt)
+int 				get_percent(t_fmt *fmt, t_vec *buf)
 {
-	if (fmt->flags & LEFT)
-		*fmt->buf_ptr++ = '%';
-	while (--fmt->width > 0)
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
-	if (!(fmt->flags & LEFT))
-		*fmt->buf_ptr++ = '%';
-	*fmt->buf_ptr = '\0';
+	char			tmp;
+	char 			per;
+
 	fmt->iter += 1;
+	per = '%';
+	if (fmt->flags & LEFT)
+		ft_vec_add(&buf, &per);
+	tmp = fmt->flags & ZERO ? '0' : ' ';
+	while (--fmt->width > 0)
+		ft_vec_add(&buf, &tmp);
+	if (!(fmt->flags & LEFT))
+		ft_vec_add(&buf, &per);
 	return (0);
 }
 
-int				get_char(t_fmt *fmt, va_list args)
+int				get_char(t_fmt *fmt, va_list args, t_vec *buf)
 {
+	unsigned char 	ch;
+	char 			tmp;
+
 	fmt->iter += 1;
-	/* applying width (If there IS width and no LEFT-flag) */
+	tmp = ' ';
+	ch = (unsigned char)va_arg(args, int);
+
+		/* if LEFT promoted - we can already write in buf */
 	if (fmt->flags & LEFT)
-		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+		ft_vec_add(&buf, &ch);
+		/* WILDCARDS when width is negative. ~ by moulitest */
 	if (fmt->width < -1)
 	{
-		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+		ft_vec_add(&buf, &ch);
 		while (++fmt->width < -1)
-			*fmt->buf_ptr++ = ' ';
+			ft_vec_add(&buf, &tmp);
 	}
+	tmp = fmt->flags & ZERO ? '0' : ' ';
 	while (--fmt->width > 0)
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+		ft_vec_add(&buf, &tmp);
 	if (fmt->precision > -1)
-		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+		ft_vec_add(&buf, &ch);
 	else if (!(fmt->flags & LEFT))
-		*fmt->buf_ptr++ = (unsigned char)va_arg(args, int);
+		ft_vec_add(&buf, &ch);
 	return (0);
 }
 
-int				get_str(t_fmt *fmt, va_list args)
+int				get_str(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	int 			len;
 	int 			lcpy;
 	const char 		*str;
 	char 			zero[] = "(null)";
-	char 			*z = zero;
+	char 			tmp;
 
 	fmt->iter += 1;
 	if (!(str = va_arg(args, const char *)))
 	{
-		while (*z)
-			*fmt->buf_ptr++ = *z++;
+		lcpy = 0;
+		while (zero[lcpy])
+			ft_vec_add(&buf, &zero[lcpy++]);
 		return (0);
 	}
-	if (*str == '\0')
-		len -= 1;
 	len = ft_strnlen(str, fmt->precision);
 	lcpy = len;
 	while (fmt->flags & LEFT && lcpy--)
-		*fmt->buf_ptr++ = *str++;
+		ft_vec_add(&buf, (void *)&*str++);
+	tmp = fmt->flags & ZERO ? '0' : ' ';
 	while (fmt->width > -1 && --fmt->width >= len)
-		*fmt->buf_ptr++ = fmt->flags & ZERO ? '0' : ' ';
+		ft_vec_add(&buf, &tmp);
 	while (len-- && lcpy > 0)
-		*fmt->buf_ptr++ = *str++;
+		ft_vec_add(&buf, (char *)str++);
 	return (0);
 }
 
-int				get_ptr(t_fmt *fmt, va_list args)
+void			put_in_buf(t_fmt *fmt, t_vec *buf, int hexlen, char hex[])
 {
-	int 			hxlen;
-	char 			hex[15];
-	char 			*hex_ptr = hex;
-	uint64_t 		pointer; //aka 'unsigned long long'
-	int 			prec;
+	char 	*prefix;
+	char 	*p;
+	char 	o;
 
+	o = '0';
+	p = hex;
+	prefix = "0x";
+	while (*prefix)
+		ft_vec_add(&buf, &*prefix++);
+	if (fmt->precision > -1)
+		while (fmt->precision-- > hexlen)
+			ft_vec_add(&buf, &o);
+	while (*p)
+		ft_vec_add(&buf, &*p++);
+}
+
+int				get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
+{
+	int 			hexlen;
+	char 			hex[15];
+	uint64_t 		pointer; //aka 'unsigned long long'
+//	int 			prec;
+	char 			tmp;
 
 	fmt->iter += 1;
+	tmp = ' ';
+	/* return of va_arg(called with void *) can not be initialized */
 	pointer = (uint64_t)va_arg(args, void *);
-		/* seems like valgrind things that return of va_arg (called with void *)
-		 * can't be initialized. */
-	itoa_base(pointer, hex_ptr, 0, 16);
-	hxlen = ft_strlen(hex);
+	hexlen = (int)itoa_base(pointer, hex, 16);
 		/* this is for . and .0 and pointer is 0 cases */
-	prec = 0;
-	if (fmt->precision == 0 && !(ft_strcmp(hex, "0")) && ++prec)
-		*hex_ptr++ = '\0';
-	//	-	-	-	-	-	-	-	-	-	//
+//	prec = 0;
+//	if (fmt->precision == 0 && !(ft_strcmp(hex, "0")) && ++prec)
+//		*hex_ptr++ = '\0';
 	if (fmt->flags & LEFT)
-	{
-		*fmt->buf_ptr++ = '0';
-		*fmt->buf_ptr++ = 'x';
-		if (fmt->precision > -1)
-			while (fmt->precision-- > hxlen)
-				*fmt->buf_ptr++ = '0';
-		while (*hex_ptr)
-			*fmt->buf_ptr++ = *hex_ptr++;
-	}
-	while (--fmt->width > hxlen + 1 && fmt->width > -1)
-		*fmt->buf_ptr++ = ' ';
-	//	-	-	-	-	-	-	-	-	-	//
+		put_in_buf(fmt, buf, hexlen, hex);
+	while (--fmt->width > hexlen + 1 && fmt->width > -1)
+		ft_vec_add(&buf, &tmp);
 	if (!(fmt->flags & LEFT))
-	{
-		*fmt->buf_ptr++ = '0';
-		*fmt->buf_ptr++ = 'x';
-		if (fmt->precision > -1)
-		{
-			while (fmt->precision-- > hxlen && ++prec)
-				*fmt->buf_ptr++ = '0';
-		}
-		while (*hex_ptr && !(fmt->flags & LEFT))
-		{
-			*fmt->buf_ptr++ = *hex_ptr++;
-			prec--;
-		}
-	}
-	//	-	-	-	-	-	-	-	-	-	//
+		put_in_buf(fmt, buf, hexlen, hex);
 	return (0);
 }

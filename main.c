@@ -14,11 +14,19 @@
 
 int 	main()
 {
-	//"{%#.5x}\n", 1 (precision--)
-	//printf("%#.3o", 1) (precision++)
+	void	*p;
 
-	printf("{%#.5x}\n", 1);
-	ft_printf("%#.3o", 1);
+
+	ft_printf("%x\n", 42);
+//	printf("%10.5d", 42);
+
+
+
+
+
+
+
+
 
 
 //	dnum(252.15625);

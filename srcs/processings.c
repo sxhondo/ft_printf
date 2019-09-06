@@ -114,6 +114,7 @@ int				process_precision(t_fmt *fmt, va_list args)
 unsigned int		process_lmodifier(t_fmt *fmt)
 {
 	unsigned int	lmodifier;
+
  	lmodifier = 0;
  	if (*fmt->iter == 'h')
  		lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
@@ -128,6 +129,7 @@ unsigned int		process_lmodifier(t_fmt *fmt)
 unsigned int		process_base(t_fmt	*fmt)
 {
 	unsigned int	base;
+
 	base = 10;
 	if (*fmt->iter == 'o')
 		base = 8;
