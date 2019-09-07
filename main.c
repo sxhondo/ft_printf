@@ -17,8 +17,8 @@ int 	main()
 	void	*p;
 
 
-	ft_printf("%x\n", 42);
-//	printf("%10.5d", 42);
+//	ft_printf("%.10d\n", 42);
+	printf("%#.4x\n", 42);
 
 
 

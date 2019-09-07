@@ -74,7 +74,7 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 
 }
 
-void				floating_point(t_fmt *fmt, va_list args, t_vec *buf)
+void					floating_point(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	long double			dnum;
 
@@ -87,7 +87,7 @@ void				floating_point(t_fmt *fmt, va_list args, t_vec *buf)
 
 }
 
-int					print_module(t_fmt *fmt, va_list args, t_vec *buf)
+int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	int64_t 			num;
 

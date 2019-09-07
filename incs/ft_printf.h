@@ -19,11 +19,10 @@
 #include <unistd.h>
 #include <limits.h>
 
-#define ZERO		(unsigned)1			/* filling with zeroes OR 'hh' */
-#define SHORT		(unsigned)2			/* short lmodifier - 'h'*/
+#define ZERO		(unsigned)1			/* filling with zeroes */
 #define PLUS		(unsigned)4			/* show sign of number */
-#define SPACE		(unsigned)8			/* space if plus OR 'l' */
-#define LEFT		(unsigned)16		/* left alignment OR 'll' */
+#define SPACE		(unsigned)8			/* space if plus */
+#define LEFT		(unsigned)16		/* left alignment */
 #define CASE		(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase OR 'L'*/
 #define SHARP		(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
 
@@ -53,15 +52,16 @@ unsigned int		process_base(t_fmt	*fmt);
 
 	/* conversions */
 int					get_percent(t_fmt *fmt, t_vec *buf);
-int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf);
 int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
 
+int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf);
+
 //void 				dnum(long double dnum);
 //long				get_dnum(long double dnum, t_fmt *fmt);
 
-long		 		itoa_base(uint64_t num, char s[], unsigned base);
+unsigned int 		itoa_base(uint64_t num, char s[], unsigned base);
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
 long				itoa_double(long double dnum, unsigned char *p, int precision);
