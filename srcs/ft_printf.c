@@ -57,9 +57,11 @@ void					positive_negative_nums(t_fmt *fmt, va_list args, t_vec *buf)
 
 void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	int64_t 			num;
+	uint64_t 		num;
 
 	num = 0;
+	fmt->flags &= ~PLUS;
+	fmt->flags &= ~SPACE;
 	if (fmt->lmodifier & CHAR) // unsigned char ('hh')
 		num = (unsigned char)va_arg(args, unsigned int);
 	else if (fmt->lmodifier & SHORT) // unsigned short int ('h')

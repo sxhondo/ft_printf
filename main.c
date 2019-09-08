@@ -14,11 +14,16 @@
 
 int 	main()
 {
+	//"%5.x %5.0x", 0, 0
+	//"%5.o %5.0o", 0, 0
+	//"%#.o %#.0o", 0, 0
+	//
+
 	void	*p;
 
-
-//	ft_printf("%.10d\n", 42);
-	printf("%#.4x\n", 42);
+	ft_printf("aa%%bb");
+//	printf("aa%%bb");
+//	printf("@moulitest:%5.o %5.0o", 0, 0);
 
 
 
