@@ -32,6 +32,13 @@
 #define LONG_LONG	(unsigned)16		/* 'll'	*/
 #define LLONG		(unsigned)32		/*	'L'	*/
 
+typedef struct		s_field
+{
+	unsigned int	nblen;
+	int 			prec;
+	char 			sign;
+}					t_field;
+
 typedef struct		s_fmt
 {
 	unsigned int	flags;
@@ -40,7 +47,6 @@ typedef struct		s_fmt
 	int				precision;
 	unsigned int	base;
 	const char		*iter;
-//	unsigned char	*buf_ptr;
 }					t_fmt;
 
 	/* processings */
@@ -56,7 +62,7 @@ int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
 
-int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf);
+int 				get_num(uint64_t num, t_fmt *fmt, t_vec *buf);
 
 //void 				dnum(long double dnum);
 //long				get_dnum(long double dnum, t_fmt *fmt);

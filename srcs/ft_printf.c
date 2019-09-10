@@ -41,9 +41,8 @@ void					positive_negative_nums(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	int64_t 			num;
 
-	num = 0;
 	if (fmt->lmodifier & CHAR) // char ('hh')
-		num = (char)va_arg(args, int);
+		num = (int64_t)(char)va_arg(args, int);
 	else if (fmt->lmodifier & SHORT) // short int ('h')
 		num = (short)va_arg(args, int);
 	else if (fmt->lmodifier & LONG) // long int ('l')
@@ -59,7 +58,6 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	uint64_t 		num;
 
-	num = 0;
 	fmt->flags &= ~PLUS;
 	fmt->flags &= ~SPACE;
 	if (fmt->lmodifier & CHAR) // unsigned char ('hh')
@@ -73,7 +71,6 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 	else
 		num = va_arg(args, unsigned int);
 	get_num(num, fmt, buf);
-
 }
 
 void					floating_point(t_fmt *fmt, va_list args, t_vec *buf)
@@ -100,16 +97,16 @@ int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 		pcsp(fmt, args, buf);
 
 		/* SIGNED NUMS */
-	if (*fmt->iter == 'd' || *fmt->iter == 'i')
+	else if (*fmt->iter == 'd' || *fmt->iter == 'i')
 		positive_negative_nums(fmt, args, buf);
 
 		/* UNSIGNED  NUMS */
-	if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
+	else if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
 			|| *fmt->iter == 'X' || *fmt->iter == 'b')
 		positive_nums(fmt, args, buf);
 
 		/* FLOATS */
-	if (*fmt->iter == 'f')
+	else if (*fmt->iter == 'f')
 		floating_point(fmt, args, buf);
 	return (0);
 }

@@ -14,26 +14,6 @@
 
 int 	main()
 {
-	//"%5.x %5.0x", 0, 0
-	//"%5.o %5.0o", 0, 0
-	//"%#.o %#.0o", 0, 0
-	//
+	ft_printf("%d\n", -1);
 
-	void	*p;
-
-	ft_printf("aa%%bb");
-//	printf("aa%%bb");
-//	printf("@moulitest:%5.o %5.0o", 0, 0);
-
-
-
-
-
-
-
-
-
-
-//	dnum(252.15625);
-	return (0);
 }

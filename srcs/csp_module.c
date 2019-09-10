@@ -38,11 +38,8 @@ int				get_char(t_fmt *fmt, va_list args, t_vec *buf)
 	fmt->iter += 1;
 	tmp = ' ';
 	ch = (unsigned char)va_arg(args, int);
-
-		/* if LEFT promoted - we can already write in buf */
 	if (fmt->flags & LEFT)
 		ft_vec_add(&buf, &ch);
-		/* WILDCARDS when width is negative. ~ by moulitest */
 	if (fmt->width < -1)
 	{
 		ft_vec_add(&buf, &ch);
@@ -110,7 +107,7 @@ int				get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
 	int 			hexlen;
 	char 			hex[15];
 	uint64_t 		pointer; //aka 'unsigned long long'
-//	int 			prec;
+	int 			prec;
 	char 			tmp;
 
 	fmt->iter += 1;
@@ -119,9 +116,9 @@ int				get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
 	pointer = (uint64_t)va_arg(args, void *);
 	hexlen = (int)itoa_base(pointer, hex, 16);
 		/* this is for . and .0 and pointer is 0 cases */
-//	prec = 0;
-//	if (fmt->precision == 0 && !(ft_strcmp(hex, "0")) && ++prec)
-//		*hex_ptr++ = '\0';
+	prec = 0;
+	if (fmt->precision == 0 && !(ft_strcmp(hex, "0")) && ++prec)
+		ft_bzero(hex, 15);
 	if (fmt->flags & LEFT)
 		put_in_buf(fmt, buf, hexlen, hex);
 	while (--fmt->width > hexlen + 1 && fmt->width > -1)

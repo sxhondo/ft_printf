@@ -23,24 +23,37 @@ void					apply_upcase(char *tmp)
 	}
 }
 
+unsigned 				handle_negative(t_fmt *fmt, int64_t num)
+{
+	if (fmt->width < -1 && num != 0)
+	{
+		fmt->width = -fmt->width;
+		fmt->flags |= LEFT;
+	}
+}
+
 unsigned int			itoa_base(uint64_t num, char s[], unsigned base)
 {
 	const char			hex_table[17] = "0123456789abcdef";
 	uint64_t 			rmndr;
-	int64_t 			save;
+	uint64_t			save;
 	char 				*ptr;
 
 	ptr = s;
 	rmndr = 1;
-	if ((save = num) < 0)
+	save = base + 1;
+
+	if (num < 0)
 		num = -num;
-	while ((rmndr * base) >= base)
+
+	while (save >= base)
 	{
 		rmndr = num / base;
+		save = rmndr * base;
 		if (base == 10 || base == 8 || base == 2)
-			*ptr++ = (num - (rmndr * base)) % 10 | 0x30;
+			*ptr++ = (char)((num - save) % 10 | (unsigned int)0x30);
 		if (base == 16)
-			*ptr++ = hex_table[num - (rmndr * base)];
+			*ptr++ = hex_table[num - save];
 		num = rmndr;
 	}
 	*ptr = '\0';
@@ -48,26 +61,86 @@ unsigned int			itoa_base(uint64_t num, char s[], unsigned base)
 	return ((unsigned int)(ptr - s));
 }
 
-int						get_sign(t_fmt *fmt, int64_t num)
+char					get_sign(t_fmt *fmt, t_vec * buf, int64_t num)
 {
 	char 				sign;
 
 	sign = 0;
 	if (fmt->flags & PLUS && num != UINT32_MAX)
 		sign = num < 0 ? '-' : '+';
-	else if (num < 0)
+	else if (num < 0 && num != ULONG_MAX)
 		sign = '-';
 	else if (fmt->flags & SPACE)
 		sign = ' ';
+	if (fmt->flags & ZERO && sign)
+	{
+		ft_vec_add(&buf, &sign);
+		fmt->width--;
+		sign = 0;
+		return (sign);
+	}
 	return (sign);
 }
 
-unsigned int			recount_nblen(t_fmt *fmt, int64_t num)
+unsigned int			put_precision(t_fmt *fmt, t_vec *buf, int prec,
+											int64_t num, unsigned int nblen, char f)
+{
+	unsigned int	i;
+	char 			sp;
+
+
+	i = 0;
+	sp = ' ';
+	if (fmt->precision == 0 && num == 0)
+	{
+		if (fmt->width > -1)
+			ft_vec_add(&buf, &sp);
+		if (fmt->base & (unsigned)8 && fmt->flags & SHARP)
+			i--;
+		i++;
+	}
+	while (prec--)
+		ft_vec_add(&buf, &f);
+	return (i);
+}
+
+int 					count_precision(t_fmt *fmt, unsigned int nblen, int64_t num, char sign)
+{
+	int 	prec;
+
+	prec = 0;
+	if (fmt->precision > -1)
+	{
+		if (sign && fmt->precision > nblen)
+		{
+			prec++;
+			fmt->width--;
+		}
+		if (fmt->precision > -1)
+		{
+			fmt->flags &= ~ZERO;
+			while (fmt->precision > nblen)
+			{
+				prec++;
+				fmt->precision--;
+				fmt->width--;
+			}
+		}
+		if (fmt->flags & SHARP && num != 0)
+		{
+			if (fmt->base == 16)
+				prec += 2;
+		}
+	}
+	return (prec);
+}
+
+int						recount_nblen(t_fmt *fmt, int64_t num)
 {
 	int 				i;
 
 	i = 0;
-	if (fmt->base == 10 && get_sign(fmt, num))
+	if (fmt->base == 10)
 		i++;
 	if (fmt->flags & SHARP && fmt->base != 10 && num != 0)
 	{
@@ -106,21 +179,6 @@ int						put_before(t_fmt *fmt, t_vec *buf, int64_t num, char sign)
 	return (len);
 }
 
-unsigned int			put_precision(t_fmt *fmt, t_vec *buf, int prec,
-											int64_t num, unsigned int nblen, char f)
-{
-	unsigned int	i;
-
-	i = 0;
-	if (fmt->precision == 0 && num == 0)
-		i = 1;
-	while (prec--)
-		ft_vec_add(&buf, &f);
-	if (i)
-		return (i);
-	return (i);
-}
-
 unsigned int			print_num(t_fmt *fmt, t_vec *buf, unsigned int nblen,
 										int64_t num, char digits[], int prec,
 										char sign)
@@ -146,42 +204,17 @@ unsigned int			print_num(t_fmt *fmt, t_vec *buf, unsigned int nblen,
 			ft_vec_add(&buf, &p_form[1]);
 	}
 	if (sign)
+	{
 		ft_vec_add(&buf, &sign);
+		nblen--;
+	}
 	nblen -= put_precision(fmt, buf, prec, num, nblen, p_form[0]);
 	while (nblen--)
 		ft_vec_add(&buf, &*p_dig++);
 	return (0);
 }
 
-int 					count_precision(t_fmt *fmt, unsigned int nblen, int64_t num)
-{
-	int 	prec;
-
-	prec = 0;
-	if (fmt->precision > -1)
-	{
-		fmt->flags &= ~ZERO;
-		while (fmt->precision > nblen)
-		{
-			prec++;
-			fmt->precision--;
-			fmt->width--;
-		}
-	}
-	return (prec);
-}
-
-char 					decide_sign(t_fmt *fmt, t_vec *buf, unsigned int nblen, int64_t num, char sign)
-{
-	if (sign && nblen-- && fmt->width-- && fmt->flags & ZERO && fmt->width > -1)
-	{
-		ft_vec_add(&buf, &sign);
-		return (0);
-	}
-	return (sign);
-}
-
-int						get_num(int64_t num, t_fmt *fmt, t_vec *buf)
+int						get_num(uint64_t num, t_fmt *fmt, t_vec *buf)
 {
 	unsigned int		nblen;
 	char 				digits[60];
@@ -189,14 +222,12 @@ int						get_num(int64_t num, t_fmt *fmt, t_vec *buf)
 	int 				prec;
 	char 				sign;
 
-	prec = 0;
 	nblen = (unsigned int)itoa_base(num, digits, fmt->base);
 	nblen += recount_nblen(fmt, num);
-	sign = decide_sign(fmt, buf, nblen, num, (char)get_sign(fmt, num));
-	nblen -= num && (fmt->flags & PLUS || fmt->flags & SPACE || num < 0) ? 1 :
-		num == 0 && (fmt->flags & PLUS || fmt->flags & SPACE) ? 1 : 0;
-	if (fmt->precision > -1)
-		prec = count_precision(fmt, nblen, num);
+	handle_negative(fmt, num);
+	if (!(sign = get_sign(fmt, buf, num)) && fmt->base == 10)
+		nblen--;
+	prec = count_precision(fmt, nblen, num, sign);
 	if (fmt->flags & LEFT)
 		print_num(fmt, buf, nblen, num, digits, prec, sign);
 	if (fmt->flags & ZERO && fmt->flags & SHARP)
