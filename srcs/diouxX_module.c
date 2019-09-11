@@ -32,7 +32,7 @@ unsigned 				handle_negative(t_fmt *fmt, int64_t num)
 	}
 }
 
-unsigned int			itoa_base(uint64_t num, char s[], unsigned base)
+unsigned int			itoa_base(uint64_t num, char s[], unsigned base, int sig)
 {
 	const char			hex_table[17] = "0123456789abcdef";
 	uint64_t 			rmndr;
@@ -40,12 +40,9 @@ unsigned int			itoa_base(uint64_t num, char s[], unsigned base)
 	char 				*ptr;
 
 	ptr = s;
-	rmndr = 1;
 	save = base + 1;
-
-	if (num < 0)
+	if (sig == 1 && (int64_t)num < 0)
 		num = -num;
-
 	while (save >= base)
 	{
 		rmndr = num / base;
@@ -61,14 +58,14 @@ unsigned int			itoa_base(uint64_t num, char s[], unsigned base)
 	return ((unsigned int)(ptr - s));
 }
 
-char					get_sign(t_fmt *fmt, t_vec * buf, int64_t num)
+char					get_sign(t_fmt *fmt, t_vec * buf, int64_t num, int sig)
 {
 	char 				sign;
 
 	sign = 0;
 	if (fmt->flags & PLUS && num != UINT32_MAX)
 		sign = num < 0 ? '-' : '+';
-	else if (num < 0 && num != ULONG_MAX)
+	else if (num < 0 && sig == 1)
 		sign = '-';
 	else if (fmt->flags & SPACE)
 		sign = ' ';
@@ -119,6 +116,8 @@ int 					count_precision(t_fmt *fmt, unsigned int nblen, int64_t num, char sign)
 		if (fmt->precision > -1)
 		{
 			fmt->flags &= ~ZERO;
+			if (sign && num >= 0)
+				fmt->precision++;
 			while (fmt->precision > nblen)
 			{
 				prec++;
@@ -214,7 +213,7 @@ unsigned int			print_num(t_fmt *fmt, t_vec *buf, unsigned int nblen,
 	return (0);
 }
 
-int						get_num(uint64_t num, t_fmt *fmt, t_vec *buf)
+int						get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig)
 {
 	unsigned int		nblen;
 	char 				digits[60];
@@ -222,16 +221,16 @@ int						get_num(uint64_t num, t_fmt *fmt, t_vec *buf)
 	int 				prec;
 	char 				sign;
 
-	nblen = (unsigned int)itoa_base(num, digits, fmt->base);
+	nblen = (unsigned int)itoa_base(num, digits, fmt->base, sig);
 	nblen += recount_nblen(fmt, num);
 	handle_negative(fmt, num);
-	if (!(sign = get_sign(fmt, buf, num)) && fmt->base == 10)
+	if (!(sign = get_sign(fmt, buf, num, sig)) && fmt->base == 10)
 		nblen--;
 	prec = count_precision(fmt, nblen, num, sign);
 	if (fmt->flags & LEFT)
 		print_num(fmt, buf, nblen, num, digits, prec, sign);
 	if (fmt->flags & ZERO && fmt->flags & SHARP)
-		nblen -= put_before(fmt, buf, num, sign);
+		nblen -= put_before(fmt, buf, (int64_t)num, sign);
 	tmp = fmt->flags & ZERO ? '0' : ' ';
 	while (--fmt->width >= nblen && fmt->width > -1)
 		ft_vec_add(&buf, &tmp);

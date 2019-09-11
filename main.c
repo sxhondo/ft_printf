@@ -14,6 +14,5 @@
 
 int 	main()
 {
-	ft_printf("%d\n", -1);
-
+	ft_printf("%lld", -9223372036854775808);
 }

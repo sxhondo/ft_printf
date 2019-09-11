@@ -39,10 +39,10 @@ void					pcsp(t_fmt	*fmt, va_list args, t_vec *buf)
 
 void					positive_negative_nums(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	int64_t 			num;
+	int64_t		num;
 
 	if (fmt->lmodifier & CHAR) // char ('hh')
-		num = (int64_t)(char)va_arg(args, int);
+		num = (char)va_arg(args, int);
 	else if (fmt->lmodifier & SHORT) // short int ('h')
 		num = (short)va_arg(args, int);
 	else if (fmt->lmodifier & LONG) // long int ('l')
@@ -51,7 +51,7 @@ void					positive_negative_nums(t_fmt *fmt, va_list args, t_vec *buf)
 		num = va_arg(args, long long int);
 	else
 		num = va_arg(args, int);
-	get_num(num, fmt, buf);
+	get_num(num, fmt, buf, 1);
 }
 
 void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
@@ -70,7 +70,7 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 		num = va_arg(args, unsigned long long);
 	else
 		num = va_arg(args, unsigned int);
-	get_num(num, fmt, buf);
+	get_num(num, fmt, buf, 0);
 }
 
 void					floating_point(t_fmt *fmt, va_list args, t_vec *buf)
@@ -88,9 +88,6 @@ void					floating_point(t_fmt *fmt, va_list args, t_vec *buf)
 
 int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	int64_t 			num;
-
-	num = 0;
 		/* PERCENT, CHAR, STRING, POINTER */
 	if (*fmt->iter == '%' || *fmt->iter == 'c' || *fmt->iter == 's'
 		|| *fmt->iter == 'p')
