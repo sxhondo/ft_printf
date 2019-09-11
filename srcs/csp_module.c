@@ -114,7 +114,7 @@ int				get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
 	tmp = ' ';
 	/* return of va_arg(called with void *) can not be initialized */
 	pointer = (uint64_t)va_arg(args, void *);
-	hexlen = (int)itoa_base((void *)pointer, hex, 16, 0);
+	hexlen = (int)itoa_base(pointer, hex, 16, 0);
 		/* this is for . and .0 and pointer is 0 cases */
 	prec = 0;
 	if (fmt->precision == 0 && !(ft_strcmp(hex, "0")) && ++prec)

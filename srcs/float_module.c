@@ -1,17 +1,17 @@
-///* ************************************************************************** */
-///*                                                                            */
-///*                                                        :::      ::::::::   */
-///*   float_module.c                                     :+:      :+:    :+:   */
-///*                                                    +:+ +:+         +:+     */
-///*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
-///*                                                +#+#+#+#+#+   +#+           */
-///*   Created: 2019/08/29 16:37:57 by sxhondo           #+#    #+#             */
-///*   Updated: 2019/08/29 16:37:59 by sxhondo          ###   ########.fr       */
-///*                                                                            */
-///* ************************************************************************** */
-//
-//#include "../incs/ft_printf.h"
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   float_module.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/29 16:37:57 by sxhondo           #+#    #+#             */
+/*   Updated: 2019/08/29 16:37:59 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <ft_printf.h>
+
 //double			round(double dnum)
 //{
 //	unsigned char	t;
@@ -41,7 +41,7 @@
 //		*p++ = '-';
 //	}
 //
-//	while ((uint64_t)dnum > 0)
+//	while ((int64_t)dnum > 0)
 //	{
 //		dnum /= 10;
 //		i++;
@@ -60,59 +60,114 @@
 //	*p++ = '\0';
 //	return (p - ptr - 1); // ?
 //}
-//
-//long					get_dnum(long double dnum, t_fmt *fmt)
-//{
-//	unsigned  char 	tmp[100];
-//	unsigned char 	*p_tmp = tmp;
-//	char 			sign;
-//	int 			nblen;
-//
-//	if (fmt->precision == -1)
-//		fmt->precision = 6;
-//
-//		/* jump after written digits */
-//	p_tmp += itoa_double(dnum, p_tmp, fmt->precision);
-//		/* if SHARP promoted print dot anyway */
-//	if (fmt->flags & SHARP && fmt->precision <= 0)
-//		*p_tmp++ = '.';
-//	nblen = ft_strlen((char *)tmp);
-//	sign = 0;
-//	if (fmt->flags & SPACE && dnum > 0)
-//	{
-//		sign = ' ';
-//		fmt->width--;
-//	}
-//
-//		/* apply sign */
-//	/* if ZERO or LEFT promoted we can already write sign in buf */
-//	if (sign && (fmt->flags & ZERO || fmt->flags & LEFT))
-//	{
-//		*fmt->buf_ptr++ = sign;
-//		sign = 0;
-//	}
-//
-//		/* apply flag left alignment ('-') */
-//	/* if LEFT promoted we can already write num in buf */
-//	while (fmt->flags & LEFT && *p_tmp)
-//		*fmt->buf_ptr++ = *p_tmp++;
-//
-//		/* apply width */
-//	/* if flag zero promoted fill the field with '0' else with ' '.
-//	 * Original printf ignores zero-filling when the precision promoted. Dunno why */
-//	while (fmt->width > -1 && --fmt->width >= nblen) // !(fmt->flags & LEFT) ?
-//		*fmt->buf_ptr++ = (fmt->flags & ZERO) && !(fmt->flags & LEFT) ? '0' : ' ';
-//
-//	/* apply sign */
-//	/* if previous sign-check was not made write in buf sign */
-//	if (sign)
-//		*fmt->buf_ptr++ = sign;
-//
-//	/* write buf */
-//	/* if buf was not already written by 'LEFT' */
-//	p_tmp = tmp;
-//	while (nblen-- && !(fmt->flags & LEFT))
-//		*fmt->buf_ptr++ = *p_tmp++;
-//	fmt->iter += 1;
-//	return (0);
-//}
+
+int64_t					power_of(int num, int pow)
+{
+	int64_t				res;
+
+	res = 1;
+	while (pow--)
+		res = res * num;
+	return (res);
+}
+
+size_t 					len_bin(char str[])
+{
+	size_t 	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != '0' && str[i] != '1')
+			return (0);
+		i++;
+	}
+	return (i);
+}
+
+
+unsigned  int			bin_to_dec(char *str)
+{
+	unsigned  int 		res;
+	char 				buf[24];
+	int 				len;
+	int 				i = 0;
+
+	i = 0;
+	res = 0;
+	ft_memcpy(buf, str, 23);
+	len = len_bin(buf);
+
+	while (len--)
+		res += ((unsigned int)buf[i++] - '0') * power_of(2, len);
+	return (res);
+}
+
+void		 			fraction_to_bin(double num, unsigned char s[])
+{
+	int 				i;
+	unsigned char 				*p;
+
+	p = s;
+	i = 0;
+	while (i < 8)
+	{
+		num = num * 2; // multiplicate fraction part by two
+		*p++ = (unsigned int)num | (unsigned)0x30; // save result
+		if ((int)num >= 1)
+			num -= (int)num;
+		i++;
+	}
+	*p = '\0';
+}
+
+typedef union				u_double
+{
+	long double				dnum;
+	struct
+	{
+		unsigned long int	mantisa : 64;
+		unsigned int		exponent : 15;
+		unsigned int		sign : 1;
+	}						s_parts;
+}							t_double;
+
+
+long 				get_dnum(long double dnum, t_fmt *fmt)
+{
+//	union					u_double	*d;
+	unsigned char 			whole[100];
+	unsigned char 			fract[100];
+
+			// check 'n' bit in num
+		//	printf("%u", (int)dnum >> n & 1);
+
+	unsigned int	exp_len;
+	exp_len = itoa_base((int)dnum, whole, 2, 0); //bin representation of whole part
+	fraction_to_bin((double)dnum - (int)dnum, fract); // bin representation of fractional part
+	printf("b2 whole, b2 fract: \t\t");
+	printf("%s,%s\n", whole, fract);
+
+		/* normalized exp form */
+	exp_len -= 1;
+	unsigned char *p_w = whole;
+	printf("normilized exp form: \t\t");
+	printf("%c,%s%s * 2^%d\n", whole[0], p_w + exp_len, fract, exp_len);
+
+		/* смещенный порядок */
+	/* исходная экспонента + (2^k - 1) - 1 , k - количество бит для хранения эксп */
+//	offset = exp_len + (unsigned int)power_of(2, k - 1) - 1;
+//  для 32 это половина байта (127 бит), для 64 это (1023 бит)
+	unsigned int offset = exp_len + 127;
+	char 		exp_off_bin[100];
+	itoa_base(offset, exp_off_bin, 2, 0);
+	printf("offseted exp \t\t\t\t%d = %sb2\n", offset, exp_off_bin);
+
+	unsigned int sign = dnum > 0 ? 1 : 0;
+
+	printf("\ns exp\t\tmant\n");
+	printf("%d %s %s%s", sign, exp_off_bin, p_w + exp_len, fract);
+
+	fmt->iter += 1;
+
+}

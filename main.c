@@ -14,5 +14,6 @@
 
 int 	main()
 {
-	ft_printf("%lld", -9223372036854775808);
+	ft_printf("%f", 3.15);
+//	printf("%e", 0.125);
 }

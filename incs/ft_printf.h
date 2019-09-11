@@ -32,13 +32,6 @@
 #define LONG_LONG	(unsigned)16		/* 'll'	*/
 #define LLONG		(unsigned)32		/*	'L'	*/
 
-typedef struct		s_field
-{
-	unsigned int	nblen;
-	int 			prec;
-	char 			sign;
-}					t_field;
-
 typedef struct		s_fmt
 {
 	unsigned int	flags;
@@ -63,14 +56,12 @@ int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
 
 unsigned int 		itoa_base(uint64_t num, char s[], unsigned base, int sig);
+long				itoa_double(long double dnum, unsigned char *p, int precision);
 int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
-
-//void 				dnum(long double dnum);
-//long				get_dnum(long double dnum, t_fmt *fmt);
+long				get_dnum(long double dnum, t_fmt *fmt);
 
 int					ft_printf(const char *restrict format, ...);
 void				print_collected_data(t_fmt *fmt);
-long				itoa_double(long double dnum, unsigned char *p, int precision);
 
 
 #endif //FT_PRINTF_FT_PRINTF_H

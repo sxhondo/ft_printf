@@ -73,16 +73,15 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 	get_num(num, fmt, buf, 0);
 }
 
-void					floating_point(t_fmt *fmt, va_list args, t_vec *buf)
+void					floats(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	long double			dnum;
 
-	dnum = 0;
 	if (fmt->lmodifier & LLONG)
 		dnum = va_arg(args, long double);
 	else
 		dnum = va_arg(args, double);
-//	get_dnum(dnum, fmt);
+	get_dnum(dnum, fmt);
 
 }
 
@@ -104,7 +103,7 @@ int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 
 		/* FLOATS */
 	else if (*fmt->iter == 'f')
-		floating_point(fmt, args, buf);
+		floats(fmt, args, buf);
 	return (0);
 }
 
