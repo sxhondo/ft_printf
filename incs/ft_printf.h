@@ -42,6 +42,21 @@ typedef struct		s_fmt
 	const char		*iter;
 }					t_fmt;
 
+//[0;31m	Red
+//[1;31m	Bold Red
+//[0;32m	Green
+//[1;32m	Bold Green
+//[0;33m	Yellow
+//[01;33m	Bold Yellow
+//[0;34m	Blue
+//[1;34m	Bold Blue
+//[0;35m	Magenta
+//[1;35m	Bold Magenta
+//[0;36m	Cyan
+//[1;36m	Bold Cyan
+//[0m	Reset
+
+
 	/* processings */
 int					process_precision(t_fmt *fmt, va_list args);
 int					process_width(t_fmt *fmt, va_list args);
@@ -54,14 +69,12 @@ int					get_percent(t_fmt *fmt, t_vec *buf);
 int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
-
-unsigned int 		itoa_base(uint64_t num, char s[], unsigned base, int sig);
-long				itoa_double(long double dnum, unsigned char *p, int precision);
 int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
-long				get_dnum(long double dnum, t_fmt *fmt);
+long				get_dnum(long double dnum, t_fmt *fmt, t_vec *buf);
+unsigned int 		itoa_base(uint64_t num, char s[], unsigned base, int sig);
 
 int					ft_printf(const char *restrict format, ...);
-void				print_collected_data(t_fmt *fmt);
+
 
 
 #endif //FT_PRINTF_FT_PRINTF_H

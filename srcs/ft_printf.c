@@ -10,20 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <ft_printf.h>
 #include "../incs/ft_printf.h"
-
-void			print_collected_data(t_fmt *fmt)
-{
-	printf("\n--------FORMAT----------\n");
-	printf("FLAGS: \t\t\t\t[%d]\n", fmt->flags);
-	printf("WIDTH: \t\t\t\t[%d]\n", fmt->width);
-	printf("PRECISION: \t\t\t[%d]\n", fmt->precision);
-	printf("L_MODIFIER: \t\t[%d] or [%c]\n", fmt->lmodifier, fmt->lmodifier);
-	printf("BASE: \t\t\t\t[%u]\n", fmt->base);
-	printf("ITERATOR: \t\t\t[%s]\n", fmt->iter);
-	printf("------------------------\n");
-}
 
 void					pcsp(t_fmt	*fmt, va_list args, t_vec *buf)
 {
@@ -81,7 +68,7 @@ void					floats(t_fmt *fmt, va_list args, t_vec *buf)
 		dnum = va_arg(args, long double);
 	else
 		dnum = va_arg(args, double);
-	get_dnum(dnum, fmt);
+	get_dnum(dnum, fmt, buf);
 
 }
 
@@ -107,33 +94,67 @@ int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 	return (0);
 }
 
-long 					ft_fprintf(int fd, const char *fmt, va_list args)
+t_fmt					*parse_format_string(t_fmt *fmt, va_list args)
+{
+	fmt->flags = process_flags(fmt);
+	fmt->width = process_width(fmt, args);
+	fmt->precision = process_precision(fmt, args);
+	fmt->lmodifier = process_lmodifier(fmt);
+	fmt->base = process_base(fmt);
+}
+
+char					*process_color(t_fmt *fmt)
+{
+	unsigned int		bold;
+
+	bold = 0;
+	while (*fmt->iter++ && *fmt->iter != '}' && *fmt->iter)
+	{
+		if (*fmt->iter == 'B')
+			bold |= (unsigned)1;
+	}
+}
+
+void					write_in_buf(t_fmt *fmt, t_vec *buf)
+{
+	char 				*str;
+	int 				i;
+
+	i = 0;
+	while (*fmt->iter != '%' && *fmt->iter)
+	{
+		if (*fmt->iter == '{')
+			process_color(fmt);
+		ft_vec_add(&buf, (char *)&*fmt->iter++);
+	}
+}
+
+int 					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	t_vec				*buf;
 	t_fmt				*format;
+	size_t 				save;
+	int 				i;
 
-	format = ft_memalloc(sizeof(t_fmt));
+	if (!(buf = ft_vec_init(1, sizeof(char)))
+			|| !(format = ft_memalloc(sizeof(t_fmt))))
+		return (0);
 	format->iter = fmt;
-	buf = ft_vec_init(1, sizeof(char));
 	while (*format->iter)
 	{
-		while (*format->iter != '%' && *format->iter)
-			ft_vec_add(&buf, (char *)format->iter++);
+		write_in_buf(format, buf);
 		if (!*format->iter)
 			break;
-		/* processings */
-		format->flags = process_flags(format);
-		format->width = process_width(format, args);
-		format->precision = process_precision(format, args);
-		format->lmodifier = process_lmodifier(format);
-		format->base = process_base(format);
+		parse_format_string(format, args);
 		print_module(format, args, buf);
 	}
-	int i = 0;
-	while (++i <= buf->total)
-		write(fd, &*buf->data++, 1);
+	i = -1;
+	save = buf->total;
+	while (++i < buf->total)
+		write(fd, &buf->data[i], 1);
+	ft_vec_del(&buf);
 	free (format);
-	return (buf->total);
+	return (save);
 }
 
 int				ft_printf(const char *restrict format, ...)

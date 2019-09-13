@@ -10,164 +10,95 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_printf.h>
+#include "../incs/ft_printf.h"
 
-//double			round(double dnum)
-//{
-//	unsigned char	t;
-//
-//	// 37.66666 * 100 =3766.66
-//	// 3766.66 + .5 =3767.16    for rounding off value
-//	// then type cast to int so value is 3767
-//	// then divided by 100 so the value converted into 37.67
-//
-//	float value = (int)(dnum * 100 + .5);
-//	return ((double)value / 100);
-//}
-//
-//long					itoa_double(long double dnum, unsigned char *p, int precision)
-//{
-//	int 				i;
-//	unsigned char 				t;
-//	unsigned char		*ptr;
-//
-//	ptr = p;
-//	i = precision;
-//	dnum = dnum;
-//
-//	if (dnum < 0)
-//	{
-//		dnum = -dnum;
-//		*p++ = '-';
-//	}
-//
-//	while ((int64_t)dnum > 0)
-//	{
-//		dnum /= 10;
-//		i++;
-//	}
-//	dnum *= 10;
-//	while (i > 0)
-//	{
-//		t = round(dnum);
-//		*p++ = t | 0x30;
-//		i--;
-//		if (i == precision && precision > 0)
-//			*p++ = '.';
-//		dnum = dnum - (double)t;
-//		dnum *= 10;
-//	}
-//	*p++ = '\0';
-//	return (p - ptr - 1); // ?
-//}
-
-int64_t					power_of(int num, int pow)
+long double						roundd(long double dnum)
 {
-	int64_t				res;
+	long double					tmp;
 
-	res = 1;
-	while (pow--)
-		res = res * num;
-	return (res);
+	tmp = (uint64_t)(dnum * 100 + .5);
+	return (tmp / 100);
 }
 
-size_t 					len_bin(char str[])
+int								itoa_double(long double dnum, unsigned char *p, t_fmt *fmt)
 {
-	size_t 	i;
+	int 						i;
+	uint64_t 					tmp;
+	unsigned char				*ptr;
 
-	i = 0;
-	while (str[i])
+	ptr = p;
+	i = fmt->precision;
+	if (dnum < 0)
+		dnum = -dnum;
+	if ((uint64_t)dnum == 0)
 	{
-		if (str[i] != '0' && str[i] != '1')
-			return (0);
-		i++;
+		*p++ = '0';
+		if (fmt->precision > 0 || fmt->flags & SHARP)
+			*p++ = '.';
 	}
-	return (i);
-}
-
-
-unsigned  int			bin_to_dec(char *str)
-{
-	unsigned  int 		res;
-	char 				buf[24];
-	int 				len;
-	int 				i = 0;
-
-	i = 0;
-	res = 0;
-	ft_memcpy(buf, str, 23);
-	len = len_bin(buf);
-
-	while (len--)
-		res += ((unsigned int)buf[i++] - '0') * power_of(2, len);
-	return (res);
-}
-
-void		 			fraction_to_bin(double num, unsigned char s[])
-{
-	int 				i;
-	unsigned char 				*p;
-
-	p = s;
-	i = 0;
-	while (i < 8)
+	while ((uint64_t)dnum > 0 && ++i)
+		dnum /= 10;
+	dnum *= 10;
+	while (i > 0)
 	{
-		num = num * 2; // multiplicate fraction part by two
-		*p++ = (unsigned int)num | (unsigned)0x30; // save result
-		if ((int)num >= 1)
-			num -= (int)num;
-		i++;
+		*p++ = (tmp = roundd(dnum)) | (unsigned)0x30;
+		i--;
+		if (i == fmt->precision && (fmt->precision > 0 || fmt->flags & SHARP))
+			*p++ = '.';
+		dnum = dnum - (long double)tmp;
+		dnum *= 10;
 	}
-	*p = '\0';
+	*p++ = '\0';
+	return ((int)(p - ptr - 1));
 }
 
-typedef union				u_double
+char 						get_dsign(long double dnum, t_fmt *fmt)
 {
-	long double				dnum;
-	struct
+	char 					sign;
+
+	sign = 0;
+	if (fmt->flags & PLUS)
+		sign = dnum < 0 ? '-' : '+';
+	else if (dnum < 0)
+		sign = '-';
+	else if (fmt->flags & SPACE)
+		sign = ' ';
+	return (sign);
+}
+
+void						print_dnum(t_fmt *fmt, t_vec *buf, unsigned int nblen,
+										unsigned char digits[], char sign)
+{
+	unsigned char 			*p_dig;
+
+	p_dig = digits;
+	if (sign)
 	{
-		unsigned long int	mantisa : 64;
-		unsigned int		exponent : 15;
-		unsigned int		sign : 1;
-	}						s_parts;
-}							t_double;
+		ft_vec_add(&buf, &sign);
+		nblen--;
+	}
+	while (nblen--)
+		ft_vec_add(&buf, &*p_dig++);
+}
 
-
-long 				get_dnum(long double dnum, t_fmt *fmt)
+long 						get_dnum(long double dnum, t_fmt *fmt, t_vec *buf)
 {
-//	union					u_double	*d;
-	unsigned char 			whole[100];
-	unsigned char 			fract[100];
+	unsigned char 			digits[100];
+	unsigned int			nblen;
+	char 					sign;
+	char 					tmp;
 
-			// check 'n' bit in num
-		//	printf("%u", (int)dnum >> n & 1);
-
-	unsigned int	exp_len;
-	exp_len = itoa_base((int)dnum, whole, 2, 0); //bin representation of whole part
-	fraction_to_bin((double)dnum - (int)dnum, fract); // bin representation of fractional part
-	printf("b2 whole, b2 fract: \t\t");
-	printf("%s,%s\n", whole, fract);
-
-		/* normalized exp form */
-	exp_len -= 1;
-	unsigned char *p_w = whole;
-	printf("normilized exp form: \t\t");
-	printf("%c,%s%s * 2^%d\n", whole[0], p_w + exp_len, fract, exp_len);
-
-		/* смещенный порядок */
-	/* исходная экспонента + (2^k - 1) - 1 , k - количество бит для хранения эксп */
-//	offset = exp_len + (unsigned int)power_of(2, k - 1) - 1;
-//  для 32 это половина байта (127 бит), для 64 это (1023 бит)
-	unsigned int offset = exp_len + 127;
-	char 		exp_off_bin[100];
-	itoa_base(offset, exp_off_bin, 2, 0);
-	printf("offseted exp \t\t\t\t%d = %sb2\n", offset, exp_off_bin);
-
-	unsigned int sign = dnum > 0 ? 1 : 0;
-
-	printf("\ns exp\t\tmant\n");
-	printf("%d %s %s%s", sign, exp_off_bin, p_w + exp_len, fract);
-
+	if (fmt->precision == -1)
+		fmt->precision = 6;
+	nblen = itoa_double(dnum, digits, fmt);
+	if ((sign = get_dsign(dnum, fmt)))
+		nblen++;
+	if (fmt->flags & LEFT)
+		print_dnum(fmt, buf, nblen, digits, sign);
+	tmp = fmt->flags & ZERO ? '0' : ' ';
+	while (--fmt->width >= nblen && fmt->width > -1)
+		ft_vec_add(&buf, &tmp);
+	if (!(fmt->flags & LEFT))
+		print_dnum(fmt, buf, nblen, digits, sign);
 	fmt->iter += 1;
-
 }
