@@ -60,14 +60,15 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 	get_num(num, fmt, buf, 0);
 }
 
-void					floats(t_fmt *fmt, va_list args, t_vec *buf)
+int						floats(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	long double			dnum;
 
 	if (fmt->lmodifier & LLONG)
-		dnum = va_arg(args, long double);
+		dnum = (long double)va_arg(args, long double);
 	else
-		dnum = va_arg(args, double);
+		dnum = (long double)va_arg(args, double);
+	fmt->flags |= *fmt->iter == 'E' ? CASE : 0;
 	get_dnum(dnum, fmt, buf);
 
 }
@@ -89,7 +90,7 @@ int						print_module(t_fmt *fmt, va_list args, t_vec *buf)
 		positive_nums(fmt, args, buf);
 
 		/* FLOATS */
-	else if (*fmt->iter == 'f')
+	else if (*fmt->iter == 'f' || *fmt->iter == 'e' || *fmt->iter == 'E')
 		floats(fmt, args, buf);
 	return (0);
 }
@@ -123,8 +124,8 @@ void					write_in_buf(t_fmt *fmt, t_vec *buf)
 	i = 0;
 	while (*fmt->iter != '%' && *fmt->iter)
 	{
-		if (*fmt->iter == '{')
-			process_color(fmt);
+//		if (*fmt->iter == '{')
+//			process_color(fmt);
 		ft_vec_add(&buf, (char *)&*fmt->iter++);
 	}
 }
