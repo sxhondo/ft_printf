@@ -11,30 +11,39 @@
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_FT_PRINTF_H
-#define FT_PRINTF_FT_PRINTF_H
+# define FT_PRINTF_FT_PRINTF_H
 
-#include <stdio.h>
-#include "../libft/incs/libft.h"
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+# include "../libft/incs/libft.h"
+# include <stdarg.h>
+# include <unistd.h>
+# include <stdint.h>
 
-#define ZERO		(unsigned)1			/* filling with zeroes */
-#define PLUS		(unsigned)4			/* show sign of number */
-#define SPACE		(unsigned)8			/* space if plus */
-#define LEFT		(unsigned)16		/* left alignment */
-#define CASE		(unsigned)32		/* is it 'x' or 'X' (0 if lowcase, 1 if uppercase OR 'L'*/
-#define SHARP		(unsigned)64		/* alternative form (0 for %o, 0x for %x) */
+# define ZERO		(unsigned)1
+# define PLUS		(unsigned)4
+# define SPACE		(unsigned)8
+# define LEFT		(unsigned)16
+# define CASE		(unsigned)32
+# define SHARP		(unsigned)64
 
-#define CHAR		(unsigned)1			/* 'hh' */
-#define SHORT		(unsigned)2			/* 'h'	*/
-#define LONG		(unsigned)8			/* 'l'	*/
-#define LONG_LONG	(unsigned)16		/* 'll'	*/
-#define LLONG		(unsigned)32		/*	'L'	*/
+/*
+** CHAR == 'hh'
+** SHORT == 'h'
+** LONG == 'l'
+** LONG_LONG == 'll'
+** LLONG == 'L'
+*/
+
+# define CHAR		(unsigned)1
+# define SHORT		(unsigned)2
+# define LONG		(unsigned)8
+# define LONG_LONG	(unsigned)16
+# define LLONG		(unsigned)32
 
 typedef struct		s_num
 {
-	char 			sign;
+	uint64_t		num;
+	unsigned int	prec;
+	char			sign;
 	unsigned int	nblen;
 	int				exp;
 }					t_num;
@@ -49,24 +58,63 @@ typedef struct		s_fmt
 	const char		*iter;
 }					t_fmt;
 
-	/* processings */
+/*
+** processings
+*/
+
 int					process_precision(t_fmt *fmt, va_list args);
 int					process_width(t_fmt *fmt, va_list args);
 unsigned int		process_flags(t_fmt *fmt);
 unsigned int		process_lmodifier(t_fmt *fmt);
 unsigned int		process_base(t_fmt	*fmt);
 
-	/* conversions */
+/*
+** conversions
+*/
+
 int					get_percent(t_fmt *fmt, t_vec *buf);
 int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
-int					get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
+void				get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
-int 				get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
-void				get_dnum(long double dnum, t_fmt *fmt, t_vec *buf);
-unsigned int 		itoa_base(uint64_t num, char s[], unsigned base, int sig);
+void				get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
+int					get_dnum(long double dnum, t_fmt *fmt, t_vec *buf);
 
-int					ft_printf(const char *restrict format, ...);
+/*
+** num - utilities
+*/
 
+unsigned int		itoa_base(uint64_t num, char s[], unsigned base, int sig);
+unsigned int		handle_negative(t_fmt *fmt, int64_t num);
+void				apply_upcase(char *tmp);
+char				get_sign(t_fmt *fmt, t_vec *buf, int64_t num, int sig);
+int					recount_nblen(t_fmt *fmt, int64_t num);
 
+/*
+** dnum - utilities
+*/
 
-#endif //FT_PRINTF_FT_PRINTF_H
+long double			roundd(long double dnum);
+char				get_dsign(long double dnum, t_fmt *fmt);
+int					put_zero(t_fmt *fmt, unsigned char *p);
+long double			get_exp(long double dnum, t_fmt *fmt, t_num *num);
+void				put_exp(char *exp, t_num *num);
+
+/*
+** expand argument
+*/
+
+void				pcsp(t_fmt	*fmt, va_list args, t_vec *buf);
+void				positive_negative_nums(t_fmt *fmt, va_list args,
+																t_vec *buf);
+void				positive_nums(t_fmt *fmt, va_list args, t_vec *buf);
+int					floats(t_fmt *fmt, va_list args, t_vec *buf);
+
+/*
+** process utilities
+*/
+
+int					skip_atoi(const char *s);
+int					ft_isspecial(char ch);
+
+int					ft_printf(const char *format, ...);
+#endif

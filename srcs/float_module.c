@@ -12,108 +12,21 @@
 
 #include "../incs/ft_printf.h"
 
-long double						roundd(long double dnum)
+unsigned int					print_dnum(t_fmt *fmt, t_vec *buf, t_num *num,
+															unsigned char *dig)
 {
-	long double					tmp;
-
-	tmp = (uint64_t)(dnum * 100 + .5);
-	return (tmp / 100);
-}
-
-char 							get_dsign(long double dnum, t_fmt *fmt)
-{
-	char 						sign;
-
-	sign = 0;
-	if (fmt->flags & PLUS)
-		sign = dnum < 0 ? '-' : '+';
-	else if (dnum < 0)
-		sign = '-';
-	else if (fmt->flags & SPACE)
-		sign = ' ';
-	return (sign);
-}
-
-long double						handle_exp(t_fmt *fmt, t_num *num,
-															long double dnum)
-{
-	int		 					i;
-	long double					save;
-
-	save = dnum;
-	i = 0;
-	if ((*fmt->iter == 'e' || *fmt->iter == 'E') && dnum != 0)
-		while ((uint64_t)save == 0 && --i)
-			save *= 10;
-	num->exp = i;
-	return (save);
-}
-
-int								zero(t_fmt *fmt, unsigned char *p)
-{
-	int 	i;
-
-	i = 0;
-	*p++ = '0';
-	i++;
-	if (fmt->precision > 0 || fmt->flags & SHARP)
-	{
-		*p++ = '.';
-		i++;
-	}
-	return (i);
-}
-
-void							put_exp(char *exp, t_num *num)
-{
-	char 						tmp[99];
-	char 						*p_tmp;
-	char 						*p_exp;
-
-	p_exp = exp;
-	if (num->exp < 0)
-	{
-		*p_exp++ = '-';
-		num->exp = -num->exp;
-	}
-	else
-		*p_exp++ = '+';
-	if (num->exp < 10)
-	{
-		*p_exp++ = '0';
-		*p_exp++ = (char)(num->exp + 0x30);
-	}
-	p_tmp = tmp;
-	if (num->exp >= 10)
-	{
-		while (num->exp > 0)
-		{
-			*p_tmp++ = (char)(num->exp % 10 + '0');
-			num->exp /= 10;
-		}
-		ft_strrev(tmp);
-		ft_strcat(exp, tmp);
-	}
-}
-
-
-unsigned int				print_dnum(t_fmt *fmt, t_vec *buf, t_num *num,
-									   unsigned char digits[])
-{
-	unsigned char 			*p_dig;
-	char					*p_exp;
-	char					exp[99];
-	unsigned int			nblen;
-	unsigned char			e;
+	char						*p_exp;
+	char						exp[99];
+	unsigned int				nblen;
+	unsigned char				e;
 
 	fmt->flags &= ~ZERO;
 	nblen = num->nblen;
 	p_exp = exp;
-	p_dig = digits;
 	if (num->sign && num->nblen--)
 		ft_vec_add(&buf, &num->sign);
 	while (num->nblen--)
-		ft_vec_add(&buf, &*p_dig++);
+		ft_vec_add(&buf, &*dig++);
 	if (*fmt->iter == 'e' || *fmt->iter == 'E')
 	{
 		e = fmt->flags & CASE ? 'E' : 'e';
@@ -125,78 +38,91 @@ unsigned int				print_dnum(t_fmt *fmt, t_vec *buf, t_num *num,
 	return (nblen);
 }
 
-int 							dtoa_exp(long double dnum, unsigned char *p,
-												t_fmt *fmt, t_num *num)
+int								write_dnum(t_fmt *fmt, long double dnum,
+													unsigned char *ptr, int i)
 {
-	int 						i;
-	uint64_t 					tmp;
-	unsigned char				*ptr;
-	int 						j;
-
-	ptr = p;
-	j = i = fmt->precision;
-	GET_ABS(dnum);
-	dnum = (uint64_t)dnum == 0 ? handle_exp(fmt, num, dnum) : dnum;
-	while ((uint64_t)dnum > 0 && ++i)
-		dnum /= 10;
-	dnum *= 10;
-	num->exp = num->exp < 0 ? num->exp : i - fmt->precision - 1;
-	j += num->exp > 0 ? num->exp : 0;
-	while (i-- > 0)
-	{
-		*p++ = (tmp = roundd(dnum)) | (unsigned)0x30;
-		if (j == i && (fmt->precision > 0 || fmt->flags & SHARP))
-		{
-			*p++ = '.';
-			if (i > fmt->precision)
-				i -= i - fmt->precision;
-		}
-		dnum = dnum - (long double)tmp;
-		dnum *= 10;
-	}
-	fmt->width -= 4;
-	*p++ = '\0';
-	return ((int)(p - ptr - 1));
-}
-
-int								dtoa(long double dnum, unsigned char digits[],
-											t_fmt *fmt, t_num *num)
-{
-	int 						i;
-	uint64_t 					tmp;
-	unsigned char				*ptr;
+	uint64_t					tmp;
 	unsigned char				*p;
 
-	p = ptr = digits;
-	i = fmt->precision;
-	GET_ABS(dnum);
-	if ((uint64_t)dnum == 0)
-		ptr += zero(fmt, ptr);
-	while ((uint64_t)dnum > 0 && ++i)
-		dnum /= 10;
-	dnum *= 10;
+	p = ptr;
 	while (i-- > 0)
 	{
-		*ptr++ = (tmp = roundd(dnum)) | (unsigned)0x30;
+		tmp = roundd(dnum);
+		*ptr++ = tmp | (unsigned)0x30;
 		if (i == fmt->precision && (fmt->precision > 0 || fmt->flags & SHARP))
 			*ptr++ = '.';
 		dnum = dnum - (long double)tmp;
 		dnum *= 10;
 	}
 	*ptr++ = '\0';
+	return ((int)(ptr - p));
+}
+
+int								write_exp(t_fmt *fmt, long double dnum,
+												t_num *num, unsigned char *p)
+{
+	int							i;
+	uint64_t					tmp;
+	unsigned char				*ptr;
+
+	ptr = p;
+	i = fmt->precision;
+	dnum = get_exp(dnum, fmt, num);
+	tmp = roundd(dnum);
+	*ptr++ = tmp | (unsigned)0x30;
+	*ptr++ = '.';
+	dnum = dnum - (long double)tmp;
+	dnum *= 10;
+	while (i-- > 0)
+	{
+		tmp = roundd(dnum);
+		*ptr++ = tmp | (unsigned)0x30;
+		dnum = dnum - (long double)tmp;
+		dnum *= 10;
+	}
+	fmt->width -= 4;
+	*ptr++ = '\0';
 	return ((int)(ptr - p - 1));
 }
 
-void						get_dnum(long double dnum, t_fmt *fmt, t_vec *buf)
+int								dtoa(long double dnum, unsigned char dig[],
+														t_fmt *fmt, t_num *num)
 {
-	unsigned char 			digits[100];
-	char 					tmp;
-	t_num					*num;
+	int							i;
+	int							zero_tmblr;
+	unsigned char				*ptr;
+	unsigned char				*p;
 
-	num = ft_memalloc(sizeof(t_num));
+	ptr = dig;
+	p = dig;
+	zero_tmblr = 0;
+	i = fmt->precision;
+	dnum = ABS(dnum);
+	if ((uint64_t)dnum == 0)
+		zero_tmblr = put_zero(fmt, ptr);
+	if (*fmt->iter == 'e' || *fmt->iter == 'E')
+	{
+		num->prec = i;
+		return (write_exp(fmt, dnum, num, ptr));
+	}
+	while ((uint64_t)dnum > 0 && ++i)
+		dnum /= 10;
+	dnum *= 10;
+	ptr += write_dnum(fmt, dnum, ptr + zero_tmblr, i);
+	return ((int)(ptr - p) - 1 + zero_tmblr);
+}
+
+int								get_dnum(long double dnum, t_fmt *fmt,
+																	t_vec *buf)
+{
+	unsigned char				digits[100];
+	char						tmp;
+	t_num						*num;
+
+	if (!(num = ft_memalloc(sizeof(t_num))))
+		return (0);
 	fmt->precision = fmt->precision == -1 ? 6 : fmt->precision;
-	num->nblen += (*fmt->iter == 'e' || *fmt->iter == 'E') ?
-			dtoa_exp(dnum, digits, fmt, num) : dtoa(dnum, digits, fmt, num);
+	num->nblen += dtoa(dnum, digits, fmt, num);
 	if ((num->sign = get_dsign(dnum, fmt)))
 		num->nblen++;
 	num->nblen = fmt->flags & LEFT ? print_dnum(fmt, buf, num, digits) :
@@ -207,5 +133,6 @@ void						get_dnum(long double dnum, t_fmt *fmt, t_vec *buf)
 	if (!(fmt->flags & LEFT))
 		print_dnum(fmt, buf, num, digits);
 	fmt->iter += 1;
-	free (num);
+	free(num);
+	return (0);
 }

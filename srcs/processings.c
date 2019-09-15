@@ -13,67 +13,32 @@
 //#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
-int 		skip_atoi(const char *s)
+unsigned		process_flags(t_fmt *fmt)
 {
-	int 		i;
-
-	i = 0;
-	while (ft_isdigit(*s))
-		i = i * 10 + *s++ - '0';
-	return (i);
-}
-
-int			ft_isspecial(char ch)
-{
-	if (ch == '*' || ch == '.' || ch == '%')
-		return (0);
-	if (ch >= ' ' && ch <= '0')
-		return (1);
-	return (0);
-}
-
-unsigned int		process_flags(t_fmt *fmt)
-{
-	unsigned int	flags;
+	unsigned	flags;
 
 	flags = 0;
 	while (*fmt->iter++ && ft_isspecial(*fmt->iter))
 	{
-		if (*fmt->iter == '-')
-		{
-			flags |= LEFT;
+		if (*fmt->iter == '-' && (flags |= LEFT))
 			continue;
-		}
-		if (*fmt->iter == '+')
-		{
-			flags |= PLUS;
+		if (*fmt->iter == '+' && (flags |= PLUS))
 			continue;
-		}
-		if (*fmt->iter == ' ')
-		{
-			flags |= SPACE;
+		if (*fmt->iter == ' ' && (flags |= SPACE))
 			continue;
-		}
-		if (*fmt->iter == '#')
-		{
-			flags |= SHARP;
+		if (*fmt->iter == '#' && (flags |= SHARP))
 			continue;
-		}
-		if (*fmt->iter == '0')
-		{
-			flags |= ZERO;
+		if (*fmt->iter == '0' && (flags |= ZERO))
 			continue;
-		}
 	}
 	return (flags);
 }
 
 int				process_width(t_fmt *fmt, va_list args)
 {
-	int 	width;
+	int			width;
 
 	width = -1;
-
 	if (*fmt->iter == '*')
 	{
 		++fmt->iter;
@@ -90,7 +55,7 @@ int				process_width(t_fmt *fmt, va_list args)
 
 int				process_precision(t_fmt *fmt, va_list args)
 {
-	int 	precision;
+	int			precision;
 
 	precision = -1;
 	if (*fmt->iter == '.')
@@ -111,24 +76,25 @@ int				process_precision(t_fmt *fmt, va_list args)
 	return (precision);
 }
 
-unsigned int		process_lmodifier(t_fmt *fmt)
+unsigned		process_lmodifier(t_fmt *fmt)
 {
-	unsigned int	lmodifier;
+	unsigned	lmodifier;
 
- 	lmodifier = 0;
- 	if (*fmt->iter == 'h')
- 		lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
- 	else if (*fmt->iter == 'l')
- 		lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
- 	else if (*fmt->iter == 'L')
- 		lmodifier |= LLONG;
- 	fmt->iter += (lmodifier & CHAR || lmodifier & LLONG) || lmodifier & LONG_LONG ? 1 : 0;
+	lmodifier = 0;
+	if (*fmt->iter == 'h')
+		lmodifier |= (*++fmt->iter == 'h') ? CHAR : SHORT;
+	else if (*fmt->iter == 'l')
+		lmodifier |= (*++fmt->iter == 'l') ? LONG_LONG : LONG;
+	else if (*fmt->iter == 'L')
+		lmodifier |= LLONG;
+	fmt->iter += (lmodifier & CHAR || lmodifier & LLONG) ||
+			lmodifier & LONG_LONG ? 1 : 0;
 	return (lmodifier);
 }
 
-unsigned int		process_base(t_fmt	*fmt)
+unsigned		process_base(t_fmt *fmt)
 {
-	unsigned int	base;
+	unsigned	base;
 
 	base = 10;
 	if (*fmt->iter == 'o')

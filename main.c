@@ -124,7 +124,6 @@ int 	main()
 {
 //	put_dnum(3.1513);
 
-	ft_printf("%Lf\n", 13.14);
-	printf("%Lf\n", 13.14);
+	ft_printf("%e\n", 0);
 
 }
