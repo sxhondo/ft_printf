@@ -42,14 +42,14 @@ int							count_precision(t_fmt *fmt, unsigned nblen,
 	prec = 0;
 	if (fmt->precision > -1)
 	{
-		if (sign && fmt->precision > nblen && fmt->width--)
+		if (sign && fmt->precision > (int)nblen && fmt->width--)
 			prec++;
 		if (fmt->precision > -1)
 		{
 			fmt->flags &= ~ZERO;
 			if (sign && num >= 0)
 				fmt->precision++;
-			while (fmt->precision > nblen && ++prec && --fmt->precision)
+			while (fmt->precision > (int)nblen && ++prec && --fmt->precision)
 				fmt->width--;
 		}
 		if (fmt->flags & SHARP && num != 0)
@@ -139,7 +139,7 @@ void						get_num(int64_t num, t_fmt *fmt,
 	if (fmt->flags & ZERO && fmt->flags & SHARP)
 		params->nblen -= put_before(fmt, buf, params->sign);
 	tmp = fmt->flags & ZERO ? '0' : ' ';
-	while (--fmt->width >= params->nblen && fmt->width > -1)
+	while ((unsigned)--fmt->width >= params->nblen && fmt->width > -1)
 		ft_vec_add(&buf, &tmp);
 	if (!(fmt->flags & LEFT))
 		print_num(fmt, buf, params, digits);

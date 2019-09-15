@@ -69,7 +69,7 @@ int					get_str(t_fmt *fmt, va_list args, t_vec *buf)
 	{
 		lcpy = 0;
 		while (zero[lcpy])
-			ft_vec_add(&buf, &zero[lcpy++]);
+			ft_vec_add(&buf, (void *)&zero[lcpy++]);
 		return (0);
 	}
 	len = ft_strnlen(str, fmt->precision);

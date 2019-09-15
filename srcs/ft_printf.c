@@ -29,7 +29,7 @@ void					print_module(t_fmt *fmt, va_list args, t_vec *buf)
 		floats(fmt, args, buf);
 }
 
-t_fmt					*parse_format_string(t_fmt *fmt, va_list args)
+void					parse_format_string(t_fmt *fmt, va_list args)
 {
 	fmt->flags = process_flags(fmt);
 	fmt->width = process_width(fmt, args);
@@ -49,7 +49,7 @@ int						ft_fprintf(int fd, const char *fmt, va_list args)
 	t_vec				*buf;
 	t_fmt				*format;
 	size_t				save;
-	int					i;
+	size_t				i;
 
 	if (!(buf = ft_vec_init(1, sizeof(char)))
 			|| !(format = ft_memalloc(sizeof(t_fmt))))

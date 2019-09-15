@@ -67,7 +67,7 @@ int								write_exp(t_fmt *fmt, long double dnum,
 
 	ptr = p;
 	i = fmt->precision;
-	dnum = get_exp(dnum, fmt, num);
+	dnum = get_exp(dnum, num);
 	tmp = roundd(dnum);
 	*ptr++ = tmp | (unsigned)0x30;
 	*ptr++ = '.';
@@ -128,7 +128,7 @@ int								get_dnum(long double dnum, t_fmt *fmt,
 	num->nblen = fmt->flags & LEFT ? print_dnum(fmt, buf, num, digits) :
 			num->nblen;
 	tmp = fmt->flags & ZERO ? '0' : ' ';
-	while (--fmt->width >= num->nblen && fmt->width > -1)
+	while (--fmt->width >= (int)num->nblen && fmt->width > -1)
 		ft_vec_add(&buf, &tmp);
 	if (!(fmt->flags & LEFT))
 		print_dnum(fmt, buf, num, digits);

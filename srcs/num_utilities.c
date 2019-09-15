@@ -79,7 +79,7 @@ int						recount_nblen(t_fmt *fmt, int64_t num)
 	return (i);
 }
 
-unsigned int			handle_negative(t_fmt *fmt, int64_t num)
+void					handle_negative(t_fmt *fmt, int64_t num)
 {
 	if (fmt->width < -1 && num != 0)
 	{

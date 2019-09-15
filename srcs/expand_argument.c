@@ -63,7 +63,7 @@ void					positive_nums(t_fmt *fmt, va_list args, t_vec *buf)
 	fmt->iter += 1;
 }
 
-int						floats(t_fmt *fmt, va_list args, t_vec *buf)
+void					floats(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	long double			dnum;
 

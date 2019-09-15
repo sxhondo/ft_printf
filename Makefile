@@ -20,6 +20,7 @@ CFLAGS = -Wall -Wextra -Werror
 INC_DIR = incs/
 LIB_INC_DIR = libft/incs
 SRCS_DIR = srcs/
+LIB_SRCS_DIR = libft/srcs
 OBJ_DIR = obj/
 
 	#Files
@@ -40,16 +41,17 @@ OBJECTS = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all: $(NAME)
 
-$(NAME): $(LIB) $(OBJ_DIR) $(SRCS_DIR)
-	@$(CC) $(CFLAGS) -c $(SOURCES) -I $(INC_DIR) -I $(LIB_INC_DIR)
-	@ar rc $(NAME) $(OBJECTS)
-#	@gcc  -c srcs/*.c -I libft/incs/ -I incs/
+$(NAME): $(OBJ_DIR) $(LIB) $(OBJ_DIR) $(SRCS_DIR)
+	$(CC) $(CFLAGS) -c $(SOURCES) -I $(INC_DIR) -I $(LIB_INC_DIR)
+	mv $(OBJ_LIST) $(OBJ_DIR)
+	ar rc $(NAME) $(OBJECTS)
 
-	@ar -q $(NAME) *.o
+$(OBJ_DIR):
+	@echo "\033[33m\033[1m$(NAME) - creating obj directory:\033[0m"
+	@mkdir -p $(OBJ_DIR)
 
-$(LIB):
-	@gcc -c libft/srcs/*.c -I libft/incs/ -I incs/
-	@ar -q libft/$(LIB) *.o
+$(LIB): $(LIB_SRCS_DIR) $(LIB_INC_DIR)
+	make -C libft/
 
 
 clean:

@@ -84,7 +84,7 @@ int					get_dnum(long double dnum, t_fmt *fmt, t_vec *buf);
 */
 
 unsigned int		itoa_base(uint64_t num, char s[], unsigned base, int sig);
-unsigned int		handle_negative(t_fmt *fmt, int64_t num);
+void				handle_negative(t_fmt *fmt, int64_t num);
 void				apply_upcase(char *tmp);
 char				get_sign(t_fmt *fmt, t_vec *buf, int64_t num, int sig);
 int					recount_nblen(t_fmt *fmt, int64_t num);
@@ -96,7 +96,7 @@ int					recount_nblen(t_fmt *fmt, int64_t num);
 long double			roundd(long double dnum);
 char				get_dsign(long double dnum, t_fmt *fmt);
 int					put_zero(t_fmt *fmt, unsigned char *p);
-long double			get_exp(long double dnum, t_fmt *fmt, t_num *num);
+long double			get_exp(long double dnum, t_num *num);
 void				put_exp(char *exp, t_num *num);
 
 /*
@@ -107,7 +107,7 @@ void				pcsp(t_fmt	*fmt, va_list args, t_vec *buf);
 void				positive_negative_nums(t_fmt *fmt, va_list args,
 																t_vec *buf);
 void				positive_nums(t_fmt *fmt, va_list args, t_vec *buf);
-int					floats(t_fmt *fmt, va_list args, t_vec *buf);
+void				floats(t_fmt *fmt, va_list args, t_vec *buf);
 
 /*
 ** process utilities

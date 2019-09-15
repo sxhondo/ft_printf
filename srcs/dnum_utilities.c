@@ -20,8 +20,7 @@ long double						roundd(long double dnum)
 	return (tmp / 100);
 }
 
-long double						get_exp(long double dnum, t_fmt *fmt,
-																	t_num *num)
+long double						get_exp(long double dnum, t_num *num)
 {
 	long double					save;
 
