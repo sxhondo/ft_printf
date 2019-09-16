@@ -22,6 +22,7 @@ void					pcsp(t_fmt *fmt, va_list args, t_vec *buf)
 		get_str(fmt, args, buf);
 	else if (*fmt->iter == 'p')
 		get_ptr(fmt, args, buf);
+	fmt->iter += 1;
 }
 
 void					positive_negative_nums(t_fmt *fmt, va_list args,

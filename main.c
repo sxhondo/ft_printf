@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/ft_printf.h"
-
 //int64_t					power_of(int num, int pow)
 //{
 //	int64_t				res;
@@ -120,10 +118,16 @@
 //	printf("%d %s %s%s", sign, exp_off_bin, p_w + exp_len, fract);
 //}
 
+#include "incs/ft_printf.h"
+#include <stdio.h>
 int 	main()
 {
 //	put_dnum(3.1513);
 
-	ft_printf("%e\n", 0);
+	const char 	str[4] = {0x01, 0x03, 0x42, 0x03};
+
+
+	ft_printf("%-010r\n", str);
+
 
 }

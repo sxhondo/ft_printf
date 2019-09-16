@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
 unsigned					put_precision(t_fmt *fmt, t_vec *buf, t_num *params,
@@ -64,12 +63,12 @@ int							count_precision(t_fmt *fmt, unsigned nblen,
 int							put_before(t_fmt *fmt, t_vec *buf, char sign)
 {
 	int						len;
-	char					*p_form;
+	char					p_form[2];
 
 	len = 0;
-	p_form = "0x";
+	ft_memcpy(p_form, "0x", 2);
 	if (fmt->flags & CASE)
-		p_form = "0X";
+		ft_memcpy(p_form, "0X", 2);
 	if (fmt->base != 10)
 	{
 		ft_vec_add(&buf, &p_form[0]);
@@ -92,16 +91,16 @@ int							put_before(t_fmt *fmt, t_vec *buf, char sign)
 unsigned					print_num(t_fmt *fmt, t_vec *buf, t_num *params,
 																	char *dig)
 {
-	char					*p_form;
-	unsigned int			nblen;
+	char						p_form[2];
+	unsigned int				nblen;
 
 	nblen = params->nblen;
-	p_form = "0x";
+	ft_memcpy(p_form, "0x", 2);
 	if (fmt->flags & ZERO)
 		fmt->flags &= ~ZERO;
 	if (fmt->flags & CASE)
 	{
-		p_form = "0X";
+		ft_memcpy(p_form, "0X", 2);
 		apply_upcase(dig);
 	}
 	if (fmt->flags & SHARP && fmt->base != 10 && params->num != 0)
@@ -119,14 +118,15 @@ unsigned					print_num(t_fmt *fmt, t_vec *buf, t_num *params,
 	return (params->nblen);
 }
 
-void						get_num(int64_t num, t_fmt *fmt,
+int							get_num(int64_t num, t_fmt *fmt,
 														t_vec *buf, int sig)
 {
 	char					digits[60];
 	t_num					*params;
 	char					tmp;
 
-	params = ft_memalloc(sizeof(t_num));
+	if (!(params = ft_memalloc(sizeof(t_num))))
+		return (0);
 	params->num = num;
 	params->nblen = (unsigned int)itoa_base(num, digits, fmt->base, sig);
 	params->nblen += recount_nblen(fmt, num);
@@ -144,4 +144,5 @@ void						get_num(int64_t num, t_fmt *fmt,
 	if (!(fmt->flags & LEFT))
 		print_num(fmt, buf, params, digits);
 	free(params);
+	return (0);
 }

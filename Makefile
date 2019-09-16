@@ -10,21 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-	#Operations
-NAME = libftprintf.a
-LIB	= libft.a
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-
-	#Directories
-INC_DIR = incs/
-LIB_INC_DIR = libft/incs
-SRCS_DIR = srcs/
-LIB_SRCS_DIR = libft/srcs
-OBJ_DIR = obj/
-
-	#Files
-SRCS_LIST =\
+SOURCES = \
 	csp_module.c\
 	dnum_utilities.c\
 	expand_argument.c\
@@ -34,33 +20,41 @@ SRCS_LIST =\
 	place_num.c\
 	process_utilities.c\
 	processings.c\
+	some_bonuses.c
 
-SOURCES = $(addprefix $(SRCS_DIR), $(SRCS_LIST))
-OBJ_LIST = $(SRCS_LIST:%.c=%.o)
-OBJECTS = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
+CC = gcc
+NAME = libftprintf.a
+FLAGS = -Wall -Wextra -Werror
+
+LIBFT = libft
+LIBFTA = libft.a
+
+SRCS_DIR = srcs
+INCS_DIR = incs
+
+OBJS = $(SOURCES:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJ_DIR) $(LIB) $(OBJ_DIR) $(SRCS_DIR)
-	$(CC) $(CFLAGS) -c $(SOURCES) -I $(INC_DIR) -I $(LIB_INC_DIR)
-	mv $(OBJ_LIST) $(OBJ_DIR)
-	ar rc $(NAME) $(OBJECTS)
+$(NAME): $(OBJS)
+	make -C libft
+	cp libft/libft.a ./$(NAME)
+	ar rcs $(NAME) $(OBJS)
 
-$(OBJ_DIR):
-	@echo "\033[33m\033[1m$(NAME) - creating obj directory:\033[0m"
-	@mkdir -p $(OBJ_DIR)
+%.o: $(SRCS_DIR)/%.c
+	$(CC) $(FLAGS) -I $(INCS_DIR) -o $@ -c $<
 
-$(LIB): $(LIB_SRCS_DIR) $(LIB_INC_DIR)
-	make -C libft/
-
+$(LIB):
+	make -C $(LIBFT)
 
 clean:
-	@rm -rf *.o libft/*.o
+	rm -f $(OBJS)
+	make clean -C $(LIBFT)
 
 fclean: clean
-	@rm -rf $(NAME)
-	@rm -rf libft/$(LIB)
+	rm -f $(NAME)
+	make fclean -C $(LIBFT)
 
-re: fclean $(LIB) all
+re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean lclean fclean re

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../incs/ft_printf.h"
-//#include "ft_printf.h"
 
 unsigned int			itoa_base(uint64_t num, char s[],
 														unsigned base, int sig)

@@ -10,15 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
-int					get_percent(t_fmt *fmt, t_vec *buf)
+int						get_percent(t_fmt *fmt, t_vec *buf)
 {
-	char			tmp;
-	char			per;
+	char				tmp;
+	char				per;
 
-	fmt->iter += 1;
 	per = '%';
 	if (fmt->flags & LEFT)
 		ft_vec_add(&buf, &per);
@@ -30,12 +28,11 @@ int					get_percent(t_fmt *fmt, t_vec *buf)
 	return (0);
 }
 
-int					get_char(t_fmt *fmt, va_list args, t_vec *buf)
+int						get_char(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	unsigned char	ch;
-	char			tmp;
+	unsigned char		ch;
+	char				tmp;
 
-	fmt->iter += 1;
 	tmp = ' ';
 	ch = (unsigned char)va_arg(args, int);
 	if (fmt->flags & LEFT)
@@ -56,15 +53,14 @@ int					get_char(t_fmt *fmt, va_list args, t_vec *buf)
 	return (0);
 }
 
-int					get_str(t_fmt *fmt, va_list args, t_vec *buf)
+int						get_str(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	const char		zero[] = "(null)";
-	int				len;
-	int				lcpy;
-	const char		*str;
-	char			tmp;
+	const char			zero[] = "(null)";
+	int					len;
+	int					lcpy;
+	const char			*str;
+	char				tmp;
 
-	fmt->iter += 1;
 	if (!(str = va_arg(args, const char *)))
 	{
 		lcpy = 0;
@@ -84,11 +80,12 @@ int					get_str(t_fmt *fmt, va_list args, t_vec *buf)
 	return (0);
 }
 
-void				put_in_buf(t_fmt *fmt, t_vec *buf, int hexlen, char hex[])
+static void				put_in_buf(t_fmt *fmt, t_vec *buf, int hexlen,
+																char hex[])
 {
-	char			*prefix;
-	char			*p;
-	char			o;
+	char				*prefix;
+	char				*p;
+	char				o;
 
 	o = '0';
 	p = hex;
@@ -102,15 +99,14 @@ void				put_in_buf(t_fmt *fmt, t_vec *buf, int hexlen, char hex[])
 		ft_vec_add(&buf, &*p++);
 }
 
-void				get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
+void					get_ptr(t_fmt *fmt, va_list args, t_vec *buf)
 {
-	int				hexlen;
-	char			hex[15];
-	uint64_t		pointer;
-	int				prec;
-	char			tmp;
+	int					hexlen;
+	char				hex[15];
+	uint64_t			pointer;
+	int					prec;
+	char				tmp;
 
-	fmt->iter += 1;
 	tmp = ' ';
 	pointer = (uint64_t)va_arg(args, void *);
 	hexlen = (int)itoa_base(pointer, hex, 16, 0);

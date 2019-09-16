@@ -12,7 +12,7 @@
 
 #include "../incs/ft_printf.h"
 
-void					print_module(t_fmt *fmt, va_list args, t_vec *buf)
+static void					print_module(t_fmt *fmt, va_list args, t_vec *buf)
 {
 	if (*fmt->iter == '%' || *fmt->iter == 'c' || *fmt->iter == 's'
 		|| *fmt->iter == 'p')
@@ -21,15 +21,14 @@ void					print_module(t_fmt *fmt, va_list args, t_vec *buf)
 		positive_negative_nums(fmt, args, buf);
 	else if (*fmt->iter == 'o' || *fmt->iter == 'u' || *fmt->iter == 'x'
 			|| *fmt->iter == 'X' || *fmt->iter == 'b')
-	{
-		fmt->base = *fmt->iter == 'b' ? 2 : fmt->base;
 		positive_nums(fmt, args, buf);
-	}
 	else if (*fmt->iter == 'f' || *fmt->iter == 'e' || *fmt->iter == 'E')
 		floats(fmt, args, buf);
+	else if (*fmt->iter == 'r')
+		print_non_printable(fmt, args, buf);
 }
 
-void					parse_format_string(t_fmt *fmt, va_list args)
+static void					parse_format_string(t_fmt *fmt, va_list args)
 {
 	fmt->flags = process_flags(fmt);
 	fmt->width = process_width(fmt, args);
@@ -38,18 +37,18 @@ void					parse_format_string(t_fmt *fmt, va_list args)
 	fmt->base = process_base(fmt);
 }
 
-void					write_in_buf(t_fmt *fmt, t_vec *buf)
+static void					write_in_buf(t_fmt *fmt, t_vec *buf)
 {
 	while (*fmt->iter != '%' && *fmt->iter)
 		ft_vec_add(&buf, (char *)&*fmt->iter++);
 }
 
-int						ft_fprintf(int fd, const char *fmt, va_list args)
+static int					ft_fprintf(int fd, const char *fmt, va_list args)
 {
-	t_vec				*buf;
-	t_fmt				*format;
-	size_t				save;
-	size_t				i;
+	t_vec					*buf;
+	t_fmt					*format;
+	size_t					save;
+	size_t					i;
 
 	if (!(buf = ft_vec_init(1, sizeof(char)))
 			|| !(format = ft_memalloc(sizeof(t_fmt))))
@@ -72,10 +71,10 @@ int						ft_fprintf(int fd, const char *fmt, va_list args)
 	return (save);
 }
 
-int						ft_printf(const char *restrict format, ...)
+int							ft_printf(const char *restrict format, ...)
 {
-	va_list				args;
-	int					done;
+	va_list					args;
+	int						done;
 
 	if (!format)
 		return (-1);

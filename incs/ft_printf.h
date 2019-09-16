@@ -76,7 +76,7 @@ int					get_percent(t_fmt *fmt, t_vec *buf);
 int					get_str(t_fmt *fmt, va_list args, t_vec *buf);
 void				get_ptr(t_fmt *fmt, va_list args, t_vec *buf);
 int					get_char(t_fmt *fmt, va_list args, t_vec *buf);
-void				get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
+int					get_num(int64_t num, t_fmt *fmt, t_vec *buf, int sig);
 int					get_dnum(long double dnum, t_fmt *fmt, t_vec *buf);
 
 /*
@@ -115,6 +115,11 @@ void				floats(t_fmt *fmt, va_list args, t_vec *buf);
 
 int					skip_atoi(const char *s);
 int					ft_isspecial(char ch);
+
+/*
+** some bonuses
+*/
+void 			print_non_printable(t_fmt *fmt, va_list args, t_vec *buf);
 
 int					ft_printf(const char *format, ...);
 #endif

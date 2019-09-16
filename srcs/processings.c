@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <ft_printf.h>
 #include "../incs/ft_printf.h"
 
 unsigned		process_flags(t_fmt *fmt)
