@@ -48,7 +48,7 @@ int								write_dnum(t_fmt *fmt, long double dnum,
 	while (i-- > 0)
 	{
 		tmp = roundd(dnum);
-		*ptr++ = tmp | (unsigned)0x30;
+		*ptr++ = tmp | 0x30u;
 		if (i == fmt->precision && (fmt->precision > 0 || fmt->flags & SHARP))
 			*ptr++ = '.';
 		dnum = dnum - (long double)tmp;
@@ -69,14 +69,14 @@ int								write_exp(t_fmt *fmt, long double dnum,
 	i = fmt->precision;
 	dnum = get_exp(dnum, num);
 	tmp = roundd(dnum);
-	*ptr++ = tmp | (unsigned)0x30;
+	*ptr++ = tmp | 0x30u;
 	*ptr++ = '.';
 	dnum = dnum - (long double)tmp;
 	dnum *= 10;
 	while (i-- > 0)
 	{
 		tmp = roundd(dnum);
-		*ptr++ = tmp | (unsigned)0x30;
+		*ptr++ = tmp | 0x30u;
 		dnum = dnum - (long double)tmp;
 		dnum *= 10;
 	}

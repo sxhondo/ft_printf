@@ -119,7 +119,10 @@ int					ft_isspecial(char ch);
 /*
 ** some bonuses
 */
-void 			print_non_printable(t_fmt *fmt, va_list args, t_vec *buf);
 
+void				print_non_printable(t_fmt *fmt, va_list args, t_vec *buf);
+void				get_color(t_fmt *fmt, t_vec *buf);
+void				put_nonp_in_buf(t_fmt *fmt, t_vec *buf, const char *str,
+															unsigned lcpy);
 int					ft_printf(const char *format, ...);
 #endif

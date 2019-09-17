@@ -30,3 +30,20 @@ int				ft_isspecial(char ch)
 		return (1);
 	return (0);
 }
+
+void			put_nonp_in_buf(t_fmt *fmt, t_vec *buf, const char *str,
+									unsigned lcpy)
+{
+	char		ast;
+
+	ast = '*';
+	fmt->flags &= ~ZERO;
+	while (*str && lcpy--)
+	{
+		if (*str < 33 || *str > 126)
+			ft_vec_add(&buf, &ast);
+		else
+			ft_vec_add(&buf, (void *)&*str);
+		str++;
+	}
+}

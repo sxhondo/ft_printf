@@ -31,7 +31,7 @@ unsigned int			itoa_base(uint64_t num, char s[],
 		rmndr = num / base;
 		save = rmndr * base;
 		if (base <= 10)
-			*ptr++ = (char)((num - save) % 10 | (unsigned int)0x30);
+			*ptr++ = (char)((num - save) % 10 | 0x30u);
 		if (base > 10)
 			*ptr++ = hex_table[num - save];
 		num = rmndr;
@@ -72,7 +72,7 @@ int						recount_nblen(t_fmt *fmt, int64_t num)
 	if (fmt->flags & SHARP && fmt->base != 10 && num != 0)
 	{
 		i++;
-		if (fmt->base & (unsigned)16)
+		if (fmt->base & 16u)
 			i++;
 	}
 	return (i);

@@ -20,7 +20,7 @@ SOURCES = \
 	place_num.c\
 	process_utilities.c\
 	processings.c\
-	some_bonuses.c
+	bonuses_1.c\
 
 CC = gcc
 NAME = libftprintf.a
@@ -41,7 +41,7 @@ $(NAME): $(OBJS)
 	cp libft/libft.a ./$(NAME)
 	ar rcs $(NAME) $(OBJS)
 
-%.o: $(SRCS_DIR)/%.c
+%.o: $(SRCS_DIR)/%.c $(INCS_DIR)/ft_printf.h
 	$(CC) $(FLAGS) -I $(INCS_DIR) -o $@ -c $<
 
 $(LIB):

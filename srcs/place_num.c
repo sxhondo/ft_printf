@@ -24,7 +24,7 @@ unsigned					put_precision(t_fmt *fmt, t_vec *buf, t_num *params,
 	{
 		if (fmt->width > -1)
 			ft_vec_add(&buf, &sp);
-		if (fmt->base & (unsigned)8 && fmt->flags & SHARP)
+		if (fmt->base & 8u && fmt->flags & SHARP)
 			i--;
 		i++;
 	}
@@ -73,7 +73,7 @@ int							put_before(t_fmt *fmt, t_vec *buf, char sign)
 	{
 		ft_vec_add(&buf, &p_form[0]);
 		len++;
-		if (fmt->base & (unsigned)16 && len++)
+		if (fmt->base & 16u && len++)
 			ft_vec_add(&buf, &p_form[1]);
 	}
 	if (fmt->flags & PLUS)
@@ -98,17 +98,17 @@ unsigned					print_num(t_fmt *fmt, t_vec *buf, t_num *params,
 	ft_memcpy(p_form, "0x", 2);
 	if (fmt->flags & ZERO)
 		fmt->flags &= ~ZERO;
-	if (fmt->flags & CASE)
-	{
-		ft_memcpy(p_form, "0X", 2);
+	if (fmt->flags & CASE && ft_memcpy(p_form, "0X", 2))
 		apply_upcase(dig);
-	}
 	if (fmt->flags & SHARP && fmt->base != 10 && params->num != 0)
 	{
 		nblen--;
-		ft_vec_add(&buf, &p_form[0]);
-		if (fmt->base & (unsigned)16 && nblen--)
-			ft_vec_add(&buf, &p_form[1]);
+		if (fmt->base == 8 || fmt->base == 16)
+		{
+			ft_vec_add(&buf, &p_form[0]);
+			if (fmt->base & 16u && nblen--)
+				ft_vec_add(&buf, &p_form[1]);
+		}
 	}
 	if (params->sign && --nblen)
 		ft_vec_add(&buf, &params->sign);

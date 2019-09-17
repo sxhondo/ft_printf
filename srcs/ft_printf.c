@@ -37,13 +37,22 @@ static void					parse_format_string(t_fmt *fmt, va_list args)
 	fmt->base = process_base(fmt);
 }
 
-static void					write_in_buf(t_fmt *fmt, t_vec *buf)
+int							write_in_buf(t_fmt *fmt, t_vec *buf)
 {
 	while (*fmt->iter != '%' && *fmt->iter)
+	{
+		if (*fmt->iter == '{')
+		{
+			get_color(fmt, buf);
+			if (*fmt->iter == '%')
+				return (0);
+		}
 		ft_vec_add(&buf, (char *)&*fmt->iter++);
+	}
+	return (0);
 }
 
-static int					ft_fprintf(int fd, const char *fmt, va_list args)
+int							ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	t_vec					*buf;
 	t_fmt					*format;
@@ -79,7 +88,7 @@ int							ft_printf(const char *restrict format, ...)
 	if (!format)
 		return (-1);
 	va_start(args, format);
-	done = (int)ft_fprintf(1, format, args);
+	done = ft_fprintf(1, format, args);
 	va_end(args);
 	return (done);
 }
