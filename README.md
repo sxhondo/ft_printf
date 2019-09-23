@@ -27,7 +27,7 @@ is a vital function.
 
 **"%%"** -A ' %' is written.  No argument is converted.  The complete conversion specification is '%%'.
 
-**"%diouxXb** - The int (or appropriate variant) argument is converted to signed decimal (d and i), unsigned octal (o), unsigned decimal (u), unsigned
+**"%diouxXb"** - The int (or appropriate variant) argument is converted to signed decimal (d and i), unsigned octal (o), unsigned decimal (u), unsigned
              hexadecimal (x and X) or binary (b) notation.\
 ~ The precision, if any, gives the minimum number of digits that must appear; if the converted value requires fewer digits, it is padded on the left with zeros.
 
@@ -44,5 +44,5 @@ number of digits after it is equal to the precision;\
             ~if the value is zero, the exponent is 00.
 
 # Usage
-    ![Example main](./pics/example_main.png)
+    ![example](./pics/example_main.png?raw=true "example")
                 
