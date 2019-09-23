@@ -43,7 +43,6 @@ number of digits after it is equal to the precision;\
             ~An E conversion uses the letter 'E' (rather than `e') to introduce the exponent.\
             ~if the value is zero, the exponent is 00.
 
-#Usage
+# Usage
     ![Alt text](./pics/example_main.png?raw=true "Example main")
-                
     ![Alt text](./pics/example_output.png?raw=true "Example output")            
