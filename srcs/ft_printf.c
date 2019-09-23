@@ -37,7 +37,7 @@ static void					parse_format_string(t_fmt *fmt, va_list args)
 	fmt->base = process_base(fmt);
 }
 
-int							write_in_buf(t_fmt *fmt, t_vec *buf)
+static int					write_in_buf(t_fmt *fmt, t_vec *buf)
 {
 	while (*fmt->iter != '%' && *fmt->iter)
 	{
@@ -52,7 +52,7 @@ int							write_in_buf(t_fmt *fmt, t_vec *buf)
 	return (0);
 }
 
-int							ft_fprintf(int fd, const char *fmt, va_list args)
+static int					ft_fprintf(int fd, const char *fmt, va_list args)
 {
 	t_vec					*buf;
 	t_fmt					*format;

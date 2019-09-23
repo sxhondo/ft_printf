@@ -18,12 +18,12 @@
 # include <unistd.h>
 # include <stdint.h>
 
-# define ZERO		(unsigned)1
-# define PLUS		(unsigned)4
-# define SPACE		(unsigned)8
-# define LEFT		(unsigned)16
-# define CASE		(unsigned)32
-# define SHARP		(unsigned)64
+# define ZERO		1u
+# define PLUS		4u
+# define SPACE		8u
+# define LEFT		16u
+# define CASE		32u
+# define SHARP		64u
 
 /*
 ** CHAR == 'hh'
@@ -33,11 +33,11 @@
 ** LLONG == 'L'
 */
 
-# define CHAR		(unsigned)1
-# define SHORT		(unsigned)2
-# define LONG		(unsigned)8
-# define LONG_LONG	(unsigned)16
-# define LLONG		(unsigned)32
+# define CHAR		1u
+# define SHORT		2u
+# define LONG		8u
+# define LONG_LONG	16u
+# define LLONG		32u
 
 typedef struct		s_num
 {

@@ -33,7 +33,7 @@ void					print_non_printable(t_fmt *fmt, va_list args,
 	fmt->iter += 1;
 }
 
-int						get_valid_name(t_fmt *fmt, char *tab)
+static int				get_valid_name(t_fmt *fmt, char *tab)
 {
 	const char			*str;
 	int					i;
@@ -60,7 +60,7 @@ int						get_valid_name(t_fmt *fmt, char *tab)
 	return (i);
 }
 
-void					check_bold(unsigned lmod, char *tab, char *col)
+static void				check_bold(unsigned lmod, char *tab, char *col)
 {
 	if (lmod & 128u)
 	{
@@ -73,7 +73,7 @@ void					check_bold(unsigned lmod, char *tab, char *col)
 		ft_memcpy(col, "[0;", 4);
 }
 
-int						put_col_in_buf(t_vec *buf, char *col)
+static int				put_col_in_buf(t_vec *buf, char *col)
 {
 	char				spec;
 
