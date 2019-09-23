@@ -45,4 +45,6 @@ number of digits after it is equal to the precision;\
 
 # Usage
     ![Alt text](./pics/example_main.png?raw=true "Example main")
-    ![Alt text](./pics/example_output.png?raw=true "Example output")            
+    
+    ![Alt text](./pics/example_output.png?raw=true "Example output")
+                
