@@ -9,8 +9,15 @@ write the resulting string of characters either in a file descriptor or in a par
 Some also propose to recall this string without printing it. In short, undeniably, printf
 is a vital function.
 
-# Installing
+# Install
+compile libft sources and ft_printf sources necessary for library libftprintf.a
+    
     make
+    
+delete ".o" files in directory; delete libftprintf.a
+
+    make clean; make fclean
+    
 # Supported Conversions 
 **"%c"** - The int argument is converted to an unsigned char, and the resulting character is written.\
 
@@ -18,8 +25,6 @@ is a vital function.
 ~ If a precision is specified, no more than the number specified are written.\  
 ~ If a precision is given, no null character need be present;\
 ~ if the precision is not specified, or is greater than the size of the array, the array must contain a terminating NUL character.\
-
-**"%k"** - The char * argument is expected to be pointer to a string. Prints non-printable characters (ASCII < 41 or > 176)
 
 **"%k"** - The char * argument is expected to be pointer to a string. Prints non-printable characters (ASCII < 41 or > 176)
 
@@ -46,5 +51,6 @@ number of digits after it is equal to the precision;\
 # Usage
     Example main:
 ![example main](./pics/example_main.png?raw=true "example main")
+
     Followed output:
 ![example output](./pics/example_output.png?raw=true "example output")
