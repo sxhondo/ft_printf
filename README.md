@@ -44,5 +44,7 @@ number of digits after it is equal to the precision;\
             ~if the value is zero, the exponent is 00.
 
 # Usage
-    ![example](./pics/example_main.png?raw=true "example")
-                
+    Example main:
+![example main](./pics/example_main.png?raw=true "example main")
+    Followed output:
+![example output](./pics/example_output.png?raw=true "example output")
