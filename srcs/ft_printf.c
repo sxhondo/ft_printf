@@ -41,13 +41,14 @@ static int					write_in_buf(t_fmt *fmt, t_vec *buf)
 {
 	while (*fmt->iter != '%' && *fmt->iter)
 	{
-		if (*fmt->iter == '{')
+		while (*fmt->iter == '{')
 		{
 			get_color(fmt, buf);
 			if (*fmt->iter == '%')
 				return (0);
 		}
-		ft_vec_add(&buf, (char *)&*fmt->iter++);
+		if ((*fmt->iter))
+			ft_vec_add(&buf, (char *)&*fmt->iter++);
 	}
 	return (0);
 }

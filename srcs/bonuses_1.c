@@ -60,10 +60,15 @@ static int				get_valid_name(t_fmt *fmt, char *tab)
 	return (i);
 }
 
-static void				check_bold(unsigned lmod, char *tab, char *col)
+static int				check_bold(t_fmt *fmt, char *tab, char *col)
 {
-	if (lmod & 128u)
+	int 	i;
+
+	i = 0;
+	if (fmt->lmodifier & 128u)
 	{
+		i++;
+		fmt->lmodifier &= ~ 128u;
 		if (!(ft_strcmp(tab, "yellow")))
 			ft_memcpy(col, "[01;", 5);
 		else
@@ -71,6 +76,7 @@ static void				check_bold(unsigned lmod, char *tab, char *col)
 	}
 	else if (ft_strcmp(tab, "eoc"))
 		ft_memcpy(col, "[0;", 4);
+	return (i);
 }
 
 static int				put_col_in_buf(t_vec *buf, char *col)
@@ -92,7 +98,7 @@ void					get_color(t_fmt *fmt, t_vec *buf)
 
 	i = 0;
 	i += get_valid_name(fmt, tab);
-	check_bold(fmt->lmodifier, tab, col);
+	i += check_bold(fmt, tab, col);
 	if (!(ft_strcmp(tab, "red")))
 		ft_strcat(col, "31m");
 	else if (!(ft_strcmp(tab, "green")))
@@ -107,8 +113,6 @@ void					get_color(t_fmt *fmt, t_vec *buf)
 		ft_strcat(col, "36m");
 	else if (!(ft_strcmp(tab, "eoc")))
 		ft_memcpy(col, "[0m", 4);
-	else if (ft_strcmp(tab, "eoc"))
-		i = 0;
 	if (i > 0 && put_col_in_buf(buf, col))
-		fmt->iter += fmt->lmodifier & 128u ? i + 3 : i + 2;
+		fmt->iter +=  i + 2;
 }
