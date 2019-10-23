@@ -58,7 +58,6 @@ static int					ft_fprintf(int fd, const char *fmt, va_list args)
 	t_vec					*buf;
 	t_fmt					*format;
 	size_t					save;
-	size_t					i;
 
 	if (!(buf = ft_vec_init(1, sizeof(char)))
 			|| !(format = ft_memalloc(sizeof(t_fmt))))
@@ -72,10 +71,8 @@ static int					ft_fprintf(int fd, const char *fmt, va_list args)
 		parse_format_string(format, args);
 		print_module(format, args, buf);
 	}
-	i = -1;
 	save = buf->total;
-	while (++i < buf->total)
-		write(fd, &buf->data[i], 1);
+	write(fd, buf->data, buf->total);
 	ft_vec_del(&buf);
 	free(format);
 	return (save);
