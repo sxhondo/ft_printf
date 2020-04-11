@@ -16,9 +16,9 @@ delete ".o" files in directory; delete libftprintf.a
     make clean; make fclean
     
 # Supported Conversions 
-**"%c"** - The int argument is converted to an unsigned char, and the resulting character is written.\
+* %c - The int argument is converted to an unsigned char, and the resulting character is written.\
 
-**"%s"** - The char * argument is expected to be pointer to a string. Characters from the array are written up to (but not including) a terminating NUL character;\
+* %s - The char * argument is expected to be pointer to a string. Characters from the array are written up to (but not including) a terminating NUL character;\
 ~ If a precision is specified, no more than the number specified are written.  
 ~ If a precision is given, no null character need be present;\
 ~ if the precision is not specified, or is greater than the size of the array, the array must contain a terminating NUL character.
