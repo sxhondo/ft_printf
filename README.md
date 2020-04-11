@@ -23,20 +23,20 @@ delete ".o" files in directory; delete libftprintf.a
 ~ If a precision is given, no null character need be present;\
 ~ if the precision is not specified, or is greater than the size of the array, the array must contain a terminating NUL character.
 
-**"%k"** - The char * argument is expected to be pointer to a string. Prints non-printable characters (ASCII < 41 or > 176)
+* %k - The char * argument is expected to be pointer to a string. Prints non-printable characters (ASCII < 41 or > 176)
 
-**"%p"** - The void * pointer argument is printed in hexadecimal
+* %p - The void * pointer argument is printed in hexadecimal
 
-**"%%"** -A ' %' is written.  No argument is converted.  The complete conversion specification is '%%'.
+* %% -A ' %' is written.  No argument is converted.  The complete conversion specification is '%%'.
 
-**"%diouxXb"** - The int (or appropriate variant) argument is converted to signed decimal (d and i), unsigned octal (o), unsigned decimal (u), unsigned hexadecimal (x and X) or binary (b) notation.\
+* %diouxXb - The int (or appropriate variant) argument is converted to signed decimal (d and i), unsigned octal (o), unsigned decimal (u), unsigned hexadecimal (x and X) or binary (b) notation.\
 ~ The precision, if any, gives the minimum number of digits that must appear; if the converted value requires fewer digits, it is padded on the left with zeros.
 
-**"%fF"** - The double argument is rounded and converted to decimal notation in the style [-]ddd.ddd, where the number of digits after the decimal-point character is equal to the precision specification.\
++ %fF - The double argument is rounded and converted to decimal notation in the style [-]ddd.ddd, where the number of digits after the decimal-point character is equal to the precision specification.\
              ~ If the precision is missing, it is taken as 6;\
              ~ If the precision is explicitly zero, no decimal-point character appears.  If a decimal point appears, at least one digit appears before it.
 
-**"%eE"** - The double argument is rounded and converted in the style [-]d.ddde+-dd where there is one digit before the decimal-point character and the
++ %eE - The double argument is rounded and converted in the style [-]d.ddde+-dd where there is one digit before the decimal-point character and the
 number of digits after it is equal to the precision;\
             ~If the precision is missing, it is taken as 6;\
             ~If the precision is zero, no decimal-point character appears.\
